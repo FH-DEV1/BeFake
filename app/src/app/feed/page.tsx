@@ -5,7 +5,7 @@ const Feed: React.FC = () => {
         <main>
             <Navbar/>
             <div className="flex justify-between">
-                <div>feed</div>
+                <div>Feed</div>
             </div>
         </main>
     )

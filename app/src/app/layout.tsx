@@ -1,11 +1,5 @@
 import type { Metadata } from 'next'
 import './globals.css'
-import { Roboto } from 'next/font/google'
-
-const roboto = Roboto({
-  subsets: ['latin'],
-  weight: ['400', '700'],
-})
 
 export const metadata: Metadata = {
   title: 'FH.Dev - BeFake',
@@ -18,12 +12,12 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="fr">
       <link rel="apple-touch-icon" href="/icon.png"/>
       <meta name="apple-mobile-web-app-capable" content="yes"/>
       <meta name="theme-color" content="#000"/>
       <body className="bg-black text-white">
-        <main className={roboto.className}>
+        <main>
           {children}
         </main>
       </body>

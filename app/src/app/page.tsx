@@ -1,35 +1,51 @@
-import { cookies } from 'next/headers'
+"use client"
+import { useEffect } from 'react';
+import Cookies from 'js-cookie';
+import { useRouter } from 'next/navigation'
 
-const domain = "https://berealapi.fly.dev"
+const Home = () => {
+  const domain = "https://berealapi.fly.dev"
+  const router = useRouter()
+  const token = Cookies.get('token');
 
-export default async function Home() {
-
-  const cookieStore = cookies()
-  const token = cookieStore.get('token')
-
-  async function refreshToken(response: any) {
-    console.log(response)
-    if (response.status == 201) {
-      cookieStore.set('token', response.data.token)
+  const refreshToken = (newToken: {data: any; status: number;}) => {
+    if (newToken.status == 201){
+      console.log(newToken)
+      Cookies.set('token', newToken.data.token, { expires: 30 });
+      router.push("/feed")
     }
-  }
+    else {
+      router.push("/login")
+    }
+  };
 
-  if (token) {
-    const headers = new Headers();
-    headers.append("Content-Type", "application/json")
-    const requestOptions = {
-      method: 'POST',
-      headers: headers,
-      body: JSON.stringify({"token": token?.value}),
-      redirects: 'follow'
-    };
-    fetch(`${domain}/login/refresh`, requestOptions)
-      .then(response => response.text())
-      .then(result => refreshToken(JSON.parse(result)))
-      .catch(error => console.log('error', error));
-  }
+  useEffect(() => {
+    if (token) {
+      const headers = new Headers();
+      headers.append('Content-Type', 'application/json');
+
+      const requestOptions = {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify({ token }),
+        redirects: 'follow',
+      };
+
+      fetch(`${domain}/login/refresh`, requestOptions)
+        .then((response) => response.text())
+        .then((result) => refreshToken(JSON.parse(result)))
+        .catch((error) => console.log('error', error));
+    }
+    else {
+      router.push("/login")
+    }
+  }, [token]);
+
   return (
-    <main>
-    </main>
-  )
-}
+    <div>
+      <h1>{Cookies.get('token')}</h1>
+    </div>
+  );
+};
+
+export default Home;
