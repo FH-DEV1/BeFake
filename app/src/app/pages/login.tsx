@@ -1,11 +1,11 @@
 "use client"
-import { ChangeEvent, useState } from 'react';
-import Cookies from 'js-cookie';
+import { ChangeEvent, useEffect, useState } from 'react';
 import PhoneInput from 'react-phone-number-input'
 import '../phoneInput.css'
 import { useRouter } from 'next/navigation'
 
 const Login: React.FC = () => {
+    const domain = "https://berealapi.fly.dev"
     const [phone, setPhone] = useState("")
     const [OTPsession, setOTPsession] = useState("")
     const [OTPcode, setOTPcode] = useState("")
@@ -13,6 +13,40 @@ const Login: React.FC = () => {
     const [view, setView] = useState(true)
     const [error, setError] = useState(false)
     const router = useRouter()
+    const token = localStorage.getItem('token');
+
+    const refreshToken = (newToken: {data: any; status: number;}) => {
+      if (newToken.status == 201){
+        console.log(newToken)
+        localStorage.setItem('token', newToken.data.token);
+        router.push("/feed")
+      }
+      else {
+        router.push("/login")
+      }
+    };
+
+    useEffect(() => {
+        if (token) {
+          const headers = new Headers();
+          headers.append('Content-Type', 'application/json');
+    
+          const requestOptions = {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify({ token }),
+            redirects: 'follow',
+          };
+    
+          fetch(`${domain}/login/refresh`, requestOptions)
+            .then((response) => response.text())
+            .then((result) => refreshToken(JSON.parse(result)))
+            .catch((error) => console.log('error', error));
+        }
+        else {
+          router.push("/login")
+        }
+      }, [token]);
 
     const checkSend = (otp: {status: number; data: any;}) => {
         setLoading(false)
@@ -47,8 +81,8 @@ const Login: React.FC = () => {
         setLoading(false)
         if (otp.status == 201) {
             console.log(otp.data.token)
-            Cookies.set('token', otp.data.token, { expires: 30 });
-            router.push("/feed")
+            localStorage.setItem('token', otp.data.token);
+            router.replace("/feed")
         }
         else {
             setError(true)
