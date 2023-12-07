@@ -4,6 +4,7 @@ import PhoneInput from 'react-phone-number-input'
 import './phoneInput.css'
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Link from 'next/link';
 
 const Home: React.FC = () => {
     const domain = "https://berealapi.fly.dev"
@@ -22,9 +23,9 @@ const Home: React.FC = () => {
                         "id": "id",
                         "username": "username",
                         "profilePicture": {
-                            "url": "https://placehold.co/999x999/webp",
-                            "width": 999,
-                            "height": 999
+                            "url": "/icon.png",
+                            "width": 2000,
+                            "height": 2000
                         }
                     },
                     "momentId": "QxTisSpb4U3j73KOSP-K6",
@@ -37,14 +38,14 @@ const Home: React.FC = () => {
                         {
                             "id": "thH6WgFz-HfVDMWIk66bW",
                             "primary": {
-                                "url": "https://placehold.co/2500x2000/webp",
-                                "width": 1500,
+                                "url": "/icon.png",
+                                "width": 2000,
                                 "height": 2000,
                                 "mediaType": "image"
                             },
                             "secondary": {
-                                "url": "https://placehold.co/2500x2000/webp",
-                                "width": 1500,
+                                "url": "/icon.png",
+                                "width": 2000,
                                 "height": 2000,
                                 "mediaType": "image"
                             },
@@ -65,15 +66,15 @@ const Home: React.FC = () => {
                                         "id": "userrealid",
                                         "username": "usernamereal",
                                         "profilePicture": {
-                                            "url": "https://placehold.co/1000x1000/webp",
-                                            "width": 1000,
-                                            "height": 1000
+                                            "url": "/icon.png",
+                                            "width": 2000,
+                                            "height": 2000
                                         }
                                     },
                                     "media": {
-                                        "url": "https://placehold.co/500x500/webp",
-                                        "width": 500,
-                                        "height": 500
+                                        "url": "/icon.png",
+                                        "width": 2000,
+                                        "height": 2000
                                     },
                                     "type": "up",
                                     "emoji": "👍",
@@ -106,7 +107,27 @@ const Home: React.FC = () => {
       }
     }, [page]);
 
+    function formatTime(seconds: number) {
+      const minutes = Math.round(seconds / 60);
+      const hours = Math.round(minutes / 60);
+  
+      if (hours >= 1) {
+          return `${hours}h late`;
+      } else {
+          return `${minutes} min late`;
+      }
+    }
 
+    const UTCtoParis = (utcTime: string) => {
+      // Create a new Date object from the UTC time
+      const date = new Date(utcTime);
+  
+      // Convert the Date object to a local time string
+      const localTime = date.toLocaleTimeString('en-US', { hour12: false });
+  
+      return localTime;
+  };
+  
 
 
     //start
@@ -279,12 +300,22 @@ const Home: React.FC = () => {
             <div className={`${page == "OTP" ? "block" : "hidden"} flex items-center justify-center flex-col h-[90vh]`}>
                 <h1 className="pb-6 text-xl opacity-50 -mt-24 ">Code de validation</h1>
                 <input
-                    type="tel"
+                    type="text"
                     value={OTPcode} 
                     onChange={(e: ChangeEvent<HTMLInputElement>) => setOTPcode(e.target.value)}
-                    className="bg-black border-b border-white border-opacity-50 rounded-none"
+                    className="bg-black border-white border-opacity-50 rounded-none text-left tracking-[6px] w-24 focus:outline-none"
                     id="otp"
+                    inputMode='numeric'
+                    maxLength={6}
                 />
+                <div className='flex'>
+                  <span className='h-0.5 bg-white w-2 mr-2'/>
+                  <span className='h-0.5 bg-white w-2 mr-2'/>
+                  <span className='h-0.5 bg-white w-2 mr-2'/>
+                  <span className='h-0.5 bg-white w-2 mr-2'/>
+                  <span className='h-0.5 bg-white w-2 mr-2'/>
+                  <span className='h-0.5 bg-white w-2 mr-2'/>
+                </div>
                 <button onClick={validateOTP} className={`${loading ? "hidden" : "block"} mt-6 py-0.5 px-1.5 rounded-md border border-white border-opacity-50`}>valider</button>
                 <div className={`${loading ? "block" : "hidden"} mt-[26px] h-7 w-7 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]`} role="status">
                     <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
@@ -296,10 +327,23 @@ const Home: React.FC = () => {
             <div className={`${page == "feed" ? "block" : "hidden"} flex flex-col pt-11`}>
                 {feed.data.data.friendsPosts.map((post) => (
                   <div className="flex mt-6" key={post.user.id}>
-                    <img className='w-10 h-10 rounded-full' src={post.user.profilePicture.url} alt={`${post.user.username}'s profile`} />
-                    <div>
-                      <p className='ml-2'>{post.user.username}</p>
-                      <p className='ml-2'>{post.posts[0].takenAt}</p>
+                    <img className='w-10 h-10 rounded-full' src={JSON.stringify(post.user.profilePicture) == "null" ? "/icon.png" : post.user.profilePicture.url} alt={`${post.user.username}'s profile`} />
+                    <div className='flex flex-col'>
+                      <p className='ml-2 text'>{post.user.username}</p>
+                      <a
+                        className='ml-2 text-xs opacity-50 cursor-pointer'
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        href={post.posts[0].location ? `https://www.google.com/maps/?q=${post.posts[0].location.latitude},${post.posts[0].location.longitude}` : undefined}
+                        onClick={(e) => {
+                          if (!post.posts[0].location) {
+                            e.preventDefault();
+                          }
+                        }}
+                      >
+                        {post.posts[0].location ? `ouvrir la position • ` : ""}
+                        {post.posts[0].isLate ? formatTime(post.posts[0].lateInSeconds) : UTCtoParis(post.posts[0].takenAt)}
+                      </a>
                     </div>
                   </div>
                 ))}
