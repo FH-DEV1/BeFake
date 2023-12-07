@@ -95,7 +95,7 @@ const Home: React.FC = () => {
                     ]
                 }
           ]}}})
-    const token = localStorage.getItem('token');
+    const token = typeof window !== "undefined" ? localStorage.getItem('token') : null
 
     useEffect(() => {
       if (page == "start") {
@@ -126,8 +126,10 @@ const Home: React.FC = () => {
           .then((response) => response.text())
           .then((result) => {
             if (JSON.parse(result).status == 201){
-              localStorage.setItem('token', JSON.parse(result).data.token);
-              setPage("feed")
+              if (typeof window !== "undefined") {
+                localStorage.setItem('token', JSON.parse(result).data.token);
+                setPage("feed")
+              }
             }
             else {
               toast.error("Erreur Token invalide")
@@ -223,9 +225,11 @@ const Home: React.FC = () => {
         .then(result => {
           setLoading(false)
           if (JSON.parse(result).status == 201) {
-            localStorage.setItem('token', JSON.parse(result).data.token);
-            setPage("feed")
-            toast.success("OTP validé avec succès!")
+            if (typeof window !== "undefined") {
+              localStorage.setItem('token', JSON.parse(result).data.token);
+              setPage("feed")
+              toast.success("OTP validé avec succès!")
+            }
           }
           else {
             toast.error("Erreur lors de la validation de l'OTP.")
