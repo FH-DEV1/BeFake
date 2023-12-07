@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 import { Slide, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 export const metadata: Metadata = {
   title: 'FH.Dev - BeFake',
@@ -20,6 +21,7 @@ export default function RootLayout({
       <meta name="theme-color" content="#000"/>
       <body className="bg-black text-white">
         <main>
+        <SpeedInsights/>
         <ToastContainer
           position="top-center"
           autoClose={5000}
