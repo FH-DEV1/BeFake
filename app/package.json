@@ -13,6 +13,7 @@
     "next": "14.0.3",
     "react": "^18",
     "react-dom": "^18",
+    "react-draggable": "^4.4.6",
     "react-phone-number-input": "^3.3.7",
     "react-toastify": "^9.1.3"
   },
