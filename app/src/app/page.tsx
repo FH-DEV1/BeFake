@@ -5,6 +5,8 @@ import './phoneInput.css'
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Draggable from 'react-draggable';
+import SwipeableViews from 'react-swipeable-views';
+
 
 const Home: React.FC = () => {
     const domain = "https://berealapi.fly.dev"
@@ -137,7 +139,26 @@ const Home: React.FC = () => {
                               }
                           ],
                           "comments": [],
-                          "tags": [],
+                          "tags": [
+                            {
+                                "userId": "DfOwBC2n6OMEKKCZxdsLTQ6WPGL2",
+                                "user": {
+                                    "id": "DfOwBC2n6OMEKKCZxdsLTQ6WPGL2",
+                                    "username": "a.s24",
+                                    "fullname": "Anaë_Sqr",
+                                    "profilePicture": {
+                                        "url": "https://cdn.bereal.network/Photos/DfOwBC2n6OMEKKCZxdsLTQ6WPGL2/profile/Y55zkakDysDrpcbnb3OFC.webp",
+                                        "width": 1000,
+                                        "height": 1000
+                                    }
+                                },
+                                "searchText": "@a.s24",
+                                "endIndex": 5,
+                                "isUntagged": false,
+                                "replaceText": "@a.s24",
+                                "type": "mention"
+                            }
+                        ],
                           "creationDate": "2023-12-06T14:37:01.494Z",
                           "updatedAt": "2023-12-06T14:37:01.494Z",
                           "visibility": [
@@ -152,13 +173,12 @@ const Home: React.FC = () => {
           ]}}})
     const token = typeof window !== "undefined" ? localStorage.getItem('token') : null
     const [selectedImages, setSelectedImages] = useState<{ [key: string]: boolean }>({});
+    const [posImages, setPosImages] = useState<{ [key: string]: { x: number; y: number } }>({});
+    const [swipeable, setSwipeable] = useState(false)
 
     useEffect(() => {
       if (page == "start") {
         refreshToken()
-      }
-      if (page == "feed") {
-        getFeed()
       }
     }, [page]);
 
@@ -187,15 +207,24 @@ const Home: React.FC = () => {
     };
 
     const UTCtoParis = (utcTime: string) => {
-      // Create a new Date object from the UTC time
       const date = new Date(utcTime);
-  
-      // Convert the Date object to a local time string
       const localTime = date.toLocaleTimeString('en-US', { hour12: false });
   
       return localTime;
   };
-  
+
+  const handleStopDrag = (postId: string, imageIndex: number, data: { x: number; y: number }) => {
+    setSwipeable(false)
+    const key = `${postId}_${imageIndex}`;
+    const newPosition = {
+      x: data.x <= (screen.width/2)-66 ? 12 : screen.width-124,
+      y: 0,
+    };
+    setPosImages((prevPosImages) => ({
+      ...prevPosImages,
+      [key]: newPosition,
+    }));
+  }
 
 
     //start
@@ -217,6 +246,7 @@ const Home: React.FC = () => {
             if (JSON.parse(result).status == 201){
               if (typeof window !== "undefined") {
                 localStorage.setItem('token', JSON.parse(result).data.token);
+                getFeed()
                 setPage("feed")
               }
             }
@@ -316,6 +346,7 @@ const Home: React.FC = () => {
           if (JSON.parse(result).status == 201) {
             if (typeof window !== "undefined") {
               localStorage.setItem('token', JSON.parse(result).data.token);
+              getFeed()
               setPage("feed")
               toast.success("OTP validé avec succès!")
             }
@@ -405,35 +436,44 @@ const Home: React.FC = () => {
             <div className={`${page == "feed" ? "block" : "hidden"} flex flex-col-reverse pt-11 pb-11`}>
                 {feed.data.data.friendsPosts.map((post) => (
                   <div className="mt-10" key={post.user.id}>
-                    <div className='flex'>
-                      <img className='w-9 h-9 rounded-full' src={JSON.stringify(post.user.profilePicture) == "null" ? "/icon.png" : post.user.profilePicture.url} alt={`${post.user.username}'s profile`} />
-                      <p className='ml-2'>{post.user.username}</p>
-                    </div>
+                    <SwipeableViews disabled={swipeable}>
                     {post.posts.map((userPost, imageIndex) => (
                       <div className='flex flex-col' key={`${userPost.id}_${imageIndex}`}>
-                        <a
-                          className='ml-11 -mt-[17px] mb-3 text-sm opacity-60 cursor-pointer'
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          href={userPost.location ? `https://www.google.com/maps/?q=${userPost.location.latitude},${userPost.location.longitude}` : undefined}
-                          onClick={(e) => {
-                            if (!userPost.location) {
-                              e.preventDefault();
-                            }
-                          }}
-                        >
-                          {userPost.location ? `ouvrir dans maps • ` : ""}
-                          {userPost.isLate ? formatTime(userPost.lateInSeconds) : UTCtoParis(userPost.takenAt)}
-                        </a>
+                        <div className='flex mb-1.5'>
+                          <img className='w-9 h-9 rounded-full' src={JSON.stringify(post.user.profilePicture) == "null" ? "/icon.png" : post.user.profilePicture.url} alt={`${post.user.username}'s profile`} />
+                          <div className='flex-col ml-2'>
+                            <p className='h-4'>{post.user.username} - {userPost.tags ? "tags" : "none"}</p>
+                            <a
+                              className='text-sm opacity-60 cursor-pointer'
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              href={userPost.location ? `https://www.google.com/maps/?q=${userPost.location.latitude},${userPost.location.longitude}` : undefined}
+                              onClick={(e) => {
+                                if (!userPost.location) {
+                                  e.preventDefault();
+                                }
+                              }}
+                            >
+                              {userPost.location ? `ouvrir dans maps • ` : ""}
+                              {userPost.isLate ? formatTime(userPost.lateInSeconds) : UTCtoParis(userPost.takenAt)}
+                            </a>
+                          </div>
+                        </div>
                         <div className='image-container relative' onClick={() => handleImageClick(userPost.id, imageIndex)}>
                           <img
                             className="h-[65vh] w-full rounded-3xl object-cover"
                             src={selectedImages[`${userPost.id}_${imageIndex}`] ? userPost.secondary.url : userPost.primary.url}
                             alt={`Image ${imageIndex}`}
                           />
-                          <Draggable bounds="parent">
+                          <Draggable 
+                            bounds="parent" 
+                            onStart={() => {setSwipeable(true)}}
+                            onStop={(e, data) => handleStopDrag(userPost.id, imageIndex, data)}
+                            defaultPosition={{x: 12, y: 0}}
+                            position={posImages[`${userPost.id}_${imageIndex}`] || { x: 12, y: 0 }}
+                          >
                             <img
-                              className="absolute top-3 left-3 w-28 h-36 rounded-xl border-2 border-black object-cover"
+                              className={`top-3 absolute w-28 h-36 rounded-xl border-2 border-black object-cover ${swipeable ? "" : "transition-transform duration-500"}`}
                               src={selectedImages[`${userPost.id}_${imageIndex}`] ? userPost.primary.url : userPost.secondary.url}
                               alt={`Image ${imageIndex}`}
                             />
@@ -441,6 +481,7 @@ const Home: React.FC = () => {
                         </div>
                       </div>
                     ))}
+                    </SwipeableViews>
                   </div>
                 ))}
             </div>
