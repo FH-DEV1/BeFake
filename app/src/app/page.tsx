@@ -141,21 +141,21 @@ const Home: React.FC = () => {
                           "comments": [],
                           "tags": [
                             {
-                                "userId": "DfOwBC2n6OMEKKCZxdsLTQ6WPGL2",
+                                "userId": "id",
                                 "user": {
-                                    "id": "DfOwBC2n6OMEKKCZxdsLTQ6WPGL2",
-                                    "username": "a.s24",
-                                    "fullname": "Anaë_Sqr",
+                                    "id": "id",
+                                    "username": "username",
+                                    "fullname": "fullname",
                                     "profilePicture": {
-                                        "url": "https://cdn.bereal.network/Photos/DfOwBC2n6OMEKKCZxdsLTQ6WPGL2/profile/Y55zkakDysDrpcbnb3OFC.webp",
+                                        "url": "pp",
                                         "width": 1000,
                                         "height": 1000
                                     }
                                 },
-                                "searchText": "@a.s24",
+                                "searchText": "searchText",
                                 "endIndex": 5,
                                 "isUntagged": false,
-                                "replaceText": "@a.s24",
+                                "replaceText": "replaceText",
                                 "type": "mention"
                             }
                         ],
@@ -434,7 +434,7 @@ const Home: React.FC = () => {
 
             {/* feed */}
             <div className={`${page == "feed" ? "block" : "hidden"} flex flex-col-reverse pt-11 pb-11`}>
-                {feed.data.data.friendsPosts.map((post) => (
+                {feed && feed.data.data.friendsPosts.map((post) => (
                   <div className="mt-10" key={post.user.id}>
                     <SwipeableViews disabled={swipeable}>
                     {post.posts.map((userPost, imageIndex) => (
@@ -442,7 +442,7 @@ const Home: React.FC = () => {
                         <div className='flex mb-1.5'>
                           <img className='w-9 h-9 rounded-full' src={JSON.stringify(post.user.profilePicture) == "null" ? "/icon.png" : post.user.profilePicture.url} alt={`${post.user.username}'s profile`} />
                           <div className='flex-col ml-2'>
-                            <p className='h-4'>{post.user.username} - {userPost.tags ? "tags" : "none"}</p>
+                            <p className='h-4'>{post.user.username}{userPost.tags[0] ? ` avec ${userPost.tags[0].user.username}` : ""}</p>
                             <a
                               className='text-sm opacity-60 cursor-pointer'
                               target="_blank"
@@ -479,13 +479,33 @@ const Home: React.FC = () => {
                             />
                           </Draggable>
                         </div>
+                        <div className="flex ml-7 -mt-14 z-50">
+                          {userPost.realMojis.slice(0, 3).map((realMojis, index) => (
+                            <div className='flex flex-row -ml-2.5' key={`${userPost.id}_realMojis_${index}`}>
+                              <img
+                                className={`w-10 h-10 rounded-full border border-black `}
+                                src={realMojis.media.url}
+                                alt={`Realmoji ${index + 1}`}
+                              />
+                              {index === 2 && userPost.realMojis.length > 3 && (
+                                <div className={`absolute flex items-center justify-center text-white text-lg h-10 w-10 rounded-full bg-black bg-opacity-70`}>
+                                  {userPost.realMojis.length > 4 ? "3+" : "+2" }
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                        <div className='flex justify-center mt-9'>
+                          {post.posts.length >= 2 && post.posts.map((dots) => (
+                            <span className={`bg-white w-2 h-2 rounded-full mx-1 ${dots === userPost ? "" : "opacity-50"}`} />
+                          )).reverse()}
+                        </div>
                       </div>
-                    ))}
+                    )).reverse()}
                     </SwipeableViews>
                   </div>
                 ))}
             </div>
-
 
         </div>
         </>
