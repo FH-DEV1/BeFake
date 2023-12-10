@@ -17,6 +17,7 @@ const Home: React.FC = () => {
     const [page, setPage] = useState("start")
     const [feed, setFeed] = useState(
       {
+        "placeholder": true,
         "data": {
           "data": {
             "friendsPosts": [
@@ -247,7 +248,6 @@ const Home: React.FC = () => {
               if (typeof window !== "undefined") {
                 localStorage.setItem('token', JSON.parse(result).data.token);
                 getFeed()
-                setPage("feed")
               }
             }
             else {
@@ -282,13 +282,16 @@ const Home: React.FC = () => {
     .then(result => {
       if (JSON.parse(result).status == 200) {
         setFeed(JSON.parse(result))
+        setPage("feed")
+        setLoading(false)
       }
       else {
         toast.error("Erreur lors du chargement des BeReal.")
-        setFeed(JSON.parse(result))
+        setPage("feedError")
+        setLoading(false)
       }
     })
-    .catch(() => toast.error("Erreur lors du chargement des BeReal."));
+    .catch(() => {toast.error("Erreur lors du chargement des BeReal.");setPage("feedError") ;setLoading(false)});
   }
 
 
@@ -505,6 +508,15 @@ const Home: React.FC = () => {
                     </SwipeableViews>
                   </div>
                 ))}
+            </div>
+
+
+            {/* feedError */}
+            <div className={`${feed.placeholder ? "block" : "hidden"} flex justify-center items-center h-[90vh]`}>
+              <button onClick={() => {getFeed(); setLoading(true)}} className={`${loading ? "hidden" : "block"} mt-6 py-0.5 px-1.5 rounded-md border border-white border-opacity-50`}>Reesayer</button>
+              <div className={`${loading ? "block" : "hidden"} mt-[26px] h-7 w-7 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]`} role="status">
+                <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
+              </div>
             </div>
 
         </div>
