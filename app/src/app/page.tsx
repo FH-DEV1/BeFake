@@ -603,23 +603,23 @@ const Home: React.FC = () => {
                 </div>
               </div>
               <div className='flex justify-center mt-6'>
-                <div className='relative w-[40vw]' onClick={() => handleImageClick(selectedPost.id, 0)}>
+                <div className='relative w-[40vw]' onClick={() => handleImageClick(selectedPost.id, 3)}>
                   <img
                     className="h-[26vh] w-[40vw] rounded-xl object-cover"
-                    src={selectedImages[`${selectedPost.id}_${0}`] ? selectedPost.secondary.url : selectedPost.primary.url}
-                    alt={`Image ${0}`}
+                    src={selectedImages[`${selectedPost.id}_${3}`] ? selectedPost.secondary.url : selectedPost.primary.url}
+                    alt={`Image ${3}`}
                   />
                   <Draggable 
                     bounds="parent" 
                     onStart={() => {setSwipeable(true)}}
-                    onStop={(e, data) => handleStopDrag(selectedPost.id, 0, data)}
+                    onStop={(e, data) => handleStopDrag(selectedPost.id, 3, data)}
                     defaultPosition={{x: 12, y: 0}}
-                    position={posImages[`${selectedPost.id}_${0}`] || { x: 12, y: 0 }}
+                    position={posImages[`${selectedPost.id}_${3}`] || { x: 12, y: 0 }}
                   >
                   <img
                     className={`top-3 absolute w-11 h-14 rounded-lg border border-black object-cover ${swipeable ? "" : "transition-transform duration-500"}`}
-                    src={selectedImages[`${selectedPost.id}_${0}`] ? selectedPost.primary.url : selectedPost.secondary.url}
-                    alt={`Image ${0}`}
+                    src={selectedImages[`${selectedPost.id}_${3}`] ? selectedPost.primary.url : selectedPost.secondary.url}
+                    alt={`Image ${3}`}
                   />
                   </Draggable>
                 </div>
@@ -628,7 +628,7 @@ const Home: React.FC = () => {
               <div className="overflow-x-auto max-w-screen-md mx-auto">
                 <div className="flex">
                   {selectedPost.realMojis.map((item, index) => (
-                    <div key={index} className="flex-shrink-0 mr-4">
+                    <div key={index} className="flex-shrink-0 mr-4 mb-5">
                       <img src={item.media.url} alt={`Image ${index}`} className="w-16 h-16 rounded-full" />
                       <div className="text-right -mr-4 -mt-8 mb-1 text-3xl">{item.emoji}</div>
                     </div>
