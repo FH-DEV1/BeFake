@@ -12,6 +12,7 @@ import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
 
 const Home: React.FC = () => {
     const domain = "https://berealapi.fly.dev"
+    const [retry, setRetry] = useState(0)
     const [phone, setPhone] = useState("")
     const [OTPsession, setOTPsession] = useState("")
     const [OTPcode, setOTPcode] = useState("")
@@ -352,10 +353,16 @@ const Home: React.FC = () => {
         setFeed(JSON.parse(result))
         setPage("feed")
         setLoading(false)
+        setRetry(0)
+      }
+      else if (retry < 1){
+        setRetry(1)
+        getFeed()
       }
       else {
         toast.error("Erreur lors du chargement des BeReal.")
         setPage("feedError")
+        setRetry(0)
         setLoading(false)
       }
     })
