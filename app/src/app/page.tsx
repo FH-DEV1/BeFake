@@ -12,7 +12,6 @@ import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
 
 const Home: React.FC = () => {
     const domain = "https://berealapi.fly.dev"
-    const [retry, setRetry] = useState("0")
     const [phone, setPhone] = useState("")
     const [OTPsession, setOTPsession] = useState("")
     const [OTPcode, setOTPcode] = useState("")
@@ -85,6 +84,7 @@ const Home: React.FC = () => {
                                 }
                             ],
                             "comments": [],
+                            "caption": "caption",
                             "tags": [],
                             "creationDate": "2023-12-06T14:37:01.494Z",
                             "updatedAt": "2023-12-06T14:37:01.494Z",
@@ -272,9 +272,9 @@ const Home: React.FC = () => {
       const minutes = Math.round(seconds / 60);
       const hours = Math.round(minutes / 60);
   
-      if (hours >= 1) {
+      if (seconds >= 3600) {
         return `${hours}h late`;
-      } else if (minutes >= 1){
+      } else if (seconds >= 60){
         return `${minutes} min late`;
       } else {
         return `${seconds}s late`;
@@ -366,17 +366,10 @@ const Home: React.FC = () => {
         setFeed(JSON.parse(result))
         setPage("feed")
         setLoading(false)
-        setRetry("0")
-      }
-      else if (retry != "1"){
-        toast.warning("ca reéssaye wsh att 2sec")
-        setRetry("1")
-        getFeed()
       }
       else {
-        toast.error("Erreur lors du chargement des BeReal.")
+        toast.warning("Erreur lors du chargement des Bereal.")
         setPage("feedError")
-        setRetry("0")
         setLoading(false)
       }
     })
@@ -593,6 +586,7 @@ const Home: React.FC = () => {
                             <span className={`bg-white w-2 h-2 rounded-full mx-1 mb-3 ${dots === userPost ? "" : "opacity-50"}`} />
                           )).reverse()}
                         </div>
+                        {userPost.caption ? <p className='ml-2'>{userPost.caption}</p> : ""}
                         <div className='ml-2 opacity-50' onClick={() => {
                           setSelectedPost({
                             "username": post.user.username,
@@ -612,7 +606,7 @@ const Home: React.FC = () => {
                           });
                           setPage("onePostFeed")
                         }}>
-                          {userPost.comments.length == 0 ? "ajouter un commentaire" : userPost.comments.length == 1 ? "voir le commentaire" : `voir les ${userPost.comments.length} commentaires`}
+                          {userPost.comments.length == 0 ? "Ajouter un commentaire..." : userPost.comments.length == 1 ? "Voir le commentaire" : `Voir les ${userPost.comments.length} commentaires`}
                         </div>
                       </div>
                     )).reverse()}
@@ -684,9 +678,15 @@ const Home: React.FC = () => {
               <span className='h-[1px] bg-white opacity-20'/>
               <div>
                 {selectedPost.comments.map((comment) => (
-                  <div>
-                    <p>{comment.user.username}</p>
-                    <p>{comment.content}</p>
+                  <div className='flex mt-3 mb-5 ml-2'>
+                    <img src={JSON.stringify(comment.user.profilePicture) == "null" ? "/icon.png" : comment.user.profilePicture.url} alt={`${comment.user.username}'s profile`} className='w-12 h-12 rounded-full'/>
+                    <div className='flex flex-col ml-2'>
+                      <div className='flex flex-row'>
+                        <p>{comment.user.username}</p>
+                        <p className='ml-2 opacity-60'>{UTCtoParis(comment.postedAt)}</p>
+                      </div>
+                      <p>{comment.content}</p>
+                    </div>
                   </div>
                 ))}
               </div>
