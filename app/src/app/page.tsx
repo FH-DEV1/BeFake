@@ -373,6 +373,7 @@ const Home: React.FC = () => {
     const [posImages, setPosImages] = useState<{ [key: string]: { x: number; y: number } }>({});
     const [isScrolled, setIsScrolled] = useState(true);
     const [prevScrollPos, setPrevScrollPos] = useState(0);
+    const [feedScrollPos, setFeedScrollPos] = useState(0);
     const [swipeable, setSwipeable] = useState(false)
 
     useEffect(() => {
@@ -496,6 +497,7 @@ const Home: React.FC = () => {
       if (JSON.parse(result).status == 200) {
         setFeed(JSON.parse(result))
         setPage("feed")
+        window.scroll(0, 0);
         setLoading(false)
       }
       else {
@@ -523,12 +525,15 @@ const Home: React.FC = () => {
         if (JSON.parse(result).status == 200) {
           setFOFfeed(JSON.parse(result))
           setPage("fof")
+          window.scroll(0, 0);
+          setLoading(false)
         }
         else {
           toast.warning("Erreur lors du chargement des Bereal.")
+          setLoading(false)
         }
       })
-      .catch(() => {toast.error("Erreur lors du chargement des BeReal.")});
+      .catch(() => {toast.error("Erreur lors du chargement des BeReal.");setLoading(false)});
     }
 
     //login
@@ -660,7 +665,10 @@ const Home: React.FC = () => {
               <div className={`${feed.data.data.userPosts ? isScrolled ? "block" : "hidden" : "hidden"} z-50`}>
                 <div className='flex text-white justify-center mt-2 fixed w-full z-50'>
                   <p className='mr-2'>Mes Amis</p>
-                  <p className='ml-2 opacity-50' onClick={() => {getFOFfeed()}}>Amis d'Amis</p>
+                  <p className={`ml-2 opacity-50 ${loading ? "hidden" : "block"}`} onClick={() => {getFOFfeed(); setLoading(true)}}>Amis d'Amis</p>
+                  <div className={`${loading ? "block" : "hidden"} mt-1 ml-3 h-5 w-5 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]`} role="status">
+                    <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
+                  </div>
                 </div>
               </div>
               <div className={`flex flex-col-reverse ${feed.data.data.userPosts ? "mt-8" : "mt-0"}`}>
@@ -713,7 +721,7 @@ const Home: React.FC = () => {
                           setSelectedPost({
                             "from": "feed",
                             "username": post.user.username,
-                            "profilePicture": post.user.profilePicture.url,
+                            "profilePicture": post.user.profilePicture ? post.user.profilePicture.url : "/icon.png",
                             "primary": userPost.primary,
                             "secondary": userPost.secondary,
                             "realMojis": userPost.realMojis,
@@ -726,6 +734,7 @@ const Home: React.FC = () => {
                             "id": userPost.id
 
                           });
+                          setFeedScrollPos(window.scrollY);
                           setPage("onePostFeed")
                         }}>
                           {userPost.realMojis.slice(0, 3).map((realMojis, index) => (
@@ -753,7 +762,7 @@ const Home: React.FC = () => {
                           setSelectedPost({
                             "from": "feed",
                             "username": post.user.username,
-                            "profilePicture": post.user.profilePicture.url,
+                            "profilePicture": post.user.profilePicture ? post.user.profilePicture.url : "/icon.png",
                             "primary": userPost.primary,
                             "secondary": userPost.secondary,
                             "realMojis": userPost.realMojis,
@@ -766,6 +775,7 @@ const Home: React.FC = () => {
                             "id": userPost.id
 
                           });
+                          setFeedScrollPos(window.scrollY);
                           setPage("onePostFeed")
                         }}>
                           {userPost.comments.length == 0 ? "Ajouter un commentaire..." : userPost.comments.length == 1 ? "Voir le commentaire" : `Voir les ${userPost.comments.length} commentaires`}
@@ -777,7 +787,6 @@ const Home: React.FC = () => {
                 ))}
               </div>
             </div>
-
 
             {/* feedError */}
             <div className={`${page == "feedError" ? "block" : "hidden"} flex items-center justify-center flex-col h-[90vh]`}>
@@ -793,7 +802,7 @@ const Home: React.FC = () => {
             {/* onePostFeed */}
             <div className={`${page == "onePostFeed" ? "block" : "hidden"} flex flex-col`}>
               <div className='flex flex-row mt-5 mx-5 justify-between'>
-                <div className='' onClick={() => {setPage(selectedPost.from)}}>
+                <div className='' onClick={() => {setPage(selectedPost.from); window.scroll(0, feedScrollPos);}}>
                   <KeyboardBackspaceRoundedIcon className='h-10 w-10'/>
                 </div>
                 <div className='flex flex-col justify-center items-center'>
@@ -828,11 +837,11 @@ const Home: React.FC = () => {
               </div>
               <span className='mt-5 mb-3 h-[1px] bg-white opacity-20'/>
               <div className=" overflow-x-clip">
-                <div className="flex mb-2">
+                <div className="flex flex-nowrap overflow-auto pb-2">
                   {selectedPost.realMojis.map((item, index) => (
-                    <div key={index} className="flex-shrink-0 mr-4">
+                    <div key={index} className="flex flex-col items-center -mr-2">
                       <img src={item.media.url} alt={`Image ${index}`} className="w-16 h-16 rounded-full" />
-                      <div className="text-right -mr-4 -mt-8 text-3xl">{item.emoji}</div>
+                      <div className="text-right ml-16 -mt-8 text-3xl">{item.emoji}</div>
                       <div className="text-center mb-1 text-xs">{item.user.username}</div>
                     </div>
                   ))}
@@ -854,16 +863,19 @@ const Home: React.FC = () => {
                 ))}
               </div>
             </div>
-
+          
             {/* fof */}
-            <div className={`${page == "fof" ? "block" : "hidden"} pt-11 pb-11`}>
+            <div className={`${page == "fof" ? `block pt-11` : "hidden"} pb-11`}>
             <div className={`${feed.data.data.userPosts ? isScrolled ? "block" : "hidden" : "hidden"} z-50`}>
                 <div className='flex text-white justify-center mt-2 fixed w-full z-50'>
-                  <p className='mr-2 opacity-50' onClick={() => {getFeed(token == null ? "error" : token)}}>Mes Amis</p>
+                  <div className={`${loading ? "block" : "hidden"} mt-1 mr-3 h-5 w-5 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]`} role="status">
+                    <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
+                  </div>
+                  <p className={`mr-2 opacity-50 ${loading ? "hidden" : "block"}`} onClick={() => {getFeed(token == null ? "error" : token); setLoading(true)}}>Mes Amis</p>
                   <p className='ml-2'>Amis d'Amis</p>
                 </div>
               </div>
-            <div className="flex flex-col-reverse mt-8">
+            <div className="flex flex-col-reverse">
                 {FOFfeed && FOFfeed.data.map((post, imageIndex) => (
                   <div className="mt-20 overflow-visible" key={post.user.id}>
                       <div className='flex flex-col' key={`${post.id}_${imageIndex}`}>
@@ -911,7 +923,7 @@ const Home: React.FC = () => {
                           setSelectedPost({
                             "from": "fof",
                             "username": post.user.username,
-                            "profilePicture": post.user.profilePicture.url,
+                            "profilePicture": post.user.profilePicture ? post.user.profilePicture.url : "/icon.png",
                             "primary": post.primary,
                             "secondary": post.secondary,
                             "realMojis": post.realmojis.sample,
@@ -923,6 +935,7 @@ const Home: React.FC = () => {
                             "retakeCounter": 0,
                             "id": post.id
                           });
+                          setFeedScrollPos(window.scrollY);
                           setPage("onePostFeed")
                         }}>
                           {post.realmojis.sample.slice(0, 3).map((realMojis, index) => (
@@ -945,7 +958,7 @@ const Home: React.FC = () => {
                           setSelectedPost({
                             "from": "fof",
                             "username": post.user.username,
-                            "profilePicture": post.user.profilePicture.url,
+                            "profilePicture": post.user.profilePicture ? post.user.profilePicture.url : "/icon.png",
                             "primary": post.primary,
                             "secondary": post.secondary,
                             "realMojis": post.realmojis.sample,
@@ -957,12 +970,13 @@ const Home: React.FC = () => {
                             "retakeCounter": 0,
                             "id": post.id
                           });
+                          setFeedScrollPos(window.scrollY);
                           setPage("onePostFeed")
                         }}>
                         </div>
                       </div>
                   </div>
-                ))}
+                )).reverse()}
               </div>
             </div>
         </div>
