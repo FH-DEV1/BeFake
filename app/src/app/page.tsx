@@ -8,6 +8,8 @@ import Draggable from 'react-draggable';
 import SwipeableViews from 'react-swipeable-views';
 import KeyboardBackspaceRoundedIcon from '@mui/icons-material/KeyboardBackspaceRounded';
 import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
+import NearMeIcon from '@mui/icons-material/NearMe';
+import ScreenRotationAltIcon from '@mui/icons-material/ScreenRotationAlt';
 
 
 const Home: React.FC = () => {
@@ -329,8 +331,8 @@ const Home: React.FC = () => {
       "lateInSeconds": 0,
       "takenAt": "2023-12-06T14:36:44.661Z",
       "location": {
-        "latitude": 0,
-        "longitude": 0
+        "latitude": 180,
+        "longitude": 180
       },
       "comments": [{
         "id": "id",
@@ -680,7 +682,7 @@ const Home: React.FC = () => {
                         <div className='flex mb-1.5'>
                           <img className='w-9 h-9 rounded-full' src={JSON.stringify(post.user.profilePicture) == "null" ? "/icon.png" : post.user.profilePicture.url} alt={`${post.user.username}'s profile`} />
                           <div className='flex-col ml-2'>
-                            <div className='h-4 flex'>{post.user.username}{userPost.tags.map((tag, tagIndex) => (<p>{tag.user.username}{tagIndex+1 == userPost.tags.length ? "" : ","}</p>))}</div>
+                            <div className='h-4 flex'>{post.user.username}{JSON.stringify(userPost.tags) !== "[]" ? ` avec ${userPost.tags.map((tag, tagIndex) => (<p>{tag.user.username}{tagIndex+1 == userPost.tags.length ? "" : ","}</p>))}` : ""}</div>
                             <a
                               className='text-sm opacity-60 cursor-pointer'
                               target="_blank"
@@ -727,7 +729,7 @@ const Home: React.FC = () => {
                             "realMojis": userPost.realMojis,
                             "lateInSeconds": userPost.lateInSeconds,
                             "takenAt": userPost.takenAt,
-                            "location": userPost.location || {"latitude": 0, "longitude": 0},
+                            "location": userPost.location || {"latitude": 180, "longitude": 180},
                             "comments": userPost.comments,
                             "tags": userPost.tags,
                             "retakeCounter": userPost.retakeCounter,
@@ -768,7 +770,7 @@ const Home: React.FC = () => {
                             "realMojis": userPost.realMojis,
                             "lateInSeconds": userPost.lateInSeconds,
                             "takenAt": userPost.takenAt,
-                            "location": userPost.location || {"latitude": 0, "longitude": 0},
+                            "location": userPost.location || {"latitude": 180, "longitude": 180},
                             "comments": userPost.comments,
                             "tags": userPost.tags,
                             "retakeCounter": userPost.retakeCounter,
@@ -835,6 +837,28 @@ const Home: React.FC = () => {
                   </Draggable>
                 </div>
               </div>
+              <div className='flex items-center w-full justify-center'>
+                <div className={`${selectedPost.location.longitude !== 180 ? "block" : "hidden"} mx-2 bg-zinc-800 flex w-[142px] mt-5 rounded-full text-white`}>
+                  <NearMeIcon className='text-white p-1'/>
+                  <a
+                    className='text-sm opacity-60 cursor-pointer'
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href={selectedPost.location ? `https://www.google.com/maps/?q=${selectedPost.location.latitude},${selectedPost.location.longitude}` : undefined}
+                    onClick={(e) => {
+                      if (!selectedPost.location) {
+                        e.preventDefault();
+                      }
+                    }}
+                  >
+                    ouvrir dans maps
+                  </a>
+                </div>
+                <div className={`${selectedPost.retakeCounter > 0 ? selectedPost.retakeCounter > 1 ? "block w-[95px]" : "block w-[87px]" : "hidden"} mx-2 bg-zinc-800 flex mt-5 rounded-full text-white`}>
+                  <ScreenRotationAltIcon className='p-1'/>
+                  <p className='text-sm opacity-60 cursor-pointer'>{selectedPost.retakeCounter > 1 ? `${selectedPost.retakeCounter} reprises` : `${selectedPost.retakeCounter} reprise`}</p>
+                </div>
+              </div>
               <span className='mt-5 mb-3 h-[1px] bg-white opacity-20'/>
               <div className=" overflow-x-clip">
                 <div className="flex flex-nowrap overflow-auto pb-2">
@@ -851,9 +875,9 @@ const Home: React.FC = () => {
               <div>
                 {selectedPost.comments.map((comment) => (
                   <div className='flex mt-3 mb-5 ml-2'>
-                    <img src={JSON.stringify(comment.user.profilePicture) == "null" ? "/icon.png" : comment.user.profilePicture.url} alt={`${comment.user.username}'s profile`} className='w-12 h-12 rounded-full'/>
+                    <img src={JSON.stringify(comment.user.profilePicture) == "null" ? "/icon.png" : comment.user.profilePicture.url} alt={`${comment.user.username}'s profile`} className='w-9 h-9 rounded-full'/>
                     <div className='flex flex-col ml-2'>
-                      <div className='flex flex-row'>
+                      <div className='flex flex-row text-sm'>
                         <p>{comment.user.username}</p>
                         <p className='ml-2 opacity-60'>{UTCtoParis(comment.postedAt)}</p>
                       </div>
@@ -929,7 +953,7 @@ const Home: React.FC = () => {
                             "realMojis": post.realmojis.sample,
                             "lateInSeconds": post.lateInSeconds,
                             "takenAt": post.takenAt,
-                            "location": post.location || {"latitude": 0, "longitude": 0},
+                            "location": post.location || {"latitude": 180, "longitude": 180},
                             "comments": [],
                             "tags": post.tags,
                             "retakeCounter": 0,
@@ -964,7 +988,7 @@ const Home: React.FC = () => {
                             "realMojis": post.realmojis.sample,
                             "lateInSeconds": post.lateInSeconds,
                             "takenAt": post.takenAt,
-                            "location": post.location || {"latitude": 0, "longitude": 0},
+                            "location": post.location || {"latitude": 180, "longitude": 180},
                             "comments": [],
                             "tags": post.tags,
                             "retakeCounter": 0,
