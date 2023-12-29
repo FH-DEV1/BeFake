@@ -10,9 +10,8 @@ This web-based BeReal client serves as a platform for viewing your friends' post
 6. **Map Locations:** Instantly open the exact location of a BeReal post on maps.
 
 ## Mobile installation
-Go to url [`bereal-fhdev`](https://bereal-fhdev.vercel.app) and follow these 2 simple steps.
-![Step 1](images/step1.jpeg)
-![Step 2](images/step2.jpeg)
+### Go to url [`bereal-fhdev`](https://bereal-fhdev.vercel.app) and follow these 2 simple steps.    
+<img src="images/step1.jpeg" alt="Step 1" width="400" /> <img src="images/step2.jpeg" alt="Step 2" width="400" />
 
 ## Local Installation
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
