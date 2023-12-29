@@ -11,7 +11,7 @@ This web-based BeReal client serves as a platform for viewing your friends' post
 
 ## Mobile installation
 ### Go to url [`bereal-fhdev`](https://bereal-fhdev.vercel.app) and follow these 2 simple steps.    
-<img src="images/step1.jpeg" alt="Step 1" width="400" /> <img src="images/step2.jpeg" alt="Step 2" width="400" />
+<img src="images/step1.jpeg" alt="Step 1" width="250" /> <img src="images/step2.jpeg" alt="Step 2" width="250" />
 
 ## Local Installation
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
