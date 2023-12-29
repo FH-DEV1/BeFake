@@ -9,6 +9,14 @@ This web-based BeReal client serves as a platform for viewing your friends' post
 5. **Realmojis and Comments:** Check out realmojis, comments, and tags associated with a post.
 6. **Map Locations:** Instantly open the exact location of a BeReal post on maps.
 
+### Todo:
+- [ ] Add link to Github
+- [ ] Add profile pages
+- [ ] Add posting comments feature
+- [ ] Add posting realmoji feature
+- [ ] Add posting page
+- [ ] Make it responsive
+
 ## Mobile installation
 ### Go to url [`bereal-fhdev`](https://bereal-fhdev.vercel.app) and follow these 2 simple steps.    
 <img src="images/step1.jpeg" alt="Step 1" width="250" /> <img src="images/step2.jpeg" alt="Step 2" width="250" />
