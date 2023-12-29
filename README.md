@@ -9,7 +9,7 @@ This web-based BeReal client serves as a platform for viewing your friends' post
 5. **Realmojis and Comments:** Check out realmojis, comments, and tags associated with a post.
 6. **Map Locations:** Instantly open the exact location of a BeReal post on maps.
 
-### Todo:
+### Todos:
 - [ ] Add link to Github
 - [ ] Add profile pages
 - [ ] Add posting comments feature
