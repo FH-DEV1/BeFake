@@ -1,9 +1,32 @@
+## Project description
+This web-based BeReal client serves as a platform for viewing your friends' posts without requiring you to make any posts yourself. Its primary feature lies in its ability to function as a genuine app on any mobile device, providing convenient access for users.
+
+### Features:
+1. **Mobile App:** Use it easily on your phone.
+2. **View Friends' Posts:** See what your friends are sharing without posting yourself.
+3. **Explore Friends-of-Friends:** Discover posts from extended connections by making your own posts.
+4. **Silent Screenshots:** Capture BeReal content without notifying the person.
+5. **Realmojis and Comments:** Check out realmojis, comments, and tags associated with a post.
+6. **Map Locations:** Instantly open the exact location of a BeReal post on maps.
+
+## Mobile installation
+Go to url [`bereal-fhdev`](https://bereal-fhdev.vercel.app) and follow these 2 simple steps.
+![Step 1](images/step1.jpeg)
+![Step 2](images/step2.jpeg)
+
+## Local Installation
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+First, clone this repository:
+```bash
+git clone https://github.com/FH-DEV1/BeReal
+```
 
-## Getting Started
+Second, move into the repo you just cloned and move in the app directory:
+```bash
+cd app
+```
 
-First, run the development server:
-
+Finally, run the development server:
 ```bash
 npm run dev
 # or
@@ -15,22 +38,3 @@ bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
