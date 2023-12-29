@@ -16,7 +16,7 @@ const Home: React.FC = () => {
     const domain = "https://berealapi.fly.dev"
     const [phone, setPhone] = useState("")
     const [OTPsession, setOTPsession] = useState("")
-    const [OTPcode, setOTPcode] = useState("")
+    const [OTPcode, setOTPcode] = useState("")    
     const [loading, setLoading] = useState(false)
     const [page, setPage] = useState("start")
     const [feed, setFeed] = useState(
@@ -164,7 +164,43 @@ const Home: React.FC = () => {
                                 "isUntagged": false,
                                 "replaceText": "replaceText",
                                 "type": "mention"
-                            }
+                            },
+                            {
+                              "userId": "id",
+                              "user": {
+                                  "id": "id",
+                                  "username": "username",
+                                  "fullname": "fullname",
+                                  "profilePicture": {
+                                      "url": "pp",
+                                      "width": 1000,
+                                      "height": 1000
+                                  }
+                              },
+                              "searchText": "searchText",
+                              "endIndex": 5,
+                              "isUntagged": false,
+                              "replaceText": "replaceText",
+                              "type": "mention"
+                          },
+                          {
+                            "userId": "id",
+                            "user": {
+                                "id": "id",
+                                "username": "username",
+                                "fullname": "fullname",
+                                "profilePicture": {
+                                    "url": "pp",
+                                    "width": 1000,
+                                    "height": 1000
+                                }
+                            },
+                            "searchText": "searchText",
+                            "endIndex": 5,
+                            "isUntagged": false,
+                            "replaceText": "replaceText",
+                            "type": "mention"
+                        }
                         ],
                           "creationDate": "2023-12-06T14:37:01.494Z",
                           "updatedAt": "2023-12-06T14:37:01.494Z",
@@ -377,6 +413,28 @@ const Home: React.FC = () => {
     const [prevScrollPos, setPrevScrollPos] = useState(0);
     const [feedScrollPos, setFeedScrollPos] = useState(0);
     const [swipeable, setSwipeable] = useState(false)
+    const [tagModalVisible, setTagModalVisible] = useState(false)
+    const [tagModalInfo, setTagModalInfo] = useState({
+      "tags": [
+        {
+            "userId": "id",
+            "user": {
+                "id": "id",
+                "username": "username",
+                "fullname": "fullname",
+                "profilePicture": {
+                    "url": "/icon.png",
+                    "width": 1000,
+                    "height": 1000
+                }
+            },
+            "searchText": "searchText",
+            "endIndex": 5,
+            "isUntagged": false,
+            "replaceText": "replaceText",
+            "type": "mention"
+        }
+    ]})
 
     useEffect(() => {
       if (page === "start") {
@@ -676,13 +734,24 @@ const Home: React.FC = () => {
               <div className={`flex flex-col-reverse ${feed.data.data.userPosts ? "mt-8" : "mt-0"}`}>
                 {feed && feed.data.data.friendsPosts.map((post) => (
                   <div className="mt-10 overflow-visible" key={post.user.id}>
-                    <SwipeableViews disabled={swipeable}>
+                    <SwipeableViews disabled={swipeable} index={post.posts.length-1}>
                     {post.posts.map((userPost, imageIndex) => (
                       <div className='flex flex-col' key={`${userPost.id}_${imageIndex}`}>
                         <div className='flex mb-1.5'>
                           <img className='w-9 h-9 rounded-full' src={JSON.stringify(post.user.profilePicture) == "null" ? "/icon.png" : post.user.profilePicture.url} alt={`${post.user.username}'s profile`} />
                           <div className='flex-col ml-2'>
-                            <div className='h-4 flex'>{post.user.username}{JSON.stringify(userPost.tags) !== "[]" ? ` avec ${userPost.tags.map((tag, tagIndex) => (<p>{tag.user.username}{tagIndex+1 == userPost.tags.length ? "" : ","}</p>))}` : ""}</div>
+                            <div className='h-4 flex' onClick={() => {
+                              if (JSON.stringify(userPost.tags) !== "[]") {
+                                setTagModalInfo({
+                                  "tags": userPost.tags
+                                }); setTagModalVisible(true)
+                              }
+                              }}>
+                              {post.user.username}
+                              {JSON.stringify(userPost.tags) == "[]" ? "" : 
+                              ` avec${userPost.tags.length > 2 ? ` ${userPost.tags[0].user.username} et ${userPost.tags.length-1} autres` : userPost.tags.map((tag) => (` ${tag.user.username}`))}`
+                              }
+                            </div>
                             <a
                               className='text-sm opacity-60 cursor-pointer'
                               target="_blank"
@@ -757,7 +826,7 @@ const Home: React.FC = () => {
                         <div className='flex justify-center mt-9'>
                           {post.posts.length >= 2 && post.posts.map((dots) => (
                             <span className={`bg-white w-2 h-2 rounded-full mx-1 mb-3 ${dots === userPost ? "" : "opacity-50"}`} />
-                          )).reverse()}
+                          ))}
                         </div>
                         {userPost.caption ? <p className='ml-2'>{userPost.caption}</p> : ""}
                         <div className='ml-2 opacity-50' onClick={() => {
@@ -783,10 +852,25 @@ const Home: React.FC = () => {
                           {userPost.comments.length == 0 ? "Ajouter un commentaire..." : userPost.comments.length == 1 ? "Voir le commentaire" : `Voir les ${userPost.comments.length} commentaires`}
                         </div>
                       </div>
-                    )).reverse()}
+                    ))}
                     </SwipeableViews>
                   </div>
                 ))}
+              </div>
+            </div>
+            
+
+            {/* tagModal */}
+            <div className={`${tagModalVisible ? "" : "translate-y-full"} transition-transform duration-300 block fixed top-0 bg-black bg-opacity-40 h-[100vh] w-[100vw]`} onClick={() => setTagModalVisible(false)}>
+              <div className={`${tagModalVisible ? "" : "translate-y-full"} transition-transform block fixed top-1/3 bg-zinc-900 w-[100vw] h-[67vh] rounded-t-3xl`}>
+                <div className='flex flex-col ml-5 mt-10'>
+                  {tagModalInfo.tags.map((tag) => (
+                    <div className='flex items-center mt-3'>
+                      <img className='h-10 w-10 rounded-full' src="/icon.png" alt={`${tag.user.username} profile picture`} />
+                      <p className='ml-3'>{tag.user.username}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
 
