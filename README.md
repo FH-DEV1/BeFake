@@ -1,3 +1,4 @@
+# Befake, a BeReal client
 ## Project description
 This web-based BeReal client serves as a platform for viewing your friends' posts without requiring you to make any posts yourself. Its primary feature lies in its ability to function as a genuine app on any mobile device, providing convenient access for users.
 
