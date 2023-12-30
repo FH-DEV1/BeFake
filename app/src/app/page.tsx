@@ -541,33 +541,62 @@ const Home: React.FC = () => {
       }
     };
 
-  //feed
-  const getFeed = (JWToken: string) => {
-    const headers = new Headers();
-    headers.append("token", (JWToken == null ? "error" : JWToken));
+    //feed
+    const getFeed = (JWToken: string) => {
+      const headers = new Headers();
+      headers.append("token", JWToken == null ? "error" : JWToken);
 
-    const requestOptions = {
+      const requestOptions = {
         method: 'GET',
         headers: headers,
+      };
+      fetch(`${domain}/friends/feed`, requestOptions)
+        .then(response => response.text())
+        .then(result => {
+          if (JSON.parse(result).status === 200) {
+            const parsedResult = JSON.parse(result);
+            if (
+              parsedResult.data &&
+              parsedResult.data.data &&
+              parsedResult.data.data.friendsPosts
+            ) {
+              const sortedPosts = parsedResult.data.data.friendsPosts.sort((a: { posts: { takenAt: string | number | Date; }[]; }, b: { posts: { takenAt: string | number | Date; }[]; }) => {
+                const takenAtA = new Date(a.posts[0].takenAt).getTime();
+                const takenAtB = new Date(b.posts[0].takenAt).getTime();
+                return takenAtA - takenAtB;
+              });
+              setFeed({
+                ...parsedResult,
+                data: {
+                  ...parsedResult.data,
+                  data: {
+                    ...parsedResult.data.data,
+                    friendsPosts: sortedPosts,
+                  },
+                },
+              });
+              setPage("feed");
+              window.scroll(0, 0);
+              setLoading(false);
+            } else {
+              toast.warning("Erreur lors du chargement des Bereal.");
+              setPage("feedError");
+              setLoading(false);
+            }
+          } else {
+            toast.warning("Erreur lors du chargement des Bereal.");
+            setPage("feedError");
+            setLoading(false);
+          }
+        })
+        .catch(() => {
+          toast.error("Erreur lors du chargement des BeReal.");
+          setPage("feedError");
+          setLoading(false);
+        });
     };
 
-    fetch(`${domain}/friends/feed`, requestOptions)
-    .then(response => response.text())
-    .then(result => {
-      if (JSON.parse(result).status == 200) {
-        setFeed(JSON.parse(result))
-        setPage("feed")
-        window.scroll(0, 0);
-        setLoading(false)
-      }
-      else {
-        toast.warning("Erreur lors du chargement des Bereal.")
-        setPage("feedError")
-        setLoading(false)
-      }
-    })
-    .catch(() => {toast.error("Erreur lors du chargement des BeReal.");setPage("feedError") ;setLoading(false)});
-  }
+
 
     //FOFfeed
     const getFOFfeed = () => {
@@ -826,7 +855,7 @@ const Home: React.FC = () => {
                         <div className='flex justify-center mt-9'>
                           {post.posts.length >= 2 && post.posts.map((dots) => (
                             <span className={`bg-white w-2 h-2 rounded-full mx-1 mb-3 ${dots === userPost ? "" : "opacity-50"}`} />
-                          ))}
+                          )).reverse()}
                         </div>
                         {userPost.caption ? <p className='ml-2'>{userPost.caption}</p> : ""}
                         <div className='ml-2 opacity-50' onClick={() => {
@@ -852,7 +881,7 @@ const Home: React.FC = () => {
                           {userPost.comments.length == 0 ? "Ajouter un commentaire..." : userPost.comments.length == 1 ? "Voir le commentaire" : `Voir les ${userPost.comments.length} commentaires`}
                         </div>
                       </div>
-                    ))}
+                    )).reverse()}
                     </SwipeableViews>
                   </div>
                 ))}
