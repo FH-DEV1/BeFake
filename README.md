@@ -16,10 +16,14 @@ This web-based BeReal client serves as a platform for viewing your friends' post
 - [ ] Add posting realmoji feature
 - [ ] Add posting page
 - [ ] Make it responsive
+- [ ] Improve code structure
 
 ## Mobile installation
 ### Go to url [`bereal-fhdev`](https://bereal-fhdev.vercel.app) and follow these 2 simple steps.    
 <img src="images/step1.jpeg" alt="Step 1" width="250" /> <img src="images/step2.jpeg" alt="Step 2" width="250" />
+
+## Code structure
+The code structure needs a review as it is currently excessively nested and unclear. For the project to maintain proper mobile compatibility, it is essential to have all components under the same route.
 
 ## Local Installation
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
