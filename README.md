@@ -18,6 +18,7 @@ This web-based BeReal client serves as a platform for viewing your friends' post
 - [ ] Add posting comments feature
 - [ ] Add posting realmoji feature
 - [ ] Add posting page
+- [ ] Add BTS
 - [ ] Make it responsive
 - [ ] Improve code structure
 
