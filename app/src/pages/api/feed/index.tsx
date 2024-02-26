@@ -1,23 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import axios from 'axios';
-import jwt from 'jsonwebtoken';
 
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 
-    const passedToken = req.headers.token as string;
-    if (!passedToken) {
+    const token = req.headers.token as string;
+    if (!token) {
       throw new Error('Token not found in headers');
     }
-
-    // Decode the JWT without verifying the signature
-    const decodedToken = jwt.decode(passedToken, { complete: true }) as { payload: { access?: { token?: string } } } | null;
-    if (!decodedToken || !decodedToken.payload || !decodedToken.payload.access || !decodedToken.payload.access.token) {
-      throw new Error('Invalid token format');
-    }
-
-    // Access the decoded token's payload
-    const token = decodedToken.payload.access.token;
 
     let headers = {
         accept: "application/json",
