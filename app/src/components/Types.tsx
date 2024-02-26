@@ -122,7 +122,7 @@ interface FriendsPosts {
 
 export interface FeedType {
     userPosts?: UserPosts;
-    friendsPosts?: FriendsPosts;
+    friendsPosts?: FriendPost[];
 }
 
 interface Tag {
@@ -192,4 +192,8 @@ interface UserData {
 interface Device {
     language: string;
     timezone: string;
+}
+
+export interface ReverseGeocodeData {
+    [postId: string]: string;
 }
