@@ -163,12 +163,25 @@ const FOFfeed: React.FC = () => {
                     <PersonRounded className='h-8 w-8 mr-2' />
                 </div>
             </div>
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-                <div className={`${loading ? "block" : "hidden"} h-7 w-7 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]`} role="status">
-                    <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
+            <div className={`${loading ? "block" : "hidden"} pt-28 pb-10`}>
+                <div className="animate-pulse flex flex-col">
+                    <div className="flex">
+                        <div className="rounded-full bg-slate-900 h-9 w-9"></div>
+                        <div className="flex flex-col pl-3 pt-2">
+                            <div className="rounded bg-slate-900 h-2 w-28"></div>
+                            <div className="rounded bg-slate-900 mt-2 h-2 w-32"></div>
+                        </div>
+                    </div>
+                    <div className="bg-slate-900 mt-3 h-[65vh] w-full rounded-3xl"></div>
+                    <div className="flex justify-center">
+                        <div className="rounded bg-slate-900 mt-4 ml-2 h-3 w-3"></div>
+                        <div className="rounded bg-slate-900 mt-4 ml-2 h-3 w-3"></div>
+                        <div className="rounded bg-slate-900 mt-4 ml-2 h-3 w-3"></div>
+                    </div>
+                    <div className="rounded bg-slate-900 mt-5 ml-2 h-2 w-56"></div>
                 </div>
             </div>
-            <div className="pt-11 pb-11">
+            <div className={`${loading ? "hidden" : ""} pt-11 pb-11`}>
                 <div className={`${FOFfeed.data ? isScrolled ? "block" : "hidden" : "hidden"} z-50`}>
                     <div className='flex text-white justify-center mt-2 fixed w-full z-50'>
                         <p className="mr-2 opacity-50" onClick={() => {setGridView(false); setPage("feed")}}>Mes Amis</p>
