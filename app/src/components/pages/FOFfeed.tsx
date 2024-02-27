@@ -5,21 +5,54 @@ import { useEffect, useState } from "react";
 import { UTCtoParisTime, formatTime } from "../TimeConversion";
 import { toast } from "react-toastify";
 import { AddAPhoto, PersonRounded } from "@mui/icons-material";
-import { TagsResponse } from "../Types";
+import { ReverseGeocodeData, TagsResponse } from "../Types";
+import { useSwipeable } from "react-swipeable";
 
 const FOFfeed: React.FC = () => {
 
-    const { setPage, prevPage, setPrevPage, scrollPos, setScrollPos, FOFfeed, setFOFFeed, setSelectedPost } = usePageState();
-    const [isScrolled, setIsScrolled] = useState(true);
-    const [loading, setLoading] = useState(false)
-    const [selectedImages, setSelectedImages] = useState<{ [key: string]: boolean }>({});
-    const [swipeable, setSwipeable] = useState(false)
-    const [posImages, setPosImages] = useState<{ [key: string]: { x: number; y: number } }>({});
-    const [prevScrollPos, setPrevScrollPos] = useState(0);
+    const { setPage, prevPage, setPrevPage, scrollPos, setScrollPos, FOFfeed, setFOFFeed, setSelectedPost, gridView, setGridView } = usePageState();
     const domain = "https://berealapi.fly.dev"
     const token = typeof window !== "undefined" ? localStorage.getItem('token') : null
-    const [tagModalVisible, setTagModalVisible] = useState(false)
+    const [isScrolled, setIsScrolled] = useState<boolean>(true);
+    const [loading, setLoading] = useState<boolean>(false)
+    const [selectedImages, setSelectedImages] = useState<{ [key: string]: boolean }>({});
+    const [swipeable, setSwipeable] = useState<boolean>(false)
+    const [posImages, setPosImages] = useState<{ [key: string]: { x: number; y: number } }>({});
+    const [prevScrollPos, setPrevScrollPos] = useState<number>(0);
+    const [tagModalVisible, setTagModalVisible] = useState<boolean>(false)
     const [tagModalInfo, setTagModalInfo] = useState<TagsResponse>()
+    const [reverseGeocodes, setReverseGeocodes] = useState<ReverseGeocodeData>({});
+
+    useEffect(() => {
+        const fetchReverseGeocodes = async () => {
+            const updatedReverseGeocodes: ReverseGeocodeData = {};
+            if (FOFfeed.data != undefined) {
+                for (const post of FOFfeed.data) {
+                    if (post.location) {
+                        const reverseGeocode = await fetchReverseGeocode(post.location.latitude, post.location.longitude);
+                        updatedReverseGeocodes[post.id] = reverseGeocode;
+                    }
+                }
+                setReverseGeocodes(updatedReverseGeocodes);
+            }
+        };
+        fetchReverseGeocodes();
+    }, [FOFfeed.data]);
+
+    async function fetchReverseGeocode(latitude: number, longitude: number) {
+        const url = `https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/reverseGeocode?location=${longitude},${latitude}&outSR=&forStorage=false&f=pjson`;
+        const requestOptions = {
+            method: "GET"
+        };
+        try {
+            const response = await fetch(url, requestOptions);
+            const result = await response.json();
+            return `${result.address.Address}, ${result.address.City}`;
+        } catch (error) {
+            console.error(error);
+            return "";
+        }
+    }
 
     useEffect(() => {
         const handleScroll = () => {
@@ -92,8 +125,12 @@ const FOFfeed: React.FC = () => {
         }
     }, []);
 
+    const handlers = useSwipeable({
+        onSwipedDown: () => {if (window.scrollY <= 0) {setGridView(!gridView)}},
+    });
+
     return (
-        <>
+        <div {...handlers}>
             <div className="fixed w-full z-50 flex justify-between items-center">
                 <div onClick={() => toast.warn("posting is not available yet")}>
                     <AddAPhoto className='h-7 w-7 ml-2' />
@@ -113,11 +150,11 @@ const FOFfeed: React.FC = () => {
             <div className="pt-11 pb-11">
                 <div className={`${FOFfeed.data ? isScrolled ? "block" : "hidden" : "hidden"} z-50`}>
                     <div className='flex text-white justify-center mt-2 fixed w-full z-50'>
-                        <p className="mr-2 opacity-50" onClick={() => {setPage("feed")}}>Mes Amis</p>
+                        <p className="mr-2 opacity-50" onClick={() => {setGridView(false); setPage("feed")}}>Mes Amis</p>
                         <p className='ml-2'>Amis d'Amis</p>
                     </div>
                 </div>
-                <div className="flex flex-col-reverse">
+                <div className={`flex flex-col-reverse ${gridView ? "hidden" : ""}`}>
                     {FOFfeed && FOFfeed.data?.map((post, imageIndex) => (
                         <div className="mt-20 overflow-visible" key={post.user.id}>
                             <div className='flex flex-col' key={`${post.id}_${imageIndex}`}>
@@ -142,7 +179,7 @@ const FOFfeed: React.FC = () => {
                                                 }
                                             } }
                                         >
-                                            {post.location ? `ouvrir dans maps • ` : ""}
+                                            {post.location ? `${reverseGeocodes[post.id] !== undefined ? reverseGeocodes[post.id] : "ouvrir dans maps"} • ` : ""}
                                             {post.lateInSeconds !== 0 ? formatTime(post.lateInSeconds) : UTCtoParisTime(post.takenAt)}
                                         </a>
                                     </div>
@@ -206,6 +243,37 @@ const FOFfeed: React.FC = () => {
                     )).reverse()}
                 </div>
             </div>
+            
+            <div className={`flex flex-wrap justify-around mt-10 pt-6 overflow-hidden ${gridView ? "" : "hidden"}`}>
+                {FOFfeed && FOFfeed.data?.map((post, imageIndex) => (
+                    <div className='flex flex-col mb-2' key={`${post.id}_${imageIndex}`} onClick={() => {
+                        setSelectedPost({
+                            from: "FOFfeed",
+                            user: post.user,
+                            post: post,
+                            realMojis: post.realmojis.sample,
+                        })
+                        setScrollPos(window.scrollY)
+                        setPage("SelectedPost")
+                    }}>
+                        <div className='relative'>
+                            <img
+                                className="w-[32vw] rounded-lg object-cover"
+                                src={selectedImages[`${post.id}_${imageIndex}`] ? post.secondary.url : post.primary.url}
+                                alt={`Image ${imageIndex}`} />
+                            <img
+                                className={`top-1 left-1 absolute w-[10vw] rounded-lg border-2 border-black object-cover ${swipeable ? "" : "transition-transform duration-500"}`}
+                                src={selectedImages[`${post.id}_${imageIndex}`] ? post.primary.url : post.secondary.url}
+                                alt={`Image ${imageIndex}`} />
+                            <div className="bottom-0 pt-2 w-full pl-1 pb-1 absolute bg-gradient-to-b from-transparent to-black">
+                                <p className="text-sm">{post.user.username}</p>
+                                <p className="text-xs opacity-80">{post.lateInSeconds !== 0 ? formatTime(post.lateInSeconds) : UTCtoParisTime(post.takenAt)}</p>
+                            </div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+
             <div className={`${tagModalVisible ? "" : "translate-y-full"} transition-transform duration-300 block fixed top-0 bg-black bg-opacity-40 h-[100vh] w-[100vw]`} onClick={() => setTagModalVisible(false)}>
                 <div className={`${tagModalVisible ? "" : "translate-y-full"} transition-transform block fixed top-1/3 bg-zinc-900 w-[100vw] h-[67vh] rounded-t-3xl`}>
                     <div className='flex flex-col ml-5 mt-10'>
@@ -218,7 +286,7 @@ const FOFfeed: React.FC = () => {
                     </div>
                 </div>
             </div>
-        </>
+        </div>
     )
 };
 

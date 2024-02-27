@@ -115,11 +115,6 @@ interface UserPosts {
     [postId: string]: Post[];
 }
 
-interface FriendsPosts {
-    [x: string]: any;
-    [index: number]: FriendPost;
-}
-
 export interface FeedType {
     userPosts?: UserPosts;
     friendsPosts?: FriendPost[];

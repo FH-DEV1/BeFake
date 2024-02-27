@@ -21,6 +21,7 @@
     "react-dom": "^18",
     "react-draggable": "^4.4.6",
     "react-phone-number-input": "^3.3.7",
+    "react-swipeable": "^7.0.1",
     "react-swipeable-views": "^0.14.0",
     "react-toastify": "^9.1.3"
   },

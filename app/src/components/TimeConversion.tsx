@@ -1,7 +1,15 @@
 export function UTCtoParisTime(utcTime: string) {
-    const date = new Date(utcTime);
-    const localTime = date.toLocaleTimeString('en-US', { hour12: false });
-    return localTime;
+  const date = new Date(utcTime);
+  const parisOffset = 1;
+  const parisTime = new Date(date.getTime() + parisOffset * 60 * 60 * 1000);
+  const currentDate = new Date(parisTime.getTime() + (date.getTimezoneOffset() * 60 * 1000));
+  const utcDate = new Date(date.toISOString().split('T')[0]);
+  const isYesterday = utcDate < currentDate && utcDate.getDate() !== currentDate.getDate() - 1;
+  let localTime = date.toLocaleTimeString('en-US', { hour12: false });
+  if (isYesterday) {
+      localTime = `Hier à ${localTime}`;
+  }
+  return localTime;
 };
 
 export function formatTime(seconds: number) {
