@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { UTCtoParisTime, formatTime } from "../TimeConversion";
 
 const SelectedPost: React.FC = () => {
-    const { setPage, selectedPost, setPrevPage } = usePageState();
+    const { setPage, selectedPost, setPrevPage, prevPage } = usePageState();
     const [swipeable, setSwipeable] = useState(false)
     const [selectedImages, setSelectedImages] = useState<{ [key: string]: boolean }>({});
     const [posImages, setPosImages] = useState<{ [key: string]: { x: number; y: number } }>({});
@@ -36,14 +36,10 @@ const SelectedPost: React.FC = () => {
         }));
     }
 
-    useEffect(() => {
-        setPrevPage("SelectedPost");
-    }, [])
-
     return (
         <div className="flex flex-col">
             <div className='flex flex-row mt-5 mx-5 justify-between items-center'>
-                <div className='' onClick={() => {setPage(selectedPost?.from ? selectedPost.from : "start")}}>
+                <div className='' onClick={() => {setPage(prevPage); setPrevPage("SelectedPost");}}>
                     <KeyboardBackspaceRounded className='h-8 w-8'/>
                 </div>
                 <div className='flex flex-col justify-center items-center'>

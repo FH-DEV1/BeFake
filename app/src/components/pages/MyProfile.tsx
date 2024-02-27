@@ -9,7 +9,7 @@ import Draggable from "react-draggable";
 import SwipeableViews from "react-swipeable-views";
 
 const MyProfile: React.FC = () => {
-    const { setPage, prevPage, setPrevPage, scrollPos, feed } = usePageState();
+    const { setPage, prevPage, setPrevPage, setGridView, feed } = usePageState();
     const domain = "https://berealapi.fly.dev"
     const token = typeof window !== "undefined" ? localStorage.getItem('token') : null
     const [MyInfo, setMyInfo] = useState<ProfileData>()
@@ -85,7 +85,7 @@ const MyProfile: React.FC = () => {
     return (
         <div className="flex flex-col items-center">
             <div className='flex justify-between w-full'>
-                <div className='' onClick={() => {window.scroll(0, scrollPos); setPage(prevPage); setPrevPage("MyProfile")}}>
+                <div className='' onClick={() => {setGridView(false); window.scroll(0, 0); setPage(prevPage); setPrevPage("MyProfile")}}>
                     <KeyboardBackspaceRounded className='h-8 w-8'/>
                 </div>
                 <p className='mb-10 text-xl font-bold'>Profile</p>

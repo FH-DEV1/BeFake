@@ -92,7 +92,6 @@ interface PostOfSelectedPost {
 }
 
 export interface SelectedPost {
-    from?: string;
     user?: User;
     post?: PostOfSelectedPost;
     realMojis?: RealMojis[];
@@ -134,7 +133,7 @@ export interface TagsResponse {
     tags: Tag[];
 }
 
-interface FOFPost {
+export interface FOFPost {
     id: string;
     user: User;
     moment: Moment;

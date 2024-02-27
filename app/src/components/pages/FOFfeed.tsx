@@ -5,8 +5,9 @@ import { useEffect, useState } from "react";
 import { UTCtoParisTime, formatTime } from "../TimeConversion";
 import { toast } from "react-toastify";
 import { AddAPhoto, PersonRounded } from "@mui/icons-material";
-import { ReverseGeocodeData, TagsResponse } from "../Types";
+import { FOFPost, ReverseGeocodeData, TagsResponse } from "../Types";
 import { useSwipeable } from "react-swipeable";
+import jwt from 'jsonwebtoken';
 
 const FOFfeed: React.FC = () => {
 
@@ -47,7 +48,7 @@ const FOFfeed: React.FC = () => {
         try {
             const response = await fetch(url, requestOptions);
             const result = await response.json();
-            return `${result.address.Address}, ${result.address.City}`;
+            return `${result.address.City}, ${result.address.CntryName}`;
         } catch (error) {
             console.error(error);
             return "";
@@ -98,6 +99,10 @@ const FOFfeed: React.FC = () => {
             window.scroll(0, 0);
             setPrevPage("FOFfeed")
             setLoading(true)
+            const decodedToken = jwt.decode(token !== null ? token : "null", { complete: true }) as { payload: { userId: string; access?: { token?: string } } } | null;
+            if (!decodedToken || !decodedToken.payload || !decodedToken.payload.access || !decodedToken.payload.access.token) {
+                throw new Error('Invalid token format');
+            }
             const headers = new Headers();
             headers.append("token", (token == null ? "error" : token));
         
@@ -110,7 +115,23 @@ const FOFfeed: React.FC = () => {
             .then(response => response.text())
             .then(result => {
                 if (JSON.parse(result).status == 200) {
-                    setFOFFeed(JSON.parse(result))
+                    const parsedResult = JSON.parse(result);
+                    parsedResult.data.forEach((post: FOFPost) => {
+                        post.realmojis.sample.sort((a, b) => {
+                            const dateA = new Date(a.postedAt).getTime();
+                            const dateB = new Date(b.postedAt).getTime();
+                            if (a.user.id === decodedToken.payload.userId) {
+                                return -1;
+                            }
+                            else if (b.user.id === decodedToken.payload.userId) {
+                                return 1;
+                            }
+                            else {
+                                return dateB - dateA;
+                            }
+                        });
+                    });
+                    setFOFFeed(parsedResult)
                     setLoading(false)
                 }
                 else {
@@ -204,7 +225,6 @@ const FOFfeed: React.FC = () => {
                                 </div>
                                 <div className={`flex ml-7 -mt-14 ${post.realmojis.sample[0] ? "mb-0" : "mb-10"} z-50`} onClick={() => {
                                     setSelectedPost({
-                                        from: "FOFfeed",
                                         user: post.user,
                                         post: post,
                                         realMojis: post.realmojis.sample
@@ -229,7 +249,6 @@ const FOFfeed: React.FC = () => {
                                 {post.caption ? <p className='ml-2 mt-8'>{post.caption}</p> : ""}
                                 <div className='ml-2 opacity-50' onClick={() => {
                                     setSelectedPost({
-                                        from: "FOFfeed",
                                         user: post.user,
                                         post: post,
                                         realMojis: post.realmojis.sample
@@ -248,7 +267,6 @@ const FOFfeed: React.FC = () => {
                 {FOFfeed && FOFfeed.data?.map((post, imageIndex) => (
                     <div className='flex flex-col mb-2' key={`${post.id}_${imageIndex}`} onClick={() => {
                         setSelectedPost({
-                            from: "FOFfeed",
                             user: post.user,
                             post: post,
                             realMojis: post.realmojis.sample,
