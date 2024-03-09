@@ -112,7 +112,7 @@ export interface FriendPost {
     posts: PostType[];
 }
 
-interface UserPosts {
+export interface UserPosts {
     [postId: string]: PostType[];
 }
 
@@ -256,4 +256,14 @@ export interface token {
     refresh_token: string;
     token_expiration: string;
     userId: string;
+}
+
+export interface refreshData {
+    token: string;
+    refresh_token: string;
+    token_expiration: string;
+}
+
+export interface FeedResponse {
+    data: FeedType
 }

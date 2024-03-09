@@ -2,27 +2,22 @@ import { NextResponse } from 'next/server';
 import axios from 'axios';
 
 export const GET = async (req: Request) => {
-    const token = req.headers.get("token")
+    let token: string|null = req.headers.get("token");
     if (!token) {
-      throw new Error('Token not found in headers');
+      return NextResponse.json({ error: "token not found in header" }, { status: 400 });
     }
 
-    let headers = {
-        'authorization': `Bearer ${token}`,
-        'bereal-app-version-code': '14549',
-        'bereal-signature': 'MToxNzA3NDgwMjI4OvR2hbFOdgnyAz1bfiCp68ul5sVZiHnv+NAZNySEcBfD',
-        'bereal-timezone': 'Europe/Paris',
-        'bereal-device-id': '937v3jb942b0h6u9'
-    }
-    try {
-        const response = await axios.request({
-            url: "https://mobile.bereal.com/api/person/me",
-            method: "GET",
-            headers: headers,
-        });
-        return NextResponse.json({status: "success", data: response.data});
-    } catch (error: any) {
-        console.log(error.response.data);
-        return NextResponse.json({ status: "error", error: error.response.data });
-    }
+    return axios.get("https://mobile.bereal.com/api/person/me", {
+        headers: {
+            'authorization': `Bearer ${token}`,
+            'bereal-app-version-code': '14549',
+            'bereal-signature': 'MToxNzA3NDgwMjI4OvR2hbFOdgnyAz1bfiCp68ul5sVZiHnv+NAZNySEcBfD',
+            'bereal-timezone': 'Europe/Paris',
+            'bereal-device-id': '937v3jb942b0h6u9'
+        }
+    }).then(response => {
+        return NextResponse.json({ data: response.data }, { status: 200 });
+    }).catch(error => {
+        return NextResponse.json({ error: error.response.data }, { status: 400 });
+    })
 }

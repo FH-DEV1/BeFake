@@ -7,8 +7,8 @@ import { UTCtoParisDate } from "@/components/TimeConversion";
 import { useRouter } from "next/navigation";
 import Post from "@/components/Post";
 import React from "react";
-import "./memory-button.css"
-import useCheck from "@/components/CheckToken";
+import "./memory-button.css";
+import axios from "axios";
 
 const MyProfile: React.FC = () => {
     const router = useRouter()
@@ -17,38 +17,33 @@ const MyProfile: React.FC = () => {
     const [swipeable, setSwipeable] = useState(false)
 
     useEffect (() => {
-        useCheck(router, "/profile/me")
         let ls = typeof window !== "undefined" ? localStorage.getItem('token') : null
-        let token = JSON.parse(ls !== null ? ls : "")
-        token = token.token
+        let parsedls = JSON.parse(ls !== null ? ls : "")
+        let token: string|null = parsedls.token
+        let token_expiration: string|null = parsedls.token_expiration
+        let refresh_token: string|null = parsedls.refresh_token
+        let lsUser = typeof window !== "undefined" ? localStorage.getItem('myself') : null
+        let parsedLSUser = JSON.parse(lsUser !== null ? lsUser : "{}")
+        let userId: string|null = parsedLSUser.id
         setLoading(true)
-        const headers = new Headers();
-        headers.append("token", (token == null ? "error" : token));
-        
-        const requestOptions = {
-            method: 'GET',
-            headers: headers,
-        };
 
-        fetch(`/api/me`, requestOptions)
-        .then(response => response.text())
-        .then(result => {
-            if (JSON.parse(result).status == "success") {
-                headers.append("userId", JSON.parse(result).data.id);
-                fetch("/api/pinned-memories", requestOptions)
-                .then(response => response.text())
-                .then(PMresult => {
-                    setMyInfo({data: JSON.parse(result).data, pinnedMemories:JSON.parse(PMresult).pinnedMemories})
-                    setLoading(false)
-                })
-                .catch(() => {toast.error("Erreur lors du chargement du profil.");setLoading(false)});
-            }
-        else {
-            toast.warning("Erreur lors du chargement du profil.")
-            setLoading(false)
+        if (token && token_expiration && refresh_token && userId) {
+            axios.get("/api/pinned-memories", {
+                headers: {
+                    token: token,
+                    token_expiration: token_expiration,
+                    refresh_token: refresh_token,
+                    userId: userId
+                }
+            }).then(PMresult => {
+                setMyInfo({data: parsedLSUser, pinnedMemories: PMresult.data.pinned.pinnedMemories})
+                setLoading(false)
+            })
+            .catch(() => {toast.error("Erreur lors du chargement du profil.");setLoading(false)});
+        } else {
+            toast.error("Erreur lors de la recuperation du token ou des info perso")
         }
-        })
-        .catch(() => {toast.error("Erreur lors du chargement du profil.");setLoading(false)});
+
     }, []);
 
     const handleLogout = () => {

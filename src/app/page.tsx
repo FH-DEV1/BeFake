@@ -1,15 +1,38 @@
 "use client"
+import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 const Home: React.FC = () => {
     const router = useRouter()
-    const token = typeof window !== "undefined" ? localStorage.getItem('token') : null
+    const ls = typeof window !== "undefined" ? localStorage.getItem('token') : null
+    const version = typeof window !== "undefined" ? localStorage.getItem('v') : null
+    const parsedLS = JSON.parse(ls !== null ? ls : "{}")
+    const token: string|null = parsedLS.token
 
     useEffect(() => {
+        if (version !== "2.0" && typeof window !== "undefined") {
+            localStorage.clear()
+            router.replace("/login/phone-number")
+        }
         if (token) {
-            router.replace("/feed")
+            axios.get("/api/me", {
+                headers: {
+                    token: token
+                }
+            }).then(response => {
+                if (response.data.data && typeof window !== "undefined") {
+                    console.log("===== personal data =====")
+                    console.log(response.data.data)
+                    console.log("=========================")
+                    localStorage.setItem("myself", JSON.stringify(response.data.data))
+                    router.replace("/feed")
+                }
+            }).catch(error => {
+                console.log(error.response.data)
+            })
         } else {
+            console.log("no token was found in ls")
             router.replace("/login/phone-number")
         }
     }, []);

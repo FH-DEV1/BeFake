@@ -32,9 +32,7 @@
 	   to make room for the extension input */
 	min-width: 0;
 	background-color: black;
-	border-bottom: solid rgba(255, 255, 255, 0.5) 1px;
 	padding-left: 5px;
-	border-radius: 0%;
 }
 
 .PhoneInputCountryIcon {

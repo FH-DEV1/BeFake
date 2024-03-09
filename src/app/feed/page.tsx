@@ -9,12 +9,12 @@ import { useSwipeable } from "react-swipeable";
 import Post from "@/components/Post";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useFeedState } from "@/components/FeedContext";
-import useCheck from "@/components/CheckToken";
+import axios from "axios";
 
 const Feed: React.FC = () => {
     const { feed, setFeed } = useFeedState();
     const searchParams = useSearchParams()
-    const [loading, setLoading] = useState<boolean>(false)
+    const [loading, setLoading] = useState<boolean>(true)
     const gridViewParam = searchParams.get('gridView');
     const [gridView, setGridView] = useState<boolean>(gridViewParam !== null ? JSON.parse(gridViewParam) : false);
     const [isScrolled, setIsScrolled] = useState<boolean>(true);
@@ -24,74 +24,54 @@ const Feed: React.FC = () => {
     const router = useRouter()
 
     useEffect (() => {
-        useCheck(router, "/")
         if (!feed.friendsPosts) {
-            let ls = typeof window !== "undefined" ? localStorage.getItem('token') : null
-            let data = JSON.parse(ls !== null ? ls : "")
-            let token = data.token
             setLoading(true)
-            const headers = new Headers();
-            headers.append("token", token);
-            const requestOptions = {
-                method: 'GET',
-                headers: headers,
-            };
-            fetch(`/api/feed`, requestOptions)
-                .then(response => response.text())
-                .then(result => {
-                    let parsedResult = JSON.parse(result);
-                    if (!parsedResult.status) {
-                        parsedResult.friendsPosts.forEach((post: FriendPost) => {
-                            post.posts.sort((a, b) => new Date(b.takenAt).getTime() - new Date(a.takenAt).getTime());
-                        });
-                        parsedResult.friendsPosts.sort((a: FriendPost, b: FriendPost) => new Date(b.posts[0].takenAt).getTime() - new Date(a.posts[0].takenAt).getTime());
-                        parsedResult.friendsPosts.forEach((posts: FriendPost) => {
-                            posts.posts.forEach((post: PostType) => {
-                                if (post.location) {
-                                    const url = `https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/reverseGeocode?location=${post.location.longitude},${post.location.latitude}&outSR=&forStorage=false&f=pjson`
-                                    const requestOptions = {
-                                        method: "GET"
-                                    };
-                                    fetch(url, requestOptions)
-                                        .then(response => response.json())
-                                        .then(result => {
-                                            if (post.location) {
-                                                post.location.ReverseGeocode = result.address;
-                                            }
-                                        })
-                                        .catch(error => {
-                                            console.error(error);
-                                        })
-                                }
-                            })
-                        });
-                        parsedResult.friendsPosts.forEach((posts: FriendPost) => {
-                            posts.posts.forEach((post: PostType) => {
-                                post.realMojis.sort((a, b) => {
-                                    const dateA = new Date(a.postedAt).getTime();
-                                    const dateB = new Date(b.postedAt).getTime();
-                                    if (a.user.id === data.userId) {
-                                        return -1;
-                                    }
-                                    else if (b.user.id === data.userId) {
-                                        return 1;
-                                    }
-                                    else {
-                                        return dateB - dateA;
-                                    }
-                                });
-                            });
-                        });
-                        setFeed(parsedResult);
-                        setLoading(false);
-                    } else {
-                        router.replace("/")
+            let lsToken = typeof window !== "undefined" ? localStorage.getItem('token') : null
+            let parsedLSToken = JSON.parse(lsToken !== null ? lsToken : "{}")
+            let token: string|null = parsedLSToken.token
+            let token_expiration: string|null = parsedLSToken.token_expiration
+            let refresh_token: string|null = parsedLSToken.refresh_token
+            let lsUser = typeof window !== "undefined" ? localStorage.getItem('myself') : null
+            let parsedLSUser = JSON.parse(lsUser !== null ? lsUser : "{}")
+            let userId: string|null = parsedLSUser.id
+
+            if (token && token_expiration && refresh_token && userId) {
+                axios.get("/api/feed", {
+                    headers: {
+                        token: token,
+                        token_expiration: token_expiration,
+                        refresh_token: refresh_token,
+                        userId: userId
                     }
                 })
+                .then((response) => {
+                    console.log("===== feed =====")
+                    console.log(response.data.feed)
+                    console.log("================")
+                    setFeed(response.data.feed)
+                    if (response.data.refresh_data && typeof window !== "undefined") {
+                        console.log("===== refreshed data =====")
+                        console.log(response.data.refresh_data)
+                        console.log("==========================")
+                        localStorage.setItem("token", JSON.stringify(response.data.refresh_data))
+                    }
+                    setLoading(false)
+                })
                 .catch((error) => {
-                    toast.error("Erreur lors du chargement des BeReal :"+ error);
-                    setLoading(false);
-                });
+                    console.log(`Erreur : ${error.response.data.error}`)
+                    toast.error("Une erreur c'est produite, regarder la console du navigateur pour plus d'info")
+                    if (error.response.data.refresh_data && typeof window !== "undefined") {
+                        console.log("===== refreshed data =====")
+                        console.log(error.response.data.refresh_data)
+                        console.log("==========================")
+                        localStorage.setItem("token", error.response.data.refresh_data)
+                    }
+                    // jsp quoi faire rediriger?
+                })
+            } else {
+                console.log("no token in ls")
+                router.replace("/login/phone-number")
+            }
         } else if (feed.data) {
             window.scroll(0, feed.data.scrollY)
         }

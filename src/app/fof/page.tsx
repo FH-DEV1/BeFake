@@ -1,5 +1,4 @@
 "use client"
-import { FOFPost } from '@/components/Types';
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { AddAPhoto, PersonRounded } from "@mui/icons-material";
@@ -8,7 +7,7 @@ import { useSwipeable } from "react-swipeable";
 import Post from "@/components/Post";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useFeedState } from "@/components/FeedContext";
-import useCheck from "@/components/CheckToken";
+import axios from 'axios';
 
 const FOFFeed: React.FC = () => {
     const { fof, setfof } = useFeedState();
@@ -22,66 +21,50 @@ const FOFFeed: React.FC = () => {
     const router = useRouter()
 
     useEffect (() => {
-        useCheck(router, "/")
         if (!fof.data) {
-            let ls = typeof window !== "undefined" ? localStorage.getItem('token') : null
-            let data = JSON.parse(ls !== null ? ls : "")
-            let token = data.token
+            let lsToken = typeof window !== "undefined" ? localStorage.getItem('token') : null
+            let parsedLSToken = JSON.parse(lsToken !== null ? lsToken : "{}")
+            let token: string|null = parsedLSToken.token
+            let token_expiration: string|null = parsedLSToken.token_expiration
+            let refresh_token: string|null = parsedLSToken.refresh_token
             setLoading(true)
-            const headers = new Headers();
-            headers.append("token", token);
-            const requestOptions = {
-                method: 'GET',
-                headers: headers,
-            };
-            fetch(`/api/fof`, requestOptions)
-                .then(response => response.text())
-                .then(result => {
-                    let parsedResult = JSON.parse(result);
-                    if (!parsedResult.status) {
-                        parsedResult.data.forEach((post: FOFPost) => {
-                            if (post.location) {
-                                const url = `https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/reverseGeocode?location=${post.location.longitude},${post.location.latitude}&outSR=&forStorage=false&f=pjson`
-                                const requestOptions = {
-                                    method: "GET"
-                                };
-                                fetch(url, requestOptions)
-                                    .then(response => response.json())
-                                    .then(result => {
-                                        if (post.location) {
-                                            post.location.ReverseGeocode = result.address;
-                                        }
-                                    })
-                                    .catch(error => {
-                                        console.error(error);
-                                    })
-                            }
-                        });
-                        parsedResult.data.forEach((post: FOFPost) => {
-                            post.realmojis.sample.sort((a, b) => {
-                                const dateA = new Date(a.postedAt).getTime();
-                                const dateB = new Date(b.postedAt).getTime();
-                                if (a.user.id === data.userId) {
-                                    return -1;
-                                }
-                                else if (b.user.id === data.userId) {
-                                    return 1;
-                                }
-                                else {
-                                    return dateB - dateA;
-                                }
-                            });
-                        });
-                        setfof(parsedResult);
-                        setLoading(false);
-                    } else {
-                        router.replace("/")
+
+            if (token && token_expiration && refresh_token) {
+                axios.get("/api/fof", {
+                    headers: {
+                        token: token,
+                        token_expiration: token_expiration,
+                        refresh_token: refresh_token,
                     }
                 })
+                .then((response) => {
+                    console.log("===== fof =====")
+                    console.log(response.data)
+                    console.log("===============")
+                    setfof(response.data)
+                    if (response.data.refresh_data && typeof window !== "undefined") {
+                        console.log("===== refreshed data =====")
+                        console.log(response.data.refresh_data)
+                        console.log("==========================")
+                        localStorage.setItem("token", JSON.stringify(response.data.refresh_data))
+                    }
+                    setLoading(false)
+                })
                 .catch((error) => {
-                    toast.error("Erreur lors du chargement des BeReal."+ error);
-                    setLoading(false);
-                });
+                    console.log(`Erreur : ${error.response.data.error}`)
+                    toast.error("Une erreur c'est produite, regarder la console du navigateur pour plus d'info")
+                    if (error.response.data.refresh_data && typeof window !== "undefined") {
+                        console.log("===== refreshed data =====")
+                        console.log(error.response.data.refresh_data)
+                        console.log("==========================")
+                        localStorage.setItem("token", error.response.data.refresh_data)
+                    }
+                    // jsp quoi faire rediriger?
+                })
+            } else {
+                console.log("no token in ls")
+                router.replace("/login/phone-number")
+            }  
         } else if (fof.params) {
             window.scroll(0, fof.params.scrollY)
         }
@@ -138,7 +121,7 @@ const FOFFeed: React.FC = () => {
                 </div>
             </div>
             <div className={`${loading ? "hidden" : ""} pt-11 pb-11`}>
-                <div className={`${fof.data ? isScrolled ? "block" : "hidden" : "hidden"} z-50`}>
+                <div className={`${fof && fof ? isScrolled ? "block" : "hidden" : "hidden"} z-50`}>
                     <div className='flex text-white justify-center mt-2 fixed w-full z-50'>
                         <p className="mr-2 opacity-50" onClick={() => {router.replace("/feed")}}>Mes Amis</p>
                         <p className='ml-2'>Amis d'Amis</p>
