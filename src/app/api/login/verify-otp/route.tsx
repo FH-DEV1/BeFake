@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import axios from 'axios';
+import jwt from 'jsonwebtoken';
 
 // DISCLAIMER : I COPIED CODE
 // I tried soooo hard to make this work on my own. Thing is everything works until it 
@@ -90,6 +91,9 @@ export const GET = async (req: Request) => {
             console.log('---------------------')
         
             let firebase_token = firebase_refresh_response.data.id_token;
+            let firebase_refresh_token = firebase_refresh_response.data.refresh_token;
+            let user_id = firebase_refresh_response.data.user_id;
+            let firebase_expiration = Date.now() + firebase_refresh_response.data.expires_in * 1000;
         
             // ============================================================================================
         
@@ -112,6 +116,24 @@ export const GET = async (req: Request) => {
             let access_token = access_grant_response.data.access_token;
             let access_refresh_token = access_grant_response.data.refresh_token;
             let access_expiration = Date.now() + access_grant_response.data.expires_in * 1000;
+
+            let payload = {
+                "access": {
+                    "refresh_token": access_refresh_token,
+                    "token": access_token,
+                    "expires": new Date(access_expiration).toISOString()
+                },
+                "firebase": {
+                    "refresh_token": firebase_refresh_token,
+                    "token": firebase_token,
+                    "expires": new Date(firebase_expiration).toISOString()
+                },
+                "userId": user_id,
+                "iat": Math.floor(Date.now() / 1000)
+            };
+
+            let jwt_token = jwt.sign(payload, 'JWT_HARD_SECRET', { algorithm: 'HS256' });
+            console.log(jwt_token)
         
             console.log("access grant");
             console.log(access_grant_response.status);
@@ -120,8 +142,9 @@ export const GET = async (req: Request) => {
 
             return NextResponse.json({refresh_data: { 
                 token: access_token,
-                refresh_token: access_refresh_token,
-                token_expiration: access_expiration
+                refresh_token: jwt_token,
+                token_expiration: access_expiration,
+
             }}, {status: 200});
         
             
@@ -141,6 +164,17 @@ export const GET = async (req: Request) => {
                 console.log(error_message);
                 return NextResponse.json({error: error.error_message}, {status: 400});
             }
+// ========================================================================================================
+// ========================================================================================================
+// ========================================================================================================
+// ========================================================================================================
+// ========================================================================================================
+// ========================================================================================================
+// ========================================================================================================
+// ========================================================================================================
+// ========================================================================================================
+// ========================================================================================================
+
     } else if (login_type == "vonage" && otp_session && otp_code) {
     
         try {
@@ -214,6 +248,9 @@ export const GET = async (req: Request) => {
         console.log('---------------------')
     
         let firebase_token = firebase_refresh_response.data.id_token;
+        let firebase_refresh_token = firebase_refresh_response.data.refresh_token;
+        let user_id = firebase_refresh_response.data.user_id;
+        let firebase_expiration = Date.now() + firebase_refresh_response.data.expires_in * 1000;
     
         // ============================================================================================
     
@@ -236,6 +273,24 @@ export const GET = async (req: Request) => {
         let access_token = access_grant_response.data.access_token;
         let access_refresh_token = access_grant_response.data.refresh_token;
         let access_expiration = Date.now() + access_grant_response.data.expires_in * 1000;
+
+        let payload = {
+            "access": {
+                "refresh_token": access_refresh_token,
+                "token": access_token,
+                "expires": new Date(access_expiration).toISOString()
+            },
+            "firebase": {
+                "refresh_token": firebase_refresh_token,
+                "token": firebase_token,
+                "expires": new Date(firebase_expiration).toISOString()
+            },
+            "userId": user_id,
+            "iat": Math.floor(Date.now() / 1000)
+        };
+
+        let jwt_token = jwt.sign(payload, 'JWT_HARD_SECRET', { algorithm: 'HS256' });
+        console.log(jwt_token)
     
         console.log("access grant");
         console.log(access_grant_response.status);

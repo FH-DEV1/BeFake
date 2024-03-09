@@ -7,14 +7,14 @@ const Home: React.FC = () => {
     const router = useRouter()
     const ls = typeof window !== "undefined" ? localStorage.getItem('token') : null
     const version = typeof window !== "undefined" ? localStorage.getItem('v') : null
-    const parsedLS = JSON.parse(ls !== null ? ls : "{}")
-    const token: string|null = parsedLS.token
 
     useEffect(() => {
-        if (version !== "2.0" && typeof window !== "undefined") {
+        if (version !== "2.1" && typeof window !== "undefined") {
             localStorage.clear()
             router.replace("/login/phone-number")
         }
+        const parsedLS = JSON.parse(ls !== null ? ls : "{}")
+        const token: string|null = parsedLS.token
         if (token) {
             axios.get("/api/me", {
                 headers: {

@@ -34,7 +34,7 @@ const OTPValidate: React.FC = () => {
                     console.log("==========================")
                     localStorage.removeItem('OTPSession');
                     localStorage.setItem("token", JSON.stringify(response.data.refresh_data))
-                    localStorage.setItem("v", "2.0")
+                    localStorage.setItem("v", "2.1")
                     router.replace("/")
                 }
                 toast.success("OTP validé avec succès!")

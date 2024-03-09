@@ -57,11 +57,3 @@ DEV=http://localhost:3000
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-BeReal recently blocked token refreshing from vercel to continue using vercel you'll need to create a pipedream workflow as follows:  
-<img src="images/pipedream-workflow.png" alt="pipedream-workflow" width="400" />  
-And add 2 lines to your .env.local :
-```bash
-VERCEL_HOSTED=TRUE
-PIPEDREAM_URL=https://YOUR_URL.m.pipedream.net
-```
