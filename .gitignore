@@ -32,5 +32,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# local env files
+.env*.local
+.env.local
+
 # VSCodeCounter
 .VSCodeCounter
