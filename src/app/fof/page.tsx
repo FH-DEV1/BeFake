@@ -66,6 +66,8 @@ const FOFFeed: React.FC = () => {
                 router.replace("/login/phone-number")
             }  
         } else if (fof.params) {
+            setLoading(false)
+            setGridView(fof.params.gridView)
             window.scroll(0, fof.params.scrollY)
         }
     }, []);
@@ -86,7 +88,7 @@ const FOFFeed: React.FC = () => {
     }, []);
 
     const handlers = useSwipeable({
-        onSwipedDown: () => {if (window.scrollY <= 0) {setGridView(!gridView); router.replace(`/fof?gridView=${!gridView}`)}},
+        onSwipedDown: () => {if (window.scrollY <= 0) {setGridView(!gridView)}},
     });
 
     return (
@@ -158,7 +160,7 @@ const FOFFeed: React.FC = () => {
                                     setSwipeable={setSwipeable}
                                 />
                                 <div className={`flex ml-7 -mt-14 ${post.realmojis.sample[0] ? "mb-0" : "mb-10"} z-50`} onClick={() => {
-                                    // fof.params = { scrollY: window.scrollY };
+                                    // fof.params = { scrollY: window.scrollY, gridView: false };
                                     // router.push(`/fof/${post.user.username}?index=0`)
                                 }}>
                                     {post.realmojis.sample.slice(0, 3).map((realMojis, index) => (
@@ -177,7 +179,7 @@ const FOFFeed: React.FC = () => {
                                 </div>
                                 {post.caption ? <p className='ml-2 mt-8'>{post.caption}</p> : ""}
                                 <div className='ml-2 opacity-50' onClick={() => {
-                                    // fof.params = { scrollY: window.scrollY };
+                                    // fof.params = { scrollY: window.scrollY, gridView: false };
                                     // router.push(`/fof/${post.user.username}?index=0`)
                                 }}>
                                 </div>
@@ -186,11 +188,13 @@ const FOFFeed: React.FC = () => {
                     )).reverse()}
                 </div>
             </div>
-            
+
+
+            {/* gridView */}
             <div className={`flex flex-wrap justify-around mt-10 pt-6 overflow-hidden ${gridView ? "" : "hidden"}`}>
                 {fof && fof.data?.map((post, imageIndex) => (
                     <div className='flex flex-col mb-2' key={`${post.id}_${imageIndex}`} onClick={() => {
-                        // fof.params = { scrollY: window.scrollY };
+                        // fof.params = { scrollY: window.scrollY, gridView: true };
                         // router.push(`/fof/${post.user.username}?index=0`)
                     }}>
                             <div className='relative'>

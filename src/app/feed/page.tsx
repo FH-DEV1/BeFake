@@ -73,6 +73,8 @@ const Feed: React.FC = () => {
                 router.replace("/login/phone-number")
             }
         } else if (feed.data) {
+            setLoading(false)
+            setGridView(feed.data.gridView)
             window.scroll(0, feed.data.scrollY)
         }
     }, []);
@@ -93,7 +95,7 @@ const Feed: React.FC = () => {
     }, []);
 
     const handlers = useSwipeable({
-        onSwipedDown: () => {if (window.scrollY <= 0) {setGridView(!gridView); router.replace(`/feed?gridView=${!gridView}`)}},
+        onSwipedDown: () => {if (window.scrollY <= 0) {setGridView(!gridView)}},
     });
 
     return (
@@ -179,7 +181,7 @@ const Feed: React.FC = () => {
                                             setSwipeable={setSwipeable}
                                         />
                                         <div className={`flex ml-7 -mt-12 ${userPost.realMojis[0] ? "mb-4" : "mb-12"} z-50`} onClick={() => {
-                                            feed.data = { scrollY: window.scrollY };
+                                            feed.data = { scrollY: window.scrollY, gridView: false };
                                             router.push(`/feed/${post.user.username}?index=${post.posts.length - postIndex - 1}`)
                                         }}>
                                             {userPost.realMojis.slice(0, 3).map((realMojis: RealMojis, index: number) => (
@@ -208,7 +210,7 @@ const Feed: React.FC = () => {
                                 {post.posts[post.posts.length-index[post.user.id]-1? post.posts.length-index[post.user.id]-1 : 0].caption}
                             </p>
                             <div className={`ml-2 opacity-50 transition-transform duration-300 ${post.posts[post.posts.length-index[post.user.id]-1? post.posts.length-index[post.user.id]-1 : 0].caption ? "" : "-translate-y-6"}`} onClick={() => {
-                                feed.data = { scrollY: window.scrollY };
+                                feed.data = { scrollY: window.scrollY, gridView: false };
                                 router.push(`/feed/${post.user.username}?index=${index[post.user.id] != undefined? index[post.user.id] : post.posts.length-1}`)
                             }}>
                                 {post.posts[post.posts.length-index[post.user.id]-1? post.posts.length-index[post.user.id]-1 : 0].comments.length == 0 ? "Ajouter un commentaire..." : post.posts[post.posts.length-index[post.user.id]-1? post.posts.length-index[post.user.id]-1 : 0].comments.length == 1 ? "Voir le commentaire" : `Voir les ${post.posts[post.posts.length-index[post.user.id]-1? post.posts.length-index[post.user.id]-1 : 0].comments.length} commentaires`}
@@ -222,7 +224,7 @@ const Feed: React.FC = () => {
                 <div className={`flex flex-wrap justify-around mt-10 pt-6 overflow-hidden ${gridView ? "" : "hidden"}`}>
                     {feed && feed.friendsPosts?.map((userPost: FriendPost, imageIndex: number) => (
                         <div className='flex flex-col mb-2' key={`${userPost.posts[0].id}_${imageIndex}`} onClick={() => {
-                            feed.data = { scrollY: window.scrollY };
+                            feed.data = { scrollY: window.scrollY, gridView: true };
                             router.push(`/feed/${userPost.user.username}?index=${userPost.posts.length - 1}`)
                         }}>
                             <div className='relative'>

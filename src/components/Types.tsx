@@ -118,6 +118,7 @@ export interface UserPosts {
 
 interface pageData {
     scrollY: number;
+    gridView: boolean;
 }
 
 export interface FeedType {
