@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 import { Slide, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
-import { SpeedInsights } from "@vercel/speed-insights/next"
+import { GoogleAnalytics } from '@next/third-parties/google'
 import { FeedProvider } from '@/components/FeedContext';
 
 export const metadata: Metadata = {
@@ -21,7 +21,7 @@ export default function RootLayout({
       <body className="bg-black text-white">
         <main>
           <FeedProvider>
-          <SpeedInsights/>
+          <GoogleAnalytics gaId="G-D65HGX91EP" />
           <ToastContainer
             position="top-center"
             autoClose={5000}

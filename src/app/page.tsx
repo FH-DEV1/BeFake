@@ -10,7 +10,7 @@ const Home: React.FC = () => {
     const version = typeof window !== "undefined" ? localStorage.getItem('v') : null
 
     useEffect(() => {
-        if (version !== "2.1" && typeof window !== "undefined") {
+        if (version !== process.env.NEXT_PUBLIC_VERSION && typeof window !== "undefined") {
             localStorage.clear()
             router.replace("/login/phone-number")
         }
