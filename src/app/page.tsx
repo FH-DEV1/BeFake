@@ -2,6 +2,7 @@
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { toast } from "react-toastify";
 
 const Home: React.FC = () => {
     const router = useRouter()
@@ -16,11 +17,13 @@ const Home: React.FC = () => {
         const parsedLS = JSON.parse(ls !== null ? ls : "{}")
         const token: string|null = parsedLS.token
         if (token) {
+            toast.error("fetch start")
             axios.get("/api/me", {
                 headers: {
                     token: token
                 }
             }).then(response => {
+                toast.error("fetch end")
                 if (response.data.data && typeof window !== "undefined") {
                     console.log("===== personal data =====")
                     console.log(response.data.data)
@@ -30,6 +33,7 @@ const Home: React.FC = () => {
                 }
             }).catch(error => {
                 console.log(error.response.data)
+                toast.error(error.response.data)
             })
         } else {
             console.log("no token was found in ls")
