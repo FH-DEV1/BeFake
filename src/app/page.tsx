@@ -6,7 +6,6 @@ import { toast } from "react-toastify";
 
 const Home: React.FC = () => {
     const router = useRouter()
-    const ls = typeof window !== "undefined" ? localStorage.getItem('token') : null
     const version = typeof window !== "undefined" ? localStorage.getItem('v') : null
 
     useEffect(() => {
@@ -14,13 +13,18 @@ const Home: React.FC = () => {
             localStorage.clear()
             router.replace("/login/phone-number")
         }
-        const parsedLS = JSON.parse(ls !== null ? ls : "{}")
-        const token: string|null = parsedLS.token
+        let lsToken = typeof window !== "undefined" ? localStorage.getItem('token') : null
+        let parsedLSToken = JSON.parse(lsToken !== null ? lsToken : "{}")
+        let token: string|null = parsedLSToken.token
+        let token_expiration: string|null = parsedLSToken.token_expiration
+        let refresh_token: string|null = parsedLSToken.refresh_token
         if (token) {
             toast.error("fetch start")
             axios.get("/api/me", {
                 headers: {
-                    token: token
+                    token: token,
+                    token_expiration: token_expiration,
+                    refresh_token: refresh_token,
                 }
             }).then(response => {
                 toast.error("fetch end")
@@ -29,9 +33,21 @@ const Home: React.FC = () => {
                     console.log(response.data.data)
                     console.log("=========================")
                     localStorage.setItem("myself", JSON.stringify(response.data.data))
+                    if (response.data.refresh_data && typeof window !== "undefined") {
+                        console.log("===== refreshed data =====")
+                        console.log(response.data.refresh_data)
+                        console.log("==========================")
+                        localStorage.setItem("token", JSON.stringify(response.data.refresh_data))
+                    }
                     router.replace("/feed")
                 }
             }).catch(error => {
+                if (error.response.data.refresh_data && typeof window !== "undefined") {
+                    console.log("===== refreshed data =====")
+                    console.log(error.response.data.refresh_data)
+                    console.log("==========================")
+                    localStorage.setItem("token", error.response.data.refresh_data)
+                }
                 console.log(error.response.data)
                 toast.error(error.response.data)
             })
