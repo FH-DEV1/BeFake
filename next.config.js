@@ -1,7 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    reactStrictMode: false,
-    output: "export"
+    reactStrictMode: false
 }
 const withPWA = require('next-pwa')({
     dest: 'public',
