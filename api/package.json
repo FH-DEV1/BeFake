@@ -1,7 +1,7 @@
 {
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
+    "start": "node build/app.js",
+    "dev": "nodemon app.ts",
     "build": "tsc"
   },
   "dependencies": {

@@ -1,7 +1,7 @@
 import * as express from 'express';
 import { Request, Response } from 'express';
 
-import { refreshToken } from './route/refresh';
+import { refreshToken } from './src/refresh';
 
 const app = express();
 const PORT = 3000;
