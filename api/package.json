@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "node ./netlify/functions/api.ts"
   },
   "keywords": [],
   "author": "",
@@ -12,6 +12,7 @@
   "dependencies": {
     "@netlify/functions": "^2.6.0",
     "@types/express": "^4.17.21",
+    "axios": "^1.6.7",
     "express": "^4.18.3",
     "serverless-http": "^3.2.0"
   }
