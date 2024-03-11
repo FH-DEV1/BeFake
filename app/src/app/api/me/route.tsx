@@ -12,7 +12,7 @@ export const GET = async (req: Request) => {
         if (now > parseInt(token_expiration)) {
             // en local utiliser : http://localhost:3000/api/refresh
             // en deploiment utiliser /api/refresh
-            let url = `${process.env.NODE_ENV === "development" ? process.env.DEV : ""}/api/refresh`
+            let url = `https://befakeapi.netlify.app/api/refresh`
             await axios.get(url, {
                 headers: {
                     refresh_token: refresh_token

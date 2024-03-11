@@ -29,6 +29,6 @@ export const refreshToken = async (req: Request, res: Response, next: NextFuncti
             return res.status(400).json({ error: error.response.data });
         }
     } else {
-        return res.status(400).json({ error: "No refresh token was found" });
+        return res.status(400).json({ error: "Could not refresh token : no refresh token was found was found in headers" });
     }
 };
