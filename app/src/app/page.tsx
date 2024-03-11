@@ -19,7 +19,6 @@ const Home: React.FC = () => {
         let token_expiration: string|null = parsedLSToken.token_expiration
         let refresh_token: string|null = parsedLSToken.refresh_token
         if (token) {
-            toast.error("fetch start")
             axios.get("/api/me", {
                 headers: {
                     token: token,
@@ -27,7 +26,6 @@ const Home: React.FC = () => {
                     refresh_token: refresh_token,
                 }
             }).then(response => {
-                toast.error("fetch end")
                 if (response.data.data && typeof window !== "undefined") {
                     console.log("===== personal data =====")
                     console.log(response.data.data)
