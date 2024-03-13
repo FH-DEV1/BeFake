@@ -1,7 +1,7 @@
 "use client"
 import SwipeableViews from "react-swipeable-views";
-import { FriendPost, Index, PostType, RealMojis } from '@/components/Types';
-import { useEffect, useState } from "react";
+import { FriendPost, Index, OptionsMenu, PostType, RealMojis } from '@/components/Types';
+import { Fragment, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { AddAPhoto, PersonRounded } from "@mui/icons-material";
 import { UTCtoParisTime, formatTime } from "@/components/TimeConversion";
@@ -10,6 +10,7 @@ import Post from "@/components/Post";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useFeedState } from "@/components/FeedContext";
 import axios from "axios";
+import { Dialog, Transition } from "@headlessui/react";
 
 const Feed: React.FC = () => {
     const { feed, setFeed } = useFeedState();
@@ -22,6 +23,86 @@ const Feed: React.FC = () => {
     const [index, setIndex] = useState<Index>({})
     const [swipeable, setSwipeable] = useState(false);
     const router = useRouter()
+    const [OptionsMenu, setOptionsMenu] = useState<OptionsMenu>({
+        show: false,
+        disabled: true
+    });
+    const PostOptions = [
+        {
+            id: "main-download",
+            name: "Télécharger l'image principal",
+            action: () => {
+                setOptionsMenu(prevState => ({
+                    ...prevState,
+                    show: false
+                }))
+            },
+        },
+        {
+            id: "secondary-download",
+            name: "Télécharger l'image secondaire",
+            action: () => {
+                setOptionsMenu(prevState => ({
+                    ...prevState,
+                    show: false
+                }))
+            },
+        },
+        {
+            id: "combined-download",
+            name: "Télécharger les images combinés",
+            action: () => {
+                toast.warning("This option is not yet available.");
+                setOptionsMenu(prevState => ({
+                    ...prevState,
+                    show: false
+                }))
+            },
+        },
+        {
+            id: "bts-download",
+            name: "Télécharger la video BTS",
+            action: () => {
+                toast.warning("This option is not yet available.");
+                setOptionsMenu(prevState => ({
+                    ...prevState,
+                    show: false
+                }))
+            },
+        },
+        {
+            id: "copy-link-main",
+            name: "Copier le lien de l'image principal",
+            action: () => {
+                if (OptionsMenu.primary) {
+                    navigator.clipboard.writeText(OptionsMenu.primary);
+                    toast.success("Lien copié avec succès !");
+                    setOptionsMenu(prevState => ({
+                        ...prevState,
+                        show: false
+                    }))
+                } else {
+                    toast.error("Erreur lors de la copie du lien")
+                }
+            },
+        },
+        {
+            id: "copy-link-secondary",
+            name: "Copier le lien de l'image secondaire",
+            action: () => {
+                if (OptionsMenu.secondary) {
+                    navigator.clipboard.writeText(OptionsMenu.secondary);
+                    toast.success("Lien copié avec succès !");
+                    setOptionsMenu(prevState => ({
+                        ...prevState,
+                        show: false
+                    }))
+                } else {
+                    toast.error("Erreur lors de la copie du lien")
+                }
+            },
+        },
+    ]
 
     useEffect (() => {
         if (!feed.friendsPosts) {
@@ -47,12 +128,10 @@ const Feed: React.FC = () => {
                 .then((response) => {
                     console.log("===== feed =====")
                     console.log(response.data.feed)
-                    console.log("================")
                     setFeed(response.data.feed)
                     if (response.data.refresh_data && typeof window !== "undefined") {
                         console.log("===== refreshed data =====")
                         console.log(response.data.refresh_data)
-                        console.log("==========================")
                         localStorage.setItem("token", JSON.stringify(response.data.refresh_data))
                     }
                     setLoading(false)
@@ -63,7 +142,6 @@ const Feed: React.FC = () => {
                     if (error.response.data.refresh_data && typeof window !== "undefined") {
                         console.log("===== refreshed data =====")
                         console.log(error.response.data.refresh_data)
-                        console.log("==========================")
                         localStorage.setItem("token", error.response.data.refresh_data)
                     }
                     // jsp quoi faire rediriger?
@@ -140,18 +218,28 @@ const Feed: React.FC = () => {
                     {feed && feed.friendsPosts?.map((post: FriendPost) => (
                         <div className="mt-10 overflow-visible" key={post.user.id}>
                             <div className={`flex mb-1.5`}>
-                                <img 
-                                    className='w-9 h-9 rounded-full'
-                                    src={JSON.stringify(post.user.profilePicture) == "null" ? "/icon.png" : post.user.profilePicture.url}
-                                    alt={`${post.user.username}'s profile`}
-                                />
+                                {post.user.profilePicture ? (
+                                    <img 
+                                        className='w-9 h-9 rounded-full ml-2'
+                                        src={post.user.profilePicture.url}
+                                        alt={`${post.user.username}'s profile`}
+                                        onClick={() => router.push(`/profile/${post.user.id}`)}
+                                    /> 
+                                ) : (
+                                    <div className='w-9 h-9 rounded-full bg-white/5 border-full border-black justify-center align-middle flex ml-2'>
+                                        <div className='m-auto text-xl uppercase font-bold'>
+                                            {post?.user.username.slice(0, 1)}
+                                        </div>
+                                    </div>
+                                )}
+
                                 <div className='flex-col ml-2'>
-                                    <p className='h-4 flex'>{post.user.username}</p>
+                                    <p className='h-4 flex' onClick={() => router.push(`/profile/${post.user.id}`)}>{post.user.username}</p>
                                     <div className='flex-col'>
                                         <a
                                             className='text-sm opacity-60 cursor-pointer'
-                                            target="_blank"
-                                            rel="noopener noreferrer"
+                                            target='_blank'
+                                            rel='noopener noreferrer'
                                             href={post.posts[post.posts.length-index[post.user.id]-1? post.posts.length-index[post.user.id]-1 : 0].location ? `https://www.google.com/maps/?q=${post.posts[post.posts.length-index[post.user.id]-1? post.posts.length-index[post.user.id]-1 : 0].location?.latitude},${post.posts[post.posts.length-index[post.user.id]-1? post.posts.length-index[post.user.id]-1 : 0].location?.longitude}` : undefined}
                                             onClick={(e) => {
                                                 if (!post.posts[post.posts.length-index[post.user.id]-1? post.posts.length-index[post.user.id]-1 : 0].location) {
@@ -159,11 +247,33 @@ const Feed: React.FC = () => {
                                                 }
                                             }}
                                         >
-                                            {post.posts[post.posts.length-index[post.user.id]-1? post.posts.length-index[post.user.id]-1 : 0].location?.ReverseGeocode ? `${post.posts[post.posts.length-index[post.user.id]-1? post.posts.length-index[post.user.id]-1 : 0].location?.ReverseGeocode?.City}, ${post.posts[post.posts.length-index[post.user.id]-1? post.posts.length-index[post.user.id]-1 : 0].location?.ReverseGeocode?.CntryName} • ` : ""}
+                                            {post.posts[post.posts.length-index[post.user.id]-1? post.posts.length-index[post.user.id]-1 : 0].location?.ReverseGeocode ? `${post.posts[post.posts.length-index[post.user.id]-1? post.posts.length-index[post.user.id]-1 : 0].location?.ReverseGeocode?.City}, ${post.posts[post.posts.length-index[post.user.id]-1? post.posts.length-index[post.user.id]-1 : 0].location?.ReverseGeocode?.CntryName} • ` : ''}
                                             {post.posts[post.posts.length-index[post.user.id]-1? post.posts.length-index[post.user.id]-1 : 0].isLate ? formatTime(post.posts[post.posts.length-index[post.user.id]-1? post.posts.length-index[post.user.id]-1 : 0].lateInSeconds) : UTCtoParisTime(post.posts[post.posts.length-index[post.user.id]-1? post.posts.length-index[post.user.id]-1 : 0].takenAt)}
                                         </a>
                                     </div>
                                 </div>
+
+                                <button className="ml-auto my-auto p-2 rounded-lg transition-all transform hover:scale-105" onClick={() => setOptionsMenu({
+                                    show: true,
+                                    username: post.user.username,
+                                    disabled: false,
+                                    takenAt: post.posts[post.posts.length-index[post.user.id]-1? post.posts.length-index[post.user.id]-1 : 0].takenAt,
+                                    primary: post.posts[post.posts.length-index[post.user.id]-1? post.posts.length-index[post.user.id]-1 : 0].primary.url,
+                                    secondary: post.posts[post.posts.length-index[post.user.id]-1? post.posts.length-index[post.user.id]-1 : 0].secondary.url
+                                })}>
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 24 24"
+                                        fill="currentColor"
+                                        className="w-6 h-6"
+                                    >
+                                        <path
+                                            fillRule="evenodd"
+                                            d="M4.5 12a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Zm6 0a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Zm6 0a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0Z"
+                                            clipRule="evenodd"
+                                        />
+                                    </svg>
+                                </button>
                             </div>
                             <SwipeableViews
                                 disabled={swipeable}
@@ -202,8 +312,8 @@ const Feed: React.FC = () => {
                                 )).reverse()}
                             </SwipeableViews>
                             <div className='flex justify-center mt-4'>
-                                {post.posts.length >= 2 && post.posts.map((dots: any) => (
-                                    <span className={`bg-white transition-opacity duration-300 w-2 h-2 rounded-full mx-1 mb-3 ${dots === post.posts[post.posts.length-index[post.user.id]-1? post.posts.length-index[post.user.id]-1 : 0] ? "" : "opacity-50"}`} />
+                                {post.posts.length >= 2 && post.posts.map((dots: any, dotsidx) => (
+                                    <span key={dotsidx} className={`bg-white transition-opacity duration-300 w-2 h-2 rounded-full mx-1 mb-3 ${dots === post.posts[post.posts.length-index[post.user.id]-1? post.posts.length-index[post.user.id]-1 : 0] ? "" : "opacity-50"}`} />
                                 )).reverse()}
                             </div>
                             <p className={`ml-2 -mt-2 h-6 transition-opacity delay-75 duration-300 ${post.posts[post.posts.length-index[post.user.id]-1? post.posts.length-index[post.user.id]-1 : 0].caption ? "opacity-100" : "opacity-0"}`}>
@@ -245,6 +355,99 @@ const Feed: React.FC = () => {
                         </div>
                     ))}
                 </div>
+
+                {/* heavily inspired (copied) from https://github.com/macedonga/beunblurred */}
+                <Transition appear show={OptionsMenu.show} as={Fragment}>
+                    <Dialog
+                        as="div"
+                        className="relative z-[60]"
+                        onClose={() => setOptionsMenu(prevState => ({
+                            ...prevState,
+                            show: false
+                        }))}
+                    >
+                        <Transition.Child
+                        as={Fragment}
+                        enter="ease-out duration-300"
+                        enterFrom="opacity-0"
+                        enterTo="opacity-100"
+                        leave="ease-in duration-200"
+                        leaveFrom="opacity-100"
+                        leaveTo="opacity-0"
+                        >
+                        <div className="fixed inset-0 bg-black backdrop-blur bg-opacity-25" />
+                        </Transition.Child>
+
+                        <div className="fixed lg:inset-0 bottom-0 inset-x-0 overflow-y-hidden w-full">
+                        <div className="flex min-h-full items-center justify-center text-center">
+                            <Transition.Child
+                            as={Fragment}
+                            enter="ease-out duration-300"
+                            enterFrom="bottom-0 opacity-0 lg:scale-95 translate-y-10 lg:translate-y-0 translate-x-0"
+                            enterTo="opacity-100 lg:scale-100 translate-y-0 translate-x-0"
+                            leave="ease-in duration-200"
+                            leaveFrom="opacity-100 lg:scale-100 translate-y-0 translate-x-0"
+                            leaveTo="opacity-0 lg:scale-95 translate-y-10 lg:translate-y-0 translate-x-0"
+                            >
+                            <Dialog.Panel
+                                className={`
+                                    lg:max-w-md max-w-none w-full z-[70]
+                                    transform overflow-hidden rounded-t-lg lg:rounded-b-lg mx-4 max-h-[90vh]
+                                    border-2 border-white/10 bg-[#0d0d0d] lg:border-b-2 border-b-0
+                                    text-left align-middle shadow-xl transition-all overflow-y-auto
+                                `}
+                            >
+                                <div className="m-6 mb-4 pb-4 border-b-2 border-white/10">
+                                <Dialog.Title
+                                    as="h2"
+                                    className={"m-0 text-center text-2xl font-bold"}
+                                >
+                                    Options du post
+                                </Dialog.Title>
+                                <p className={"m-0 text-center opacity-75 text-sm mt-2"}>
+                                    {OptionsMenu.username ? OptionsMenu.username : ""}
+                                </p>
+                                </div>
+
+                                <div className="mx-6 mb-2 mt-2">
+                                    {PostOptions.map((option) => (
+                                        <div className="mb-2" key={option.id}>
+                                            <button
+                                                disabled={OptionsMenu.disabled}
+                                                onClick={() => option.action()}
+                                                className={`
+                                                    text-center py-2 px-4 w-full rounded-lg outline-none bg-white/5 relative
+                                                    disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 ease-in-out hover:bg-white/10
+                                                    ${OptionsMenu.disabled ? "animate-pulse" : ""}
+                                                `}
+                                            >
+                                                {option.name}
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                <div className="grid gap-y-4 mb-6 mx-6">
+                                <button
+                                    disabled={OptionsMenu.disabled}
+                                    className={`
+                                        text-center  py-2 px-4 w-full rounded-lg outline-none bg-red-600 relative 
+                                        disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 ease-in-out hover:bg-red-500 
+                                    `}
+                                    onClick={() => setOptionsMenu(prevState => ({
+                                        ...prevState,
+                                        show: false
+                                    }))}
+                                >
+                                    Fermer
+                                </button>
+                                </div>
+                            </Dialog.Panel>
+                            </Transition.Child>
+                        </div>
+                        </div>
+                    </Dialog>
+                </Transition>
             </div>
         </div>
     )

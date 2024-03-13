@@ -29,12 +29,10 @@ const Home: React.FC = () => {
                 if (response.data.data && typeof window !== "undefined") {
                     console.log("===== personal data =====")
                     console.log(response.data.data)
-                    console.log("=========================")
                     localStorage.setItem("myself", JSON.stringify(response.data.data))
                     if (response.data.refresh_data && typeof window !== "undefined") {
                         console.log("===== refreshed data =====")
                         console.log(response.data.refresh_data)
-                        console.log("==========================")
                         localStorage.setItem("token", JSON.stringify(response.data.refresh_data))
                     }
                     router.replace("/feed")
@@ -43,7 +41,6 @@ const Home: React.FC = () => {
                 if (error.response.data.refresh_data && typeof window !== "undefined") {
                     console.log("===== refreshed data =====")
                     console.log(error.response.data.refresh_data)
-                    console.log("==========================")
                     localStorage.setItem("token", error.response.data.refresh_data)
                 }
                 console.log(error.response.data)

@@ -268,3 +268,12 @@ export interface refreshData {
 export interface FeedResponse {
     data: FeedType
 }
+
+export interface OptionsMenu {
+    show: boolean;
+    username?: string;
+    disabled: boolean;
+    takenAt?: string;
+    primary?: string;
+    secondary?: string;
+}
