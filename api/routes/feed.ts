@@ -69,7 +69,7 @@ export const getFeed = async (req: Request, res: Response, next: NextFunction) =
                     if (post.location) {
                         const url = `https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/reverseGeocode?location=${post.location.longitude},${post.location.latitude}&outSR=&forStorage=false&f=pjson`;
                         const response = await axios.get(url);
-                        if (post.location) {
+                        if (post.location && response.data) {
                             post.location.ReverseGeocode = response.data.address;
                         }
                     }
