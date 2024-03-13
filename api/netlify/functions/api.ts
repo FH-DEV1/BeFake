@@ -12,7 +12,7 @@ const router = Router();
 const corsOptions = {
   origin: 'https://bereal-fhdev.vercel.app',
 };
-api.use(cors(corsOptions));
+router.use(cors(corsOptions));
 
 router.get("/refresh", refreshToken, (req, res) => {
  res.json({
