@@ -123,7 +123,7 @@ const Feed: React.FC = () => {
                         token: token,
                         token_expiration: token_expiration,
                         refresh_token: refresh_token,
-                        userId: userId
+                        userid: userId
                     }
                 })
                 .then((response) => {

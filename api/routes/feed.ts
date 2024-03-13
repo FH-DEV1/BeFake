@@ -10,7 +10,7 @@ export const getFeed = async (req: Request, res: Response, next: NextFunction) =
         let token: string | undefined = req.headers.token as string;
         let token_expiration: string | undefined = req.headers.token_expiration as string;
         let refresh_token: string | undefined = req.headers.refresh_token as string;
-        let userId: string | undefined = req.headers.userId as string;
+        let userId: string | undefined = req.headers.userid as string;
 
         if (token && token_expiration && refresh_token && userId) {
             const now = Date.now();
