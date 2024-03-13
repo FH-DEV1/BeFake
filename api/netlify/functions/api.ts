@@ -12,7 +12,7 @@ const router = Router();
 
 api.use(cors({
  origin: 'https://bereal-fhdev.vercel.app',
- methods: 'GET',
+ methods: ['GET'],
 //  allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
