@@ -8,9 +8,9 @@ export const getFeed = async (req: Request, res: Response, next: NextFunction) =
     try {
         let refreshData: refreshDataType | undefined;
         let token: string | undefined = req.headers.token as string;
-        const tokenExpiration: string | undefined = req.headers.token_expiration as string;
-        const refreshToken: string | undefined = req.headers.refresh_token as string;
-        const userId: string | undefined = req.headers.userId as string;
+        let tokenExpiration: string | undefined = req.headers.token_expiration as string;
+        let refreshToken: string | undefined = req.headers.refresh_token as string;
+        let userId: string | undefined = req.headers.userId as string;
 
         if (token && tokenExpiration && refreshToken && userId) {
             const now = Date.now();
