@@ -45,7 +45,9 @@ export const getFeed = async (req: Request, res: Response, next: NextFunction) =
             }
         });
         
-        const responseData: FeedResponse = feedResponse.data;
+        const responseData: FeedResponse = feedResponse;
+
+        console.log(responseData)
 
         if (responseData.data.friendsPosts !== undefined) {
             responseData.data.friendsPosts.sort((a: FriendPost, b: FriendPost) => new Date(b.posts[0].takenAt).getTime() - new Date(a.posts[0].takenAt).getTime());
