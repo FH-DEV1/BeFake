@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { NextFunction, Request, Response } from 'express';
-import { FeedResponse, FriendPost, refreshDataType } from '../types/Types';
+import { FeedType, FriendPost, refreshDataType } from '../types/Types';
 
 const domain = process.env.DOMAIN
 
@@ -45,14 +45,12 @@ export const getFeed = async (req: Request, res: Response, next: NextFunction) =
             }
         });
         
-        const responseData: FeedResponse = feedResponse;
+        const responseData: FeedType = feedResponse.data;
 
-        console.log(responseData)
+        if (responseData.friendsPosts) {
+            responseData.friendsPosts.sort((a: FriendPost, b: FriendPost) => new Date(b.posts[0].takenAt).getTime() - new Date(a.posts[0].takenAt).getTime());
 
-        if (responseData.data.friendsPosts !== undefined) {
-            responseData.data.friendsPosts.sort((a: FriendPost, b: FriendPost) => new Date(b.posts[0].takenAt).getTime() - new Date(a.posts[0].takenAt).getTime());
-
-            await Promise.all(responseData.data.friendsPosts.map(async (userPosts) => {
+            await Promise.all(responseData.friendsPosts.map(async (userPosts) => {
                 userPosts.posts.sort((a, b) => new Date(b.takenAt).getTime() - new Date(a.takenAt).getTime());
 
                 await Promise.all(userPosts.posts.map(async (post) => {
@@ -71,7 +69,7 @@ export const getFeed = async (req: Request, res: Response, next: NextFunction) =
                     if (post.location) {
                         const url = `https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/reverseGeocode?location=${post.location.longitude},${post.location.latitude}&outSR=&forStorage=false&f=pjson`;
                         const response = await axios.get(url);
-                        if (post.location && response.data) {
+                        if (response.data) {
                             post.location.ReverseGeocode = response.data.address;
                         }
                     }

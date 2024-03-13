@@ -99,7 +99,7 @@ interface UserPosts {
     [postId: string]: PostType[];
 }
 
-interface FeedType {
+export interface FeedType {
     userPosts?: UserPosts;
     friendsPosts?: FriendPost[];
 }
@@ -110,10 +110,6 @@ export interface FriendPost {
     region: string;
     moment: Moment;
     posts: PostType[];
-}
-
-export interface FeedResponse {
-    data: FeedType
 }
 
 export interface refreshDataType {
