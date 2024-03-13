@@ -26,7 +26,11 @@ export const refreshToken = async (req: Request, res: Response, next: NextFuncti
             res.locals.token_expiration = Date.now() + response.data.expires_in * 1000;
             return next();
         } catch (error: any) {
-            return res.status(400).json({ error: error.response.data });
+            if (error.response.data) {
+                return res.status(400).json({ error: error.response.data });
+            } else {
+                return res.status(400).json({ error: error });
+            }
         }
     } else {
         return res.status(400).json({ error: "Could not refresh token : no refresh token was found was found in headers" });

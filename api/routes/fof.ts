@@ -49,6 +49,10 @@ export const getData = async (req: Request, res: Response, next: NextFunction) =
 
         return next();
     } catch (error: any) {
-        return res.status(400).json({ error: error.response.data });
+        if (error.response.data) {
+            return res.status(400).json({ error: error.response.data });
+        } else {
+            return res.status(400).json({ error: error });
+        }
     }
 };

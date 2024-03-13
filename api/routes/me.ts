@@ -39,6 +39,10 @@ export const getSelf = async (req: Request, res: Response, next: NextFunction) =
             return res.status(400).json({ error: `Error: token, token_expiration, refresh_token, or userId is undefined` });
         }
     } catch (error: any) {
-        return res.status(400).json({ error: error.response.data });
+        if (error.response.data) {
+            return res.status(400).json({ error: error.response.data });
+        } else {
+            return res.status(400).json({ error: error });
+        }
     }
 };
