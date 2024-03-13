@@ -30,6 +30,7 @@ export const getData = async (req: Request, res: Response, next: NextFunction) =
         }
 
         let nextPage: string | null = 'https://mobile.bereal.com/api/feeds/friends-of-friends';
+        
         while (nextPage) {
             const response: any = await axios.get(nextPage, {
                 headers: {

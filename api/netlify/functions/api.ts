@@ -11,8 +11,7 @@ const api = express();
 const router = Router();
 
 api.use(cors({
- origin: 'https://bereal-fhdev.vercel.app',
- methods: ['GET'],
+  origin: '/^https:\/\/bereal-fhdev\.vercel\.app\//'
 }));
 
 router.get("/refresh", refreshToken, (req, res) => {
