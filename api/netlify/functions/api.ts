@@ -9,10 +9,10 @@ import { getSelf } from "../../routes/me.ts";
 
 const api = express();
 const router = Router();
-
-api.use(cors({
-  origin: '/^https:\/\/bereal-fhdev\.vercel\.app\//'
-}));
+const corsOptions = {
+  origin: 'https://bereal-fhdev.vercel.app',
+};
+api.use(cors(corsOptions));
 
 router.get("/refresh", refreshToken, (req, res) => {
  res.json({
