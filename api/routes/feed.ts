@@ -67,7 +67,12 @@ export const getFeed = async (req: Request, res: Response, next: NextFunction) =
                     }
                 }));
             }));
-            res.locals.response = {feed: responseData, refreshData: refreshData}
+            
+            if (refreshData) {
+                res.locals.response = {feed: responseData, refreshData: refreshData}
+            } else {
+                res.locals.response = {feed: responseData}
+            }
 
             return next();
         }

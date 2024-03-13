@@ -46,7 +46,11 @@ export const getData = async (req: Request, res: Response, next: NextFunction) =
             nextPage = response.data.next ? `https://mobile.bereal.com/api/feeds/friends-of-friends?page=${response.data.next}` : null;
         }
 
-        res.locals.response = {data: data, refresh_data: refreshData}
+        if (refreshData) {
+            res.locals.response = {data: data, refresh_data: refreshData}
+        } else {
+            res.locals.response = {data: data}
+        }
 
         return next();
     } catch (error: any) {

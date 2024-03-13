@@ -30,8 +30,11 @@ export const getSelf = async (req: Request, res: Response, next: NextFunction) =
                     'bereal-device-id': '937v3jb942b0h6u9'
                 }
             });
-
-            res.locals.reponse = { data: response.data, refresh_data: refreshData }
+            if (refreshData) {
+                res.locals.reponse = { data: response.data, refresh_data: refreshData }
+            } else {
+                res.locals.reponse = { data: response.data }
+            }
 
             return next();
 
