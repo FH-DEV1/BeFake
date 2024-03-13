@@ -6,6 +6,7 @@ import { verifyOTP } from '../../routes/verifyOTP.ts';
 import { getFeed } from "../../routes/feed.ts";
 import { getData } from "../../routes/fof.ts";
 import { getSelf } from "../../routes/me.ts";
+import { getPinnedMemories } from "../../routes/pinnedMemories.ts";
 
 const api = express();
 const router = Router();
@@ -41,6 +42,10 @@ router.get("/fof", getData, (req, res) => {
 });
 
 router.get("/me", getSelf, (req, res) => {
+  res.json(res.locals.response);
+});
+
+router.get("/pinned-memories", getPinnedMemories, (req, res) => {
   res.json(res.locals.response);
 });
 

@@ -29,7 +29,7 @@ const MyProfile: React.FC = () => {
         setLoading(true)
 
         if (token && token_expiration && refresh_token && userId) {
-            axios.get("/api/pinned-memories", {
+            axios.get(`${domain}/api/pinned-memories`, {
                 headers: {
                     token: token,
                     token_expiration: token_expiration,
