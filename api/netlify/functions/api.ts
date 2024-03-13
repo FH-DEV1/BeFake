@@ -12,7 +12,7 @@ import { sendCode } from "../../routes/sendCode.ts";
 const api = express();
 const router = Router();
 const corsOptions = {
-  origin: ['https://bereal-fhdev.vercel.app', 'http://localhost:3000'],
+  origin: ['https://bereal-fhdev.vercel.app', 'https://befake.website', 'http://localhost:3000'],
 };
 router.use(cors(corsOptions));
 
