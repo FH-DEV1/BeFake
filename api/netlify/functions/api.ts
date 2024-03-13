@@ -10,7 +10,7 @@ import { getSelf } from "../../routes/me.ts";
 const api = express();
 const router = Router();
 const corsOptions = {
-  origin: 'https://bereal-fhdev.vercel.app',
+  origin: ['https://bereal-fhdev.vercel.app', 'http://localhost:3000'],
 };
 router.use(cors(corsOptions));
 

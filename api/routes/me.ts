@@ -18,7 +18,6 @@ export const getSelf = async (req: Request, res: Response, next: NextFunction) =
                         refresh_token: refresh_token
                     }
                 });
-                console.log(response)
                 refreshData = response.data;
                 token = response.data.token;
             }
