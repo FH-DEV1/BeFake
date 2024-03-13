@@ -1,8 +1,8 @@
-import { NextResponse } from 'next/server';
+import { Request, Response, NextFunction } from 'express';
 import axios from 'axios';
 
-export const GET = async (req: Request) => {
-    let phone_number: string|null = req.headers.get("phone_number");
+export const sendCode = async (req: Request, res: Response, next: NextFunction) => {
+    let phone_number: string | undefined = req.headers.phone_number as string;
 
     return axios.post("https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyClient?key=AIzaSyDwjfEeparokD7sXPVQli9NsTuhT6fJ6iA", { 
         "appToken": "54F80A258C35A916B38A3AD83CA5DDD48A44BFE2461F90831E0F97EBA4BB2EC7"
@@ -36,7 +36,8 @@ export const GET = async (req: Request) => {
                 "x-firebase-gmpid": "1:405768487586:ios:28c4df089ca92b89",
             }
         }).then(otp_response => {
-            return NextResponse.json({otp_session: otp_response.data.sessionInfo, login_type: "firebase", phone_number: phone_number}, {status: 200});
+            res.locals.response = {otp_session: otp_response.data.sessionInfo, login_type: "firebase", phone_number: phone_number}
+            return next()
         }).catch(async () => {
             return axios.post(
                 "https://auth.bereal.team/api/vonage/request-code",
@@ -55,9 +56,10 @@ export const GET = async (req: Request) => {
                     }
                 }
             ).then(vonage_response => {
-                return NextResponse.json({otp_session: vonage_response.data.vonageRequestId, login_type: "vonage", phone_number: phone_number}, {status: 200});
+                res.locals.response = {otp_session: vonage_response.data.vonageRequestId, login_type: "vonage", phone_number: phone_number}
+                return next()
             }).catch(() => {
-                return NextResponse.json({error: "No api responded successfully"}, {status: 400});
+                return res.status(400).json({ error: "No api responded successfully" });
             })
         })
     }).catch(async () => {
@@ -78,9 +80,10 @@ export const GET = async (req: Request) => {
                 }
             }
         ).then(vonage_response => {
-            return NextResponse.json({otp_session: vonage_response.data.vonageRequestId, login_type: "vonage", phone_number: phone_number}, {status: 200});
+            res.locals.response = {otp_session: vonage_response.data.vonageRequestId, login_type: "vonage", phone_number: phone_number}
+            return next()
         }).catch(() => {
-            return NextResponse.json({error: "No api responded successfully"}, {status: 400});
+            return res.status(400).json({ error: "No api responded successfully" });
         })
     })
 }

@@ -5,6 +5,7 @@ import { ChangeEvent, useEffect, useState } from 'react';
 import { toast } from "react-toastify";
 
 const OTPValidate: React.FC = () => {
+    const domain = process.env.NEXT_PUBLIC_DOMAIN
     const [OTPcode, setOTPcode] = useState("")
     const [loading, setLoading] = useState(false)
     const ls = typeof window !== "undefined" ? localStorage.getItem('OTPSession') : null
@@ -21,7 +22,7 @@ const OTPValidate: React.FC = () => {
     const verifyOTP = () => {
         setLoading(true)
         if (parsedls.otp_session && parsedls.login_type) {
-            axios.get("https://befakeapi.netlify.app/api/verify-otp", {
+            axios.get(`${domain}/api/verify-otp`, {
                 headers: {
                     otp_code: OTPcode,
                     login_type: parsedls.login_type,

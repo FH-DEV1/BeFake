@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 
 
 const Login: React.FC = () => {
+    const domain = process.env.NEXT_PUBLIC_DOMAIN
     const router = useRouter()
     const [phone, setPhone] = useState("")
     const [loading, setLoading] = useState(false)
@@ -21,7 +22,7 @@ const Login: React.FC = () => {
 
     const sendOTP = () => {
         setLoading(true)
-        axios.get(`/api/login/send-code`, {
+        axios.get(`${domain}/api/send-code`, {
             headers: {
                 phone_number: phone,
             }

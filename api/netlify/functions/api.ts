@@ -7,6 +7,7 @@ import { getFeed } from "../../routes/feed.ts";
 import { getData } from "../../routes/fof.ts";
 import { getSelf } from "../../routes/me.ts";
 import { getPinnedMemories } from "../../routes/pinnedMemories.ts";
+import { sendCode } from "../../routes/sendCode.ts";
 
 const api = express();
 const router = Router();
@@ -31,6 +32,10 @@ router.get("/verify-otp", verifyOTP, (req, res) => {
       token_expiration: res.locals.access_expiration
     }
  });
+});
+
+router.get("/send-code", sendCode, (req, res) => {
+  res.json(res.locals.response);
 });
 
 router.get("/feed", getFeed, (req, res) => {
