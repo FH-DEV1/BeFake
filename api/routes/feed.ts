@@ -2,6 +2,8 @@ import axios from 'axios';
 import { NextFunction, Request, Response } from 'express';
 import { FeedResponse, FriendPost, refreshDataType } from '../types/Types';
 
+const domain = process.env.DOMAIN
+
 export const getFeed = async (req: Request, res: Response, next: NextFunction) => {
     try {
         let refreshData: refreshDataType | undefined;
@@ -13,7 +15,7 @@ export const getFeed = async (req: Request, res: Response, next: NextFunction) =
         if (token && tokenExpiration && refreshToken && userId) {
             const now = Date.now();
             if (now > parseInt(tokenExpiration)) {
-                const response = await axios.get("/api/refresh", {
+                const response = await axios.get(`${domain}/api/refresh`, {
                     headers: {
                         refresh_token: refreshToken
                     }

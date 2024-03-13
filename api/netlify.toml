@@ -7,8 +7,3 @@
  from = "/api/*"
  status = 200
  to = "/.netlify/functions/api/:splat"
-
-[[headers]]
- for = "/*"
- [headers.values]
-    Access-Control-Allow-Origin = "https://bereal-fhdev.vercel.app"

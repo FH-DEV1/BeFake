@@ -13,7 +13,6 @@ const router = Router();
 api.use(cors({
  origin: 'https://bereal-fhdev.vercel.app',
  methods: ['GET'],
-//  allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
 router.get("/refresh", refreshToken, (req, res) => {

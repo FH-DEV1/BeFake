@@ -2,6 +2,8 @@ import axios from 'axios';
 import { Request, Response, NextFunction } from 'express';
 import { refreshDataType } from '../types/Types';
 
+const domain = process.env.DOMAIN
+
 export const getData = async (req: Request, res: Response, next: NextFunction) => {
     try {
         let token: string | null = req.headers.token as string;
@@ -14,8 +16,7 @@ export const getData = async (req: Request, res: Response, next: NextFunction) =
             let now = Date.now();
    
             if (now > parseInt(tokenExpiration)) {
-                let url = `${process.env.BASE_URL === 'development' ? process.env.DEV : ''}/api/refresh`;
-                const response = await axios.get(url, {
+                const response = await axios.get(`${domain}/api/refresh`, {
                     headers: {
                         refresh_token: refreshToken
                     }

@@ -2,6 +2,8 @@ import { Request, Response, NextFunction } from 'express';
 import axios from 'axios';
 import { refreshDataType } from '../types/Types';
 
+const domain = process.env.DOMAIN
+
 export const getSelf = async (req: Request, res: Response, next: NextFunction) => {
     let refresh_token: string | undefined = req.headers.refresh_token as string;
     let token: string | undefined = req.headers.token as string;
@@ -11,7 +13,7 @@ export const getSelf = async (req: Request, res: Response, next: NextFunction) =
         if (token && refresh_token && token_expiration) {
             const now = Date.now();
             if (now > parseInt(token_expiration)) {
-                const response = await axios.get("/api/refresh", {
+                const response = await axios.get(`${domain}/api/refresh`, {
                     headers: {
                         refresh_token: refresh_token
                     }
@@ -30,7 +32,7 @@ export const getSelf = async (req: Request, res: Response, next: NextFunction) =
             });
 
             res.locals.reponse = { data: response.data, refresh_data: refreshData }
-            
+
             return next();
 
         } else {
