@@ -13,6 +13,7 @@ import axios from "axios";
 import { Dialog, Transition } from "@headlessui/react";
 
 const Feed: React.FC = () => {
+    const domain = process.env.NEXT_PUBLIC_DOMAIN
     const { feed, setFeed } = useFeedState();
     const searchParams = useSearchParams()
     const [loading, setLoading] = useState<boolean>(true)
@@ -117,7 +118,7 @@ const Feed: React.FC = () => {
             let userId: string|null = parsedLSUser.id
 
             if (token && token_expiration && refresh_token && userId) {
-                axios.get("/api/feed", {
+                axios.get(`${domain}/api/feed`, {
                     headers: {
                         token: token,
                         token_expiration: token_expiration,

@@ -3,6 +3,9 @@ import serverless from "serverless-http";
 import cors from 'cors';
 import { refreshToken } from '../../routes/refresh.ts';
 import { verifyOTP } from '../../routes/verifyOTP.ts';
+import { getFeed } from "../../routes/feed.ts";
+import { getData } from "../../routes/fof.ts";
+import { getSelf } from "../../routes/me.ts";
 
 const api = express();
 const router = Router();
@@ -29,6 +32,18 @@ router.get("/verify-otp", verifyOTP, (req, res) => {
       token_expiration: res.locals.access_expiration
     }
  });
+});
+
+router.get("/feed", getFeed, (req, res) => {
+  res.json(res.locals.response);
+});
+
+router.get("/fof", getData, (req, res) => {
+  res.json(res.locals.response);
+});
+
+router.get("/me", getSelf, (req, res) => {
+  res.json(res.locals.response);
 });
 
 api.use("/api/", router);

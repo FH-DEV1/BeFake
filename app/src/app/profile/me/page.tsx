@@ -11,6 +11,7 @@ import "./memory-button.css";
 import axios from "axios";
 
 const MyProfile: React.FC = () => {
+    const domain = process.env.NEXT_PUBLIC_DOMAIN
     const router = useRouter()
     const [MyInfo, setMyInfo] = useState<ProfileData>()
     const [loading, setLoading] = useState(false)

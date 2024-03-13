@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { toast } from "react-toastify";
 
 const Home: React.FC = () => {
+    const domain = process.env.NEXT_PUBLIC_DOMAIN
     const router = useRouter()
     const version = typeof window !== "undefined" ? localStorage.getItem('v') : null
 
@@ -19,7 +20,7 @@ const Home: React.FC = () => {
         let token_expiration: string|null = parsedLSToken.token_expiration
         let refresh_token: string|null = parsedLSToken.refresh_token
         if (token) {
-            axios.get("/api/me", {
+            axios.get(`${domain}/api/me`, {
                 headers: {
                     token: token,
                     token_expiration: token_expiration,

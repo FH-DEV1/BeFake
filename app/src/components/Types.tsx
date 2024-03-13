@@ -215,7 +215,7 @@ export interface ReverseGeocodeData {
     PostalExt: string;
     CntryName: string;
     CountryCode: string;
-   }
+}
 
 export interface PostProps {
     post: {

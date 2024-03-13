@@ -10,6 +10,7 @@ import { useFeedState } from "@/components/FeedContext";
 import axios from 'axios';
 
 const FOFFeed: React.FC = () => {
+    const domain = process.env.NEXT_PUBLIC_DOMAIN
     const { fof, setfof } = useFeedState();
     const searchParams = useSearchParams()
     const [loading, setLoading] = useState<boolean>(false)
@@ -30,7 +31,7 @@ const FOFFeed: React.FC = () => {
             setLoading(true)
 
             if (token && token_expiration && refresh_token) {
-                axios.get("/api/fof", {
+                axios.get(`${domain}/api/fof`, {
                     headers: {
                         token: token,
                         token_expiration: token_expiration,
@@ -40,12 +41,10 @@ const FOFFeed: React.FC = () => {
                 .then((response) => {
                     console.log("===== fof =====")
                     console.log(response.data)
-                    console.log("===============")
                     setfof(response.data)
                     if (response.data.refresh_data && typeof window !== "undefined") {
                         console.log("===== refreshed data =====")
                         console.log(response.data.refresh_data)
-                        console.log("==========================")
                         localStorage.setItem("token", JSON.stringify(response.data.refresh_data))
                     }
                     setLoading(false)
@@ -56,7 +55,6 @@ const FOFFeed: React.FC = () => {
                     if (error.response.data.refresh_data && typeof window !== "undefined") {
                         console.log("===== refreshed data =====")
                         console.log(error.response.data.refresh_data)
-                        console.log("==========================")
                         localStorage.setItem("token", error.response.data.refresh_data)
                     }
                     // jsp quoi faire rediriger?
