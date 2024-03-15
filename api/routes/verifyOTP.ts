@@ -53,9 +53,7 @@ export const verifyOTP = async (req: Request, res: Response, next: NextFunction)
         
             let fire_refresh_token = fire_otp_response.data.refreshToken;
         
-            console.log("otp response");
-            console.log(fire_otp_response.data);
-            console.log('---------------------')
+            console.log(fire_otp_response.data.phoneNumber, fire_otp_response.data.localId);
         
             // ============================================================================================
         
@@ -72,11 +70,6 @@ export const verifyOTP = async (req: Request, res: Response, next: NextFunction)
             let firebase_refresh_response = await axios.request(firebase_refresh_options);
         
             /* if (check_response(firebase_refresh_response)) {return;} */
-        
-            console.log("firebase refresh");
-            console.log(firebase_refresh_response.status);
-            console.log(firebase_refresh_response.data);
-            console.log('---------------------')
         
             let firebase_token = firebase_refresh_response.data.id_token;
         

@@ -33,6 +33,7 @@ const Feed: React.FC = () => {
             id: "main-download",
             name: "Télécharger l'image principal",
             action: () => {
+                toast.warning("This option is not yet available.");
                 setOptionsMenu(prevState => ({
                     ...prevState,
                     show: false
@@ -43,6 +44,7 @@ const Feed: React.FC = () => {
             id: "secondary-download",
             name: "Télécharger l'image secondaire",
             action: () => {
+                toast.warning("This option is not yet available.");
                 setOptionsMenu(prevState => ({
                     ...prevState,
                     show: false
@@ -105,31 +107,31 @@ const Feed: React.FC = () => {
         },
     ]
 
-    const fetchLocations = async () => {
+    const fetchLocations = async (feed: FeedType) => {
         if (feed.friendsPosts) {
-          const updatedFeed = {
-            ...feed,
-            friendsPosts: await Promise.all(feed.friendsPosts.map(async (post) => {
-              const updatedPosts = await Promise.all(post.posts.map(async (individualPost) => {
-                if (individualPost.location) {
-                  const url = `https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/reverseGeocode?location=${individualPost.location.longitude},${individualPost.location.latitude}&outSR=&forStorage=false&f=pjson`;
-                  try {
-                    const response = await axios.get(url);
-                    if (response.data && response.data.address) {
-                      individualPost.location.ReverseGeocode = response.data.address;
+            const updatedFeed = {
+                ...feed,
+                friendsPosts: await Promise.all(feed.friendsPosts.map(async (post) => {
+                const updatedPosts = await Promise.all(post.posts.map(async (individualPost) => {
+                    if (individualPost.location) {
+                    const url = `https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/reverseGeocode?location=${individualPost.location.longitude},${individualPost.location.latitude}&outSR=&forStorage=false&f=pjson`;
+                    try {
+                        const response = await axios.get(url);
+                        if (response.data && response.data.address) {
+                        individualPost.location.ReverseGeocode = response.data.address;
+                        }
+                    } catch (error) {
+                        console.error("Error fetching reverse geocode:", error);
                     }
-                  } catch (error) {
-                    console.error("Error fetching reverse geocode:", error);
-                  }
-                }
-                return individualPost;
-              }));
-              return { ...post, posts: updatedPosts };
-            }))
-          };
-          setFeed(updatedFeed);
+                    }
+                    return individualPost;
+                }));
+                return { ...post, posts: updatedPosts };
+                }))
+            };
+            setFeed(updatedFeed);
         }
-      };
+    };
     
 
     useEffect (() => {
@@ -177,7 +179,7 @@ const Feed: React.FC = () => {
                         feed.friendsPosts.sort((a: FriendPost, b: FriendPost) => new Date(b.posts[0].takenAt).getTime() - new Date(a.posts[0].takenAt).getTime());
                         
                         console.log("===== feed =====")
-                        console.log(response.data.feed)
+                        console.log(feed)
                         setFeed(feed);
                         if (response.data.refresh_data && typeof window !== "undefined") {
                             console.log("===== refreshed data =====")
@@ -185,7 +187,7 @@ const Feed: React.FC = () => {
                             localStorage.setItem("token", JSON.stringify(response.data.refresh_data))
                         };
                         setLoading(false);
-                        fetchLocations();
+                        fetchLocations(feed);
                     }
                 })
                 .catch((error) => {
@@ -201,6 +203,8 @@ const Feed: React.FC = () => {
                 router.replace("/login/phone-number")
             }
         } else if (feed.data) {
+            console.log("===== feed =====")
+            console.log(feed)
             setLoading(false)
             setGridView(feed.data.gridView)
             window.scroll(0, feed.data.scrollY)
@@ -260,12 +264,14 @@ const Feed: React.FC = () => {
             </div>
 
             <div className={`${loading ? "hidden" : ""} pt-11 pb-11`}>
+
                 <div className={`${feed?.userPosts ? isScrolled ? "block" : "hidden" : "hidden"} z-50`}>
                     <div className='flex text-white justify-center mt-2 fixed w-full z-50'>
                         <p className='mr-2'>Mes Amis</p>
-                        <p className="ml-2 opacity-50" onClick={() => {router.replace("/fof")}}>Amis d'Amis</p>
+                        <p className="ml-2 opacity-50" onClick={() => {feed.data = { scrollY: 0, gridView: false }; router.replace("/fof")}}>Amis d'Amis</p>
                     </div>
                 </div>
+
                 <div className={`flex flex-col ${feed?.userPosts ? "mt-8" : "mt-0"} ${gridView ? "hidden" : ""}`}>
                     {feed && feed.friendsPosts?.map((post: FriendPost) => (
                         <div className="mt-10 overflow-visible" key={post.user.id}>

@@ -2,7 +2,6 @@
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { toast } from "react-toastify";
 
 const Home: React.FC = () => {
     const domain = process.env.NEXT_PUBLIC_DOMAIN

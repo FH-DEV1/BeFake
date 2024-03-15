@@ -8,6 +8,7 @@ import Post from "@/components/Post";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useFeedState } from "@/components/FeedContext";
 import axios from 'axios';
+import { FOFfeedType } from "@/components/Types";
 
 const FOFFeed: React.FC = () => {
     const domain = process.env.NEXT_PUBLIC_DOMAIN
@@ -20,6 +21,9 @@ const FOFFeed: React.FC = () => {
     const [prevScrollPos, setPrevScrollPos] = useState<number>(0);
     const [swipeable, setSwipeable] = useState(false);
     const router = useRouter()
+    let lsUser = typeof window !== "undefined" ? localStorage.getItem('myself') : null
+    let parsedLSUser = JSON.parse(lsUser !== null ? lsUser : "{}")
+    let userId: string|null = parsedLSUser.id
 
     useEffect (() => {
         if (!fof.data) {
@@ -39,15 +43,33 @@ const FOFFeed: React.FC = () => {
                     }
                 })
                 .then((response) => {
-                    console.log("===== fof =====")
-                    console.log(response.data)
-                    setfof(response.data)
-                    if (response.data.refresh_data && typeof window !== "undefined") {
-                        console.log("===== refreshed data =====")
-                        console.log(response.data.refresh_data)
-                        localStorage.setItem("token", JSON.stringify(response.data.refresh_data))
+                    let feed: FOFfeedType = response.data
+                    if (feed.data) {
+                        feed.data.forEach((post) => {
+                            post.realmojis.sample.sort((a, b) => {
+                                const dateA = new Date(a.postedAt).getTime();
+                                const dateB = new Date(b.postedAt).getTime();
+                                if (a.user.id === userId) {
+                                    return -1;
+                                }
+                                else if (b.user.id === userId) {
+                                    return 1;
+                                }
+                                else {
+                                    return dateB - dateA;
+                                }
+                            });
+                        });
+                        console.log("===== fof =====")
+                        console.log(feed)
+                        setfof(feed)
+                        if (response.data.refresh_data && typeof window !== "undefined") {
+                            console.log("===== refreshed data =====")
+                            console.log(response.data.refresh_data)
+                            localStorage.setItem("token", JSON.stringify(response.data.refresh_data))
+                        }
+                        setLoading(false)
                     }
-                    setLoading(false)
                 })
                 .catch((error) => {
                     if (error.response.data.refresh_data && typeof window !== "undefined") {
@@ -62,6 +84,8 @@ const FOFFeed: React.FC = () => {
                 router.replace("/login/phone-number")
             }  
         } else if (fof.params) {
+            console.log("===== fof =====")
+            console.log(fof)
             setLoading(false)
             setGridView(fof.params.gridView)
             window.scroll(0, fof.params.scrollY)
