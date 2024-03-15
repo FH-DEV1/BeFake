@@ -40,9 +40,11 @@ const MyProfile: React.FC = () => {
                 setMyInfo({data: parsedLSUser, pinnedMemories: PMresult.data.pinned.pinnedMemories})
                 setLoading(false)
             })
-            .catch(() => {toast.error("Erreur lors du chargement du profil.");setLoading(false)});
+            .catch(() => {
+                router.replace("/error")
+            });
         } else {
-            toast.error("Erreur lors de la recuperation du token ou des info perso")
+            router.replace("/error")
         }
 
     }, []);

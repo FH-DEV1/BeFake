@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { NextFunction, Request, Response } from 'express';
-import { FeedType, FriendPost, refreshDataType } from '../types/Types';
+import { refreshDataType } from '../types/Types';
 
 const domain = process.env.DOMAIN
 
@@ -44,42 +44,13 @@ export const getFeed = async (req: Request, res: Response, next: NextFunction) =
                 'bereal-device-id': '937v3jb942b0h6u9'
             }
         });
-        
-        const responseData: FeedType = feedResponse.data;
 
-        if (responseData.friendsPosts) {
-            responseData.friendsPosts.sort((a: FriendPost, b: FriendPost) => new Date(b.posts[0].takenAt).getTime() - new Date(a.posts[0].takenAt).getTime());
+        if (feedResponse.data.friendsPosts) {
 
-            await Promise.all(responseData.friendsPosts.map(async (userPosts) => {
-                userPosts.posts.sort((a, b) => new Date(b.takenAt).getTime() - new Date(a.takenAt).getTime());
-
-                await Promise.all(userPosts.posts.map(async (post) => {
-                    post.realMojis.sort((a, b) => {
-                        const dateA = new Date(a.postedAt).getTime();
-                        const dateB = new Date(b.postedAt).getTime();
-                        if (a.user.id === userId) {
-                            return -1;
-                        } else if (b.user.id === userId) {
-                            return 1;
-                        } else {
-                            return dateB - dateA;
-                        }
-                    });
-
-                    if (post.location) {
-                        const url = `https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/reverseGeocode?location=${post.location.longitude},${post.location.latitude}&outSR=&forStorage=false&f=pjson`;
-                        const response = await axios.get(url);
-                        if (response.data) {
-                            post.location.ReverseGeocode = response.data.address;
-                        }
-                    }
-                }));
-            }));
-            
             if (refreshData) {
-                res.locals.response = {feed: responseData, refreshData: refreshData}
+                res.locals.response = {feed: feedResponse.data, refreshData: refreshData}
             } else {
-                res.locals.response = {feed: responseData}
+                res.locals.response = {feed: feedResponse.data}
             }
 
             return next();

@@ -50,14 +50,12 @@ const FOFFeed: React.FC = () => {
                     setLoading(false)
                 })
                 .catch((error) => {
-                    console.log(`Erreur : ${error.response.data.error}`)
-                    toast.error("Une erreur c'est produite, regarder la console du navigateur pour plus d'info")
                     if (error.response.data.refresh_data && typeof window !== "undefined") {
                         console.log("===== refreshed data =====")
                         console.log(error.response.data.refresh_data)
                         localStorage.setItem("token", error.response.data.refresh_data)
                     }
-                    // jsp quoi faire rediriger?
+                    router.replace("/error")
                 })
             } else {
                 console.log("no token in ls")

@@ -44,8 +44,7 @@ const Home: React.FC = () => {
                     console.log(error.response.data.refresh_data)
                     localStorage.setItem("token", error.response.data.refresh_data)
                 }
-                console.log(error.response.data)
-                toast.error(error.response.data)
+                router.replace("/error")
             })
         } else {
             console.log("no token was found in ls")

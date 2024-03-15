@@ -1,6 +1,6 @@
 "use client"
 import SwipeableViews from "react-swipeable-views";
-import { FriendPost, Index, OptionsMenu, PostType, RealMojis } from '@/components/Types';
+import { FeedType, FriendPost, Index, OptionsMenu, PostType, RealMojis } from '@/components/Types';
 import { Fragment, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { AddAPhoto, PersonRounded } from "@mui/icons-material";
@@ -105,6 +105,33 @@ const Feed: React.FC = () => {
         },
     ]
 
+    const fetchLocations = async () => {
+        if (feed.friendsPosts) {
+          const updatedFeed = {
+            ...feed,
+            friendsPosts: await Promise.all(feed.friendsPosts.map(async (post) => {
+              const updatedPosts = await Promise.all(post.posts.map(async (individualPost) => {
+                if (individualPost.location) {
+                  const url = `https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/reverseGeocode?location=${individualPost.location.longitude},${individualPost.location.latitude}&outSR=&forStorage=false&f=pjson`;
+                  try {
+                    const response = await axios.get(url);
+                    if (response.data && response.data.address) {
+                      individualPost.location.ReverseGeocode = response.data.address;
+                    }
+                  } catch (error) {
+                    console.error("Error fetching reverse geocode:", error);
+                  }
+                }
+                return individualPost;
+              }));
+              return { ...post, posts: updatedPosts };
+            }))
+          };
+          setFeed(updatedFeed);
+        }
+      };
+    
+
     useEffect (() => {
         if (!feed.friendsPosts) {
             setLoading(true)
@@ -127,25 +154,47 @@ const Feed: React.FC = () => {
                     }
                 })
                 .then((response) => {
-                    console.log("===== feed =====")
-                    console.log(response.data.feed)
-                    setFeed(response.data.feed)
-                    if (response.data.refresh_data && typeof window !== "undefined") {
-                        console.log("===== refreshed data =====")
-                        console.log(response.data.refresh_data)
-                        localStorage.setItem("token", JSON.stringify(response.data.refresh_data))
+                    let feed: FeedType = response.data.feed
+                    if (feed.friendsPosts) {
+                        feed.friendsPosts.forEach((post: FriendPost) => {
+                            post.posts.sort((a, b) => new Date(b.takenAt).getTime() - new Date(a.takenAt).getTime());
+                            post.posts.forEach((post: PostType) => {
+                                post.realMojis.sort((a, b) => {
+                                    const dateA = new Date(a.postedAt).getTime();
+                                    const dateB = new Date(b.postedAt).getTime();
+                                    if (a.user.id === userId) {
+                                        return -1;
+                                    }
+                                    else if (b.user.id === userId) {
+                                        return 1;
+                                    }
+                                    else {
+                                        return dateB - dateA;
+                                    }
+                                });
+                            });
+                        });
+                        feed.friendsPosts.sort((a: FriendPost, b: FriendPost) => new Date(b.posts[0].takenAt).getTime() - new Date(a.posts[0].takenAt).getTime());
+                        
+                        console.log("===== feed =====")
+                        console.log(response.data.feed)
+                        setFeed(feed);
+                        if (response.data.refresh_data && typeof window !== "undefined") {
+                            console.log("===== refreshed data =====")
+                            console.log(response.data.refresh_data)
+                            localStorage.setItem("token", JSON.stringify(response.data.refresh_data))
+                        };
+                        setLoading(false);
+                        fetchLocations();
                     }
-                    setLoading(false)
                 })
                 .catch((error) => {
-                    console.log(`Erreur : ${error.response.data.error}`)
-                    toast.error("Une erreur c'est produite, regarder la console du navigateur pour plus d'info")
                     if (error.response.data.refresh_data && typeof window !== "undefined") {
                         console.log("===== refreshed data =====")
                         console.log(error.response.data.refresh_data)
                         localStorage.setItem("token", error.response.data.refresh_data)
                     }
-                    // jsp quoi faire rediriger?
+                    router.replace("/error")
                 })
             } else {
                 console.log("no token in ls")
@@ -190,6 +239,7 @@ const Feed: React.FC = () => {
                     <PersonRounded className='h-8 w-8 mr-2' />
                 </div>
             </div>
+
             <div className={`${loading ? "block" : "hidden"} pt-28`}>
                 <div className="animate-pulse flex flex-col">
                     <div className="flex">
@@ -208,6 +258,7 @@ const Feed: React.FC = () => {
                     <div className="rounded bg-slate-900 mt-5 ml-2 h-2 w-56"></div>
                 </div>
             </div>
+
             <div className={`${loading ? "hidden" : ""} pt-11 pb-11`}>
                 <div className={`${feed?.userPosts ? isScrolled ? "block" : "hidden" : "hidden"} z-50`}>
                     <div className='flex text-white justify-center mt-2 fixed w-full z-50'>

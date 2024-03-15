@@ -32,7 +32,6 @@ const OTPValidate: React.FC = () => {
                 if (typeof window !== "undefined") {
                     console.log("===== refreshed data =====")
                     console.log(response.data.refresh_data)
-                    console.log("==========================")
                     localStorage.removeItem('OTPSession');
                     localStorage.setItem("token", JSON.stringify(response.data.refresh_data))
                     localStorage.setItem("v", process.env.NEXT_PUBLIC_VERSION || "")

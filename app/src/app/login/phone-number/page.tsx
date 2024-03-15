@@ -30,7 +30,6 @@ const Login: React.FC = () => {
             setLoading(false)
             console.log("===== otp response =====")
             console.log(response.data)
-            console.log("========================")
             if (typeof window !== "undefined") {
                 localStorage.setItem('OTPSession', JSON.stringify(response.data));
                 router.replace("/login/verify-otp")
