@@ -8,6 +8,7 @@ import { getData } from "../../routes/fof.ts";
 import { getSelf } from "../../routes/me.ts";
 import { getPinnedMemories } from "../../routes/pinnedMemories.ts";
 import { sendCode } from "../../routes/sendCode.ts";
+import { profiles } from '../../routes/profiles.ts';
 
 const api = express();
 const router = Router();
@@ -51,6 +52,10 @@ router.get("/me", getSelf, (req, res) => {
 });
 
 router.get("/pinned-memories", getPinnedMemories, (req, res) => {
+  res.json(res.locals.response);
+});
+
+router.get("/profiles", profiles, (req, res) => {
   res.json(res.locals.response);
 });
 
