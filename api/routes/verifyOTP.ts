@@ -8,7 +8,7 @@ export const verifyOTP = async (req: Request, res: Response, next: NextFunction)
 
     function check_response(response: { status: number; data: any; }) {
         if (response.status > 350 || response.status == 16) {
-            console.log("error | ", response);
+            // console.log("error | ", response);
             return res.status(400).json({ error: response });
         }
         return false;
@@ -99,9 +99,9 @@ export const verifyOTP = async (req: Request, res: Response, next: NextFunction)
         
             }
             catch (error: any) {
-                console.log("FAILURE")
-                console.log(error);
-                console.log('---------------------')
+                // console.log("FAILURE")
+                // console.log(error);
+                // console.log('---------------------')
         
                 let error_message;
         
@@ -110,7 +110,7 @@ export const verifyOTP = async (req: Request, res: Response, next: NextFunction)
                 } else {
                     error_message = error.toString();
                 }
-                console.log(error_message);
+                // console.log(error_message);
                 return res.status(400).json({ error: error_message });
             }
     } else if (login_type == "vonage" && otp_session && otp_code) {
@@ -120,12 +120,12 @@ export const verifyOTP = async (req: Request, res: Response, next: NextFunction)
         let otp = otp_code;
         let vonage_request_id = otp_session;
     
-        console.log('=====================')
-        console.log("login process");
-        console.log(req.body);
-        console.log(otp);
-        console.log(vonage_request_id);
-        console.log('---------------------')
+        // console.log('=====================')
+        // console.log("login process");
+        // console.log(req.body);
+        // console.log(otp);
+        // console.log(vonage_request_id);
+        // console.log('---------------------')
     
         let headers_list = {"Accept": "application/json","User-Agent": "BeReal/8586 CFNetwork/1240.0.4 Darwin/20.6.0","x-ios-bundle-identifier": "AlexisBarreyat.BeReal","Content-Type": "application/json"}
     
@@ -142,9 +142,9 @@ export const verifyOTP = async (req: Request, res: Response, next: NextFunction)
     
         let token = response.data.token;
         let uid = response.data.uid;
-        console.log("validated");
-        console.log(response.data);
-        console.log('---------------------')
+        // console.log("validated");
+        // console.log(response.data);
+        // console.log('---------------------')
     
         // ============================================================================================
     
@@ -159,10 +159,10 @@ export const verifyOTP = async (req: Request, res: Response, next: NextFunction)
 
         let refresh_token = refresh_response.data.refreshToken;
     
-        console.log("first refresh");
-        console.log(refresh_response.status);
-        console.log(refresh_response.data);
-        console.log('---------------------')
+        // console.log("first refresh");
+        // console.log(refresh_response.status);
+        // console.log(refresh_response.data);
+        // console.log('---------------------')
     
         // ============================================================================================
     
@@ -180,10 +180,10 @@ export const verifyOTP = async (req: Request, res: Response, next: NextFunction)
     
         if (check_response(firebase_refresh_response)) {return;}
     
-        console.log("firebase refresh");
-        console.log(firebase_refresh_response.status);
-        console.log(firebase_refresh_response.data);
-        console.log('---------------------')
+        // console.log("firebase refresh");
+        // console.log(firebase_refresh_response.status);
+        // console.log(firebase_refresh_response.data);
+        // console.log('---------------------')
     
         let firebase_token = firebase_refresh_response.data.id_token;
     
