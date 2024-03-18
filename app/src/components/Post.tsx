@@ -16,6 +16,12 @@ const Post: React.FC<PostProps> = ({ post, width, swipeable, setSwipeable }) => 
             "secondary": "w-[10vw] rounded-lg",
             "primaryRatio": 0.3,
             "secondaryRatio": 0.1,
+        },
+        "large": {
+            "primary": "w-[90vw] rounded-3xl",
+            "secondary": "w-[27vw] rounded-xl",
+            "primaryRatio": 0.9,
+            "secondaryRatio": 0.27,
         }
     }
     const [posImage, setPosImage] = useState({ x: screen.width*style[width].primaryRatio/30, y: screen.width*style[width].primaryRatio/30 })

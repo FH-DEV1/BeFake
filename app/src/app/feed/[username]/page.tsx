@@ -39,7 +39,7 @@ export default function Page({ params }: { params: { username: string } }) {
                     <h1 className='text-xl'>BeReal de {params.username}</h1>
                     <p className='opacity-60'>{UTCtoParisTime(posts?.posts[posts.posts.length-index-1]?.takenAt ? posts?.posts[posts.posts.length-index-1]?.takenAt : "1999-12-31T23:00:00.000Z")}{posts?.posts[index]?.lateInSeconds !== 0 ? ` - ${formatTime(posts?.posts[index]?.lateInSeconds ? posts.posts[index].lateInSeconds : 0)}` : ""}</p>
                 </div>
-                <div className='' onClick={() => toast.warn("seeing others profile is not available yet")}>
+                <div className='' onClick={() => router.push(`/profile/${posts?.user.id}`)}>
                     <PersonRounded className='h-8 w-8'/>
                 </div>
             </div>

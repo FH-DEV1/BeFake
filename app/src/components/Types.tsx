@@ -277,3 +277,40 @@ export interface OptionsMenu {
     primary?: string;
     secondary?: string;
 }
+
+interface CommonFriend {
+    id: string;
+    username: string;
+    fullname: string;
+    profilePicture: Image | null;
+}
+
+interface Relationship {
+    status: string;
+    commonFriends: {
+        sample: CommonFriend[];
+        total: number;
+    };
+    friendedAt: string;
+}
+
+interface FriendUserData {
+    id: string;
+    username: string;
+    fullname: string;
+    profilePicture: Image | null;
+    relationship: Relationship;
+    createdAt: string;
+    isRealPeople: boolean;
+    userFreshness: string;
+    streakLength: number;
+    type: string;
+    links: any[];
+    biography?: string;
+    location?: string;
+}
+
+export interface FriendData {
+    data: FriendUserData
+    pinnedMemories?: PinnedMemory[]
+}

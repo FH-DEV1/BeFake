@@ -34,7 +34,7 @@ const MyProfile: React.FC = () => {
                     token: token,
                     token_expiration: token_expiration,
                     refresh_token: refresh_token,
-                    userId: userId
+                    userid: userId
                 }
             }).then(PMresult => {
                 setMyInfo({data: parsedLSUser, pinnedMemories: PMresult.data.pinned.pinnedMemories})

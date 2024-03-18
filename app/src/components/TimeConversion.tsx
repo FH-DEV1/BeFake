@@ -1,6 +1,6 @@
 import { formatToTimeZone } from 'date-fns-timezone';
 
-export function UTCtoParisTime(utcTime: string) {
+export function UTCtoParisTime(utcTime: string): string {
   const frTime = formatToTimeZone(new Date(utcTime), 'YYYY-MM-DDTHH:mm:ss.SSSSZ', { timeZone: 'Europe/Paris' });
   const date = new Date(frTime)
   const UTCdate = new Date();
@@ -11,7 +11,7 @@ export function UTCtoParisTime(utcTime: string) {
   return timeString;
 }
 
-export function formatTime(seconds: number) {
+export function formatTime(seconds: number): string {
     const minutes = Math.round(seconds / 60);
     const hours = Math.round(minutes / 60);
 
@@ -24,7 +24,7 @@ export function formatTime(seconds: number) {
     }
 }
 
-export function UTCtoParisDate(utcTime: string) {
+export function UTCtoParisDate(utcTime: string): string {
   const options: Intl.DateTimeFormatOptions = {
     year: 'numeric',
     month: 'long',
@@ -38,3 +38,29 @@ export function UTCtoParisDate(utcTime: string) {
 
   return localTime;
 };
+
+export function formatDate(dateString: string): string {
+  const date = new Date(dateString);
+  const currentDate = new Date();
+  const elapsedMilliseconds = currentDate.getTime() - date.getTime();
+  const elapsedSeconds = Math.floor(elapsedMilliseconds / 1000);
+  const elapsedMinutes = Math.floor(elapsedSeconds / 60);
+  const elapsedHours = Math.floor(elapsedMinutes / 60);
+  const elapsedDays = Math.floor(elapsedHours / 24);
+  const elapsedMonths = Math.floor(elapsedDays / 30);
+  const elapsedYears = Math.floor(elapsedMonths / 12);
+
+  if (elapsedYears > 0) {
+      return `Amis depuis ${elapsedYears} année${elapsedYears > 1 ? 's' : ''}`;
+  } else if (elapsedMonths > 0) {
+      return `Amis depuis ${elapsedMonths} mois`;
+  } else if (elapsedDays > 0) {
+      return `Amis depuis ${elapsedDays} jour${elapsedDays > 1 ? 's' : ''}`;
+  } else if (elapsedHours > 0) {
+      return `Amis depuis ${elapsedHours} heure${elapsedHours > 1 ? 's' : ''}`;
+  } else if (elapsedMinutes > 0) {
+      return `Amis depuis ${elapsedMinutes} minute${elapsedMinutes > 1 ? 's' : ''}`;
+  } else {
+      return `Amis depuis ${elapsedSeconds} seconde${elapsedSeconds > 1 ? 's' : ''}`;
+  }
+}
