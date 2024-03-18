@@ -16,7 +16,7 @@ const Feed: React.FC = () => {
     const domain = process.env.NEXT_PUBLIC_DOMAIN
     const { feed, setFeed } = useFeedState();
     const searchParams = useSearchParams()
-    const [loading, setLoading] = useState<boolean>(true)
+    const [loading, setLoading] = useState<boolean>(false)
     const gridViewParam = searchParams.get('gridView');
     const [gridView, setGridView] = useState<boolean>(gridViewParam !== null ? JSON.parse(gridViewParam) : false);
     const [isScrolled, setIsScrolled] = useState<boolean>(true);
