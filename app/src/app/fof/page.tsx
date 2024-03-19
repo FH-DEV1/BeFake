@@ -25,6 +25,29 @@ const FOFFeed: React.FC = () => {
     let parsedLSUser = JSON.parse(lsUser !== null ? lsUser : "{}")
     let userId: string|null = parsedLSUser.id
 
+    const fetchLocations = async (feed: FOFfeedType) => {
+    if (feed.data && feed.data.length > 0) {
+        const updatedFeed: FOFfeedType = {
+          ...feed,
+          data: await Promise.all(feed.data.map(async (post) => {
+            if (post.location) {
+              const url = `https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/reverseGeocode?location=${post.location.longitude},${post.location.latitude}&outSR=&forStorage=false&f=pjson`;
+              try {
+                const response = await axios.get(url);
+                if (response.data && response.data.address) {
+                  post.location.ReverseGeocode = response.data.address;
+                }
+              } catch (error) {
+                console.error('Error fetching reverse geocode:', error);
+              }
+            }
+            return post;
+          }))
+        };
+        setfof(updatedFeed);
+      }
+    };
+
     useEffect (() => {
         if (!fof.data) {
             let lsToken = typeof window !== "undefined" ? localStorage.getItem('token') : null
@@ -69,6 +92,7 @@ const FOFFeed: React.FC = () => {
                             localStorage.setItem("token", JSON.stringify(response.data.refresh_data))
                         }
                         setLoading(false)
+                        fetchLocations(feed)
                     }
                 })
                 .catch((error) => {
