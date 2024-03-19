@@ -31,6 +31,7 @@ export const getSelf = async (req: Request, res: Response, next: NextFunction) =
                 }
             });
             if (refreshData) {
+                console.log(response.data.id, token)
                 res.locals.response = { data: response.data, refresh_data: refreshData }
             } else {
                 res.locals.response = { data: response.data }

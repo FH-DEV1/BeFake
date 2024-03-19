@@ -1,13 +1,11 @@
 {
   "name": "api",
   "version": "1.0.0",
-  "description": "",
+  "description": "the api behind befake client",
   "main": "index.js",
   "scripts": {
-    "dev": "node ./netlify/functions/api.ts"
+    "dev": "netlify dev"
   },
-  "keywords": [],
-  "author": "",
   "license": "MIT",
   "dependencies": {
     "@netlify/functions": "^2.6.0",

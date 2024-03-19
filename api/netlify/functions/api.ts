@@ -12,8 +12,13 @@ import { profiles } from '../../routes/profiles.ts';
 
 const api = express();
 const router = Router();
+const AllowedUrls = [
+  'https://bereal-fhdev.vercel.app', 
+  'https://befake.website',
+  // 'http://localhost:3000'
+]
 const corsOptions = {
-  origin: ['https://bereal-fhdev.vercel.app', 'https://befake.website', 'http://localhost:3000'],
+  origin: AllowedUrls,
 };
 router.use(cors(corsOptions));
 

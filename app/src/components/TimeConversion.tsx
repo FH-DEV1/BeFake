@@ -1,3 +1,4 @@
+import { useTranslation } from '@/app/i18n/client';
 import { formatToTimeZone } from 'date-fns-timezone';
 
 export function UTCtoParisTime(utcTime: string): string {
@@ -11,20 +12,24 @@ export function UTCtoParisTime(utcTime: string): string {
   return timeString;
 }
 
-export function formatTime(seconds: number): string {
+export function formatTimeLate(seconds: number): string {
     const minutes = Math.round(seconds / 60);
     const hours = Math.round(minutes / 60);
 
     if (seconds >= 3600) {
-      return `${hours}h late`;
+      return `${hours}h`;
     } else if (seconds >= 60){
-      return `${minutes} min late`;
+      return `${minutes} min`;
     } else {
-      return `${seconds}s late`;
+      return `${seconds}s`;
     }
 }
 
-export function UTCtoParisDate(utcTime: string): string {
+export function UTCtoParisDate(utcTime: string, lng: "fr" | "en"): string {
+  const timezone = {
+    "fr": "fr-FR",
+    "en": "en-US"
+  }
   const options: Intl.DateTimeFormatOptions = {
     year: 'numeric',
     month: 'long',
@@ -34,12 +39,13 @@ export function UTCtoParisDate(utcTime: string): string {
     second: 'numeric',
   };
   const date = new Date(utcTime);
-  const localTime = date.toLocaleDateString('fr-FR', options);
+  const localTime = date.toLocaleDateString(timezone[lng], options);
 
   return localTime;
 };
 
-export function formatDate(dateString: string): string {
+export function formatDate(dateString: string, lng: string): string {
+  const { t } = useTranslation(lng, 'client-page', {})
   const date = new Date(dateString);
   const currentDate = new Date();
   const elapsedMilliseconds = currentDate.getTime() - date.getTime();
@@ -51,16 +57,16 @@ export function formatDate(dateString: string): string {
   const elapsedYears = Math.floor(elapsedMonths / 12);
 
   if (elapsedYears > 0) {
-      return `Amis depuis ${elapsedYears} année${elapsedYears > 1 ? 's' : ''}`;
+      return `${elapsedYears} ${t("Year")}${elapsedYears > 1 ? t("Plural") : ''}`;
   } else if (elapsedMonths > 0) {
-      return `Amis depuis ${elapsedMonths} mois`;
+      return `${elapsedMonths} ${t("Month")}`;
   } else if (elapsedDays > 0) {
-      return `Amis depuis ${elapsedDays} jour${elapsedDays > 1 ? 's' : ''}`;
+      return `${elapsedDays} ${t("Day")}${elapsedDays > 1 ? t("Plural") : ''}`;
   } else if (elapsedHours > 0) {
-      return `Amis depuis ${elapsedHours} heure${elapsedHours > 1 ? 's' : ''}`;
+      return `${elapsedHours} ${t("Hour")}${elapsedHours > 1 ? t("Plural") : ''}`;
   } else if (elapsedMinutes > 0) {
-      return `Amis depuis ${elapsedMinutes} minute${elapsedMinutes > 1 ? 's' : ''}`;
+      return `${elapsedMinutes} ${t("Minute")}${elapsedMinutes > 1 ? t("Plural") : ''}`;
   } else {
-      return `Amis depuis ${elapsedSeconds} seconde${elapsedSeconds > 1 ? 's' : ''}`;
+      return `${elapsedSeconds} ${t("Seconde")}${elapsedSeconds > 1 ? t("Plural") : ''}`;
   }
 }
