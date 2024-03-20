@@ -39,9 +39,9 @@ export const getFeed = async (req: Request, res: Response, next: NextFunction) =
             headers: {
                 'authorization': `Bearer ${token}`,
                 'bereal-app-version-code': '14549',
-                'bereal-signature': 'MToxNzA3NDgwMjI4OvR2hbFOdgnyAz1bfiCp68ul5sVZiHnv+NAZNySEcBfD',
-                'bereal-timezone': 'Europe/Paris',
-                'bereal-device-id': '937v3jb942b0h6u9'
+                'bereal-signature': 'MToxNzEwOTU4NjQxOpg0j8sNuUN6oL3/h9GtyvzOPwPz1Rqf+euE+QfDPQlA',
+                'bereal-device-id': 'XKFg0Nkarwqyds17',
+                'bereal-timezone': 'Europe/Paris'
             }
         });
 

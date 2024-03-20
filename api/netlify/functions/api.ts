@@ -15,7 +15,7 @@ const router = Router();
 const AllowedUrls = [
   'https://bereal-fhdev.vercel.app', 
   'https://befake.website',
-  // 'http://localhost:3000'
+  'http://localhost:3000'
 ]
 const corsOptions = {
   origin: AllowedUrls,
