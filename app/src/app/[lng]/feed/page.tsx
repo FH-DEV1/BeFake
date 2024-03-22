@@ -261,19 +261,19 @@ export default function Feed({ params }: { params: { lng: string }}) {
             <div className={`${loading ? "block" : "hidden"} pt-28`}>
                 <div className="animate-pulse flex flex-col">
                     <div className="flex">
-                        <div className="rounded-full bg-slate-900 h-9 w-9"></div>
+                        <div className="rounded-full bg-gray-900 h-9 w-9"></div>
                         <div className="flex flex-col pl-3 pt-2">
-                            <div className="rounded bg-slate-900 h-2 w-28"></div>
-                            <div className="rounded bg-slate-900 mt-2 h-2 w-32"></div>
+                            <div className="rounded bg-gray-900 h-2 w-28"></div>
+                            <div className="rounded bg-gray-900 mt-2 h-2 w-32"></div>
                         </div>
                     </div>
-                    <div className="bg-slate-900 mt-3 h-[65vh] w-full rounded-3xl"></div>
+                    <div className="bg-gray-900 mt-3 h-[65vh] w-full rounded-3xl"></div>
                     <div className="flex justify-center">
-                        <div className="rounded bg-slate-900 mt-4 ml-2 h-3 w-3"></div>
-                        <div className="rounded bg-slate-900 mt-4 ml-2 h-3 w-3"></div>
-                        <div className="rounded bg-slate-900 mt-4 ml-2 h-3 w-3"></div>
+                        <div className="rounded bg-gray-900 mt-4 ml-2 h-3 w-3"></div>
+                        <div className="rounded bg-gray-900 mt-4 ml-2 h-3 w-3"></div>
+                        <div className="rounded bg-gray-900 mt-4 ml-2 h-3 w-3"></div>
                     </div>
-                    <div className="rounded bg-slate-900 mt-5 ml-2 h-2 w-56"></div>
+                    <div className="rounded bg-gray-900 mt-5 ml-2 h-2 w-56"></div>
                 </div>
             </div>
 

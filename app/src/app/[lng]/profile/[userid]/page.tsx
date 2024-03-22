@@ -114,15 +114,15 @@ export default function Page({ params }: { params: { userid: string, lng: string
                                     </div>
                                 </div>
                             ) : (
-                                <div className="mt-3 flex rounded-xl bg-slate-900 w-[30vw] h-[40vw]"></div>
+                                <div className="mt-3 flex rounded-xl bg-gray-900 w-[30vw] h-[40vw]"></div>
                             )}
                         </React.Fragment>
                     ))
                 : (
                     <div className="flex flex-row justify-around w-[100vw] mt-3 animate-pulse">
-                        <div className="flex rounded-xl bg-slate-900 w-[30vw] h-[40vw]"></div>
-                        <div className="flex rounded-xl bg-slate-900 w-[30vw] h-[40vw]"></div>
-                        <div className="flex rounded-xl bg-slate-900 w-[30vw] h-[40vw]"></div>
+                        <div className="flex rounded-xl bg-gray-900 w-[30vw] h-[40vw]"></div>
+                        <div className="flex rounded-xl bg-gray-900 w-[30vw] h-[40vw]"></div>
+                        <div className="flex rounded-xl bg-gray-900 w-[30vw] h-[40vw]"></div>
                     </div>
                 )}
             </div>

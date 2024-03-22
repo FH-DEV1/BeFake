@@ -73,23 +73,23 @@ export default function MyProfile({ params }: { params: { lng: string }}) {
                 </div>
                 <div className={`${loading ? "block" : "hidden"}`}>
                     <div className="animate-pulse flex flex-col items-center justify-center">
-                        <div className="rounded-full bg-slate-900 h-36 w-36"></div>
-                        <div className="rounded-full bg-slate-900 h-10 w-24 mt-5"></div>
-                        <div className="rounded bg-slate-900 mt-2 h-2 w-20"></div>
+                        <div className="rounded-full bg-gray-900 h-36 w-36"></div>
+                        <div className="rounded-full bg-gray-900 h-10 w-24 mt-5"></div>
+                        <div className="rounded bg-gray-900 mt-2 h-2 w-20"></div>
                         <div className="flex flex-row justify-around w-[100vw] mt-5">
-                            <div className="flex rounded-full bg-slate-900 h-20 w-20"></div>
-                            <div className="flex rounded-full bg-slate-900 h-20 w-20"></div>
-                            <div className="flex rounded-full bg-slate-900 h-20 w-20"></div>
-                            <div className="flex rounded-full bg-slate-900 h-20 w-20"></div>
+                            <div className="flex rounded-full bg-gray-900 h-20 w-20"></div>
+                            <div className="flex rounded-full bg-gray-900 h-20 w-20"></div>
+                            <div className="flex rounded-full bg-gray-900 h-20 w-20"></div>
+                            <div className="flex rounded-full bg-gray-900 h-20 w-20"></div>
                         </div>
-                        <div className="rounded bg-slate-900 mt-6 h-2 w-32"></div>
+                        <div className="rounded bg-gray-900 mt-6 h-2 w-32"></div>
                         <div className="flex flex-row justify-around w-[100vw] mt-5">
-                            <div className="flex rounded-xl bg-slate-900 w-[30vw] h-[40vw]"></div>
-                            <div className="flex rounded-xl bg-slate-900 w-[30vw] h-[40vw]"></div>
-                            <div className="flex rounded-xl bg-slate-900 w-[30vw] h-[40vw]"></div>
+                            <div className="flex rounded-xl bg-gray-900 w-[30vw] h-[40vw]"></div>
+                            <div className="flex rounded-xl bg-gray-900 w-[30vw] h-[40vw]"></div>
+                            <div className="flex rounded-xl bg-gray-900 w-[30vw] h-[40vw]"></div>
                         </div>
-                        <div className="flex rounded-xl bg-slate-900 w-40 h-10 mt-10"></div>
-                        <div className="rounded bg-slate-900 mt-10 h-2 w-56"></div>
+                        <div className="flex rounded-xl bg-gray-900 w-40 h-10 mt-10"></div>
+                        <div className="rounded bg-gray-900 mt-10 h-2 w-56"></div>
                     </div>
                 </div>
                 <div className={loading ? "hidden" : "flex flex-col items-center"}>
