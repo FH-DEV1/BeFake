@@ -1,7 +1,17 @@
 {
   "name": "FH.Dev - BeFake.",
   "short_name": "FH.Dev - BeFake.",
+  "theme_color": "#000",
+  "background_color": "#000",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
   "icons": [
+    {
+      "src": "ios/256.png",
+      "sizes": "256x256",
+      "purpose": "maskable"
+    },
     {
       "src": "windows11/SmallTile.scale-100.png",
       "sizes": "71x71"
@@ -450,10 +460,5 @@
       "src": "ios/1024.png",
       "sizes": "1024x1024"
     }
-  ],
-  "theme_color": "#000",
-  "background_color": "#000",
-  "start_url": "/",
-  "display": "standalone",
-  "orientation": "portrait"
+  ]
 }

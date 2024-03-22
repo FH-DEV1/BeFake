@@ -18,7 +18,8 @@ export function middleware(req: { cookies: { has: (arg0: any) => any; get: (arg0
   // Redirect if lng in path is not supported
   if (
     !languages.some(loc => req.nextUrl.pathname.startsWith(`/${loc}`)) &&
-    !req.nextUrl.pathname.startsWith('/_next')
+    !req.nextUrl.pathname.startsWith('/_next') &&
+    !req.nextUrl.pathname.startsWith('/public')
   ) {
     return NextResponse.redirect(new URL(`/${lng}${req.nextUrl.pathname}`, req.url))
   }

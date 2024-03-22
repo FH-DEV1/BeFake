@@ -8,9 +8,10 @@ import { dir } from 'i18next'
 import { languages } from '../i18n/settings'
 
 export const metadata: Metadata = {
-  manifest: "/manifest.json",
+  manifest: "/public/manifest.json",
   title: 'FH.Dev - BeFake',
   description: "BeReal but you don't need to post to see others BeReal",
+  themeColor: "#000",
 }
 
 export async function generateStaticParams() {
@@ -28,6 +29,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang={lng} dir={dir(lng)}>
+      <head>
+        <meta name="theme-color" content="#000" />
+      </head>
       <body className="bg-black text-white">
         <main>
           <FeedProvider>

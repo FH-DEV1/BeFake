@@ -243,7 +243,7 @@ export default function Feed({ params }: { params: { lng: string }}) {
                 </svg>
                 <div onClick={() => router.push(`/${params.lng}/profile/me`)}>
                     {parsedLSUser.profilePicture ? (
-                    <img 
+                    <img
                         className='w-8 h-8 rounded-full mr-2'
                         src={parsedLSUser.profilePicture.url}
                         alt="my profile"
