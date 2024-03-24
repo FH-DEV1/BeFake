@@ -11,7 +11,6 @@ export const metadata: Metadata = {
   manifest: "/public/manifest.json",
   title: 'FH.Dev - BeFake',
   description: "BeReal but you don't need to post to see others BeReal",
-  themeColor: "#000",
 }
 
 export async function generateStaticParams() {

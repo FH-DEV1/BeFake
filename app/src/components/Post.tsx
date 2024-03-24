@@ -33,7 +33,7 @@ const Post: React.FC<PostProps> = ({ post, width, swipeable, setSwipeable }) => 
         <div className='flex flex-col'>
             <div className='relative' onClick={() => setSelectedImage(!selectedImage)}>
                 <Image
-                    className={`${style[width].primary} object-cover`}
+                    className={`${style[width].primary} object-cover cursor-pointer`}
                     src={selectedImage ? post.secondary.url : post.primary.url}
                     width={1500}
                     height={2000}
@@ -54,7 +54,7 @@ const Post: React.FC<PostProps> = ({ post, width, swipeable, setSwipeable }) => 
                     position={posImage}
                 >
                     <Image
-                        className={`${style[width].secondary} top-0 absolute border-2 border-black object-cover ${swipeable ? "" : "transition-transform duration-500"}`}
+                        className={`${style[width].secondary} top-0 absolute border-2 border-black object-cover ${swipeable ? "" : "transition-transform duration-500 cursor-move"}`}
                         src={selectedImage ? post.primary.url : post.secondary.url}
                         width={1500}
                         height={2000}

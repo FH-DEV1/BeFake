@@ -52,5 +52,8 @@
   "OTPError": "Error verifying OTP",
   "VerifyPhoneNumber": "Verify your number",
   "PhoneNumberSentTo": "Verification code sent to ",
-  "Validate": "Verify Code"
+  "Validate": "Verify Code",
+  "FriendsWith": "Friends with ",
+  "AndManyOthers": " and {{number}} more",
+  "UnLockMoreBeReal": "Post on time to unlock more BeReal's"
 }

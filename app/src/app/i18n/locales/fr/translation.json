@@ -52,5 +52,8 @@
   "OTPError": "Erreur lors de la verification de l'OTP",
   "VerifyPhoneNumber": "Verifiez votre numéro de téléphone",
   "PhoneNumberSentTo": "Code de vérification envoyé au ",
-  "Validate": "Valider"
+  "Validate": "Valider",
+  "FriendsWith": "Ami(e) avec ",
+  "AndManyOthers": " et {{number}} autres",
+  "UnLockMoreBeReal": "Postes à l'heure pour débloquer plus de BeReals"
 }

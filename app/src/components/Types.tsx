@@ -8,7 +8,8 @@ interface Image {
 interface User {
     id: string;
     username: string;
-    profilePicture: Image;
+    profilePicture: Image | null;
+    type?: string;
 }
 
 export interface RealMojis {
@@ -61,14 +62,19 @@ export interface PostType {
     postedAt: string;
     realMojis: RealMojis[];
     comments: Comment[];
-    caption: string;
+    caption?: string;
     tags: TagUser[];
     creationDate: string;
     updatedAt: string;
     visibility: string[];
-    origin: any;
+    origin?: any;
     postType: string;
     location?: Location;
+    unblurCount?: number;
+    btsMedia?: Image;
+    parentPostId?: string;
+    parentPostUserId?: string;
+    parentPostUsername?: string;
 }
 
 interface PostOfSelectedPost {
@@ -113,7 +119,10 @@ export interface FriendPost {
 }
 
 export interface UserPosts {
-    [postId: string]: PostType[];
+    momentId: string;
+    posts: PostType[];
+    region: string;
+    user: User;
 }
 
 interface pageData {
@@ -124,6 +133,8 @@ interface pageData {
 export interface FeedType {
     userPosts?: UserPosts;
     friendsPosts?: FriendPost[];
+    maxPostsPerMoment: number;
+    remainingPosts: number;
     data?: pageData
 }
 
@@ -171,7 +182,7 @@ interface UserData {
     username: string;
     birthdate: string;
     fullname: string;
-    profilePicture: Image;
+    profilePicture: Image|null;
     realmojis: RealMojis[];
     devices: Device[];
     canDeletePost: boolean;
@@ -185,6 +196,8 @@ interface UserData {
     userFreshness: string;
     streakLength: number;
     type: string;
+    biography: string;
+    location: string;
 }
 
 interface Device {
@@ -276,6 +289,7 @@ export interface OptionsMenu {
     takenAt?: string;
     primary?: string;
     secondary?: string;
+    btsMedia?: string;
 }
 
 interface CommonFriend {

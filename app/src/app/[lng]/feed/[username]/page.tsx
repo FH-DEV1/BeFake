@@ -4,10 +4,12 @@ import { useFeedState } from '@/components/FeedContext'
 import Post from '@/components/Post'
 import { UTCtoParisTime, formatTimeLate } from '@/components/TimeConversion'
 import { FriendPost } from '@/components/Types'
-import { KeyboardBackspaceRounded, NearMe, PersonRounded, ScreenRotationAlt } from '@mui/icons-material'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import SwipeableViews from 'react-swipeable-views'
+import { IoArrowBack, IoPerson } from 'react-icons/io5'
+import { FaLocationArrow } from "react-icons/fa";
+import { MdOutlineScreenRotationAlt } from "react-icons/md";
 
 export default function Page({ params }: { params: { username: string, lng: string } }) {
     const { t } = useTranslation(params.lng, 'client-page', {})
@@ -34,14 +36,14 @@ export default function Page({ params }: { params: { username: string, lng: stri
         <div className="flex flex-col">
             <div className='flex flex-row mt-5 mx-5 justify-between items-center'>
                 <div className='' onClick={() => {router.back()}}>
-                    <KeyboardBackspaceRounded className='h-8 w-8'/>
+                    <IoArrowBack className='h-8 w-8'/>
                 </div>
                 <div className='flex flex-col justify-center items-center'>
                     <h1 className='text-xl'>{t("FriendBerealTitle", {name: params.username})}</h1>
                     <p className='opacity-60'>{UTCtoParisTime(posts?.posts[posts.posts.length-index-1]?.takenAt ? posts?.posts[posts.posts.length-index-1]?.takenAt : "1999-12-31T23:00:00.000Z")}{posts?.posts[index]?.lateInSeconds !== 0 ? ` - ${t("TimeLate", {time: formatTimeLate(posts?.posts[index]?.lateInSeconds ? posts.posts[index].lateInSeconds : 0)})}` : ""}</p>
                 </div>
                 <div className='' onClick={() => router.push(`/${params.lng}/profile/${posts?.user.id}`)}>
-                    <PersonRounded className='h-8 w-8'/>
+                    <IoPerson className='h-8 w-8'/>
                 </div>
             </div>
             <div className='flex justify-center mt-6'>
@@ -64,10 +66,10 @@ export default function Page({ params }: { params: { username: string, lng: stri
                 </SwipeableViews>
             </div>
             <div className='flex items-center w-full justify-center'>
-                <div className={`${posts?.posts[posts.posts.length-index-1]?.location ? "block" : "hidden"} mx-2 bg-zinc-800 flex pr-2 mt-5 rounded-full text-white`}>
-                    <NearMe className='text-white p-1'/>
+                <div className={`${posts?.posts[posts.posts.length-index-1]?.location ? "block" : "hidden"} mx-2 bg-zinc-800 flex pr-2 pl-1 mt-5 rounded-full text-white`}>
+                    <FaLocationArrow className='p-1 h-5 w-5 text-white/60'/>
                     <a
-                        className='text-sm opacity-60 cursor-pointer'
+                        className='text-sm -mt-0.5 opacity-60 cursor-pointer'
                         target="_blank"
                         rel="noopener noreferrer"
                         href={posts?.posts[posts.posts.length-index-1]?.location ? `https://www.google.com/maps/?q=${posts?.posts[posts.posts.length-index-1]?.location?.latitude},${posts?.posts[posts.posts.length-index-1]?.location?.longitude}` : undefined}
@@ -80,9 +82,9 @@ export default function Page({ params }: { params: { username: string, lng: stri
                         {posts?.posts[posts.posts.length-index-1]?.location?.ReverseGeocode ? `${posts?.posts[posts.posts.length-index-1]?.location?.ReverseGeocode?.City}, ${posts?.posts[posts.posts.length-index-1]?.location?.ReverseGeocode?.CntryName}` : t("OpenInMaps")}
                     </a>
                 </div>
-                <div className={`${posts?.posts[posts.posts.length-index-1]?.retakeCounter ? posts.posts[posts.posts.length-index-1].retakeCounter > 0 ? posts.posts[posts.posts.length-index-1].retakeCounter > 1 ? "block w-[95px]" : "block w-[87px]": "hidden" : "hidden"} mx-2 bg-zinc-800 flex mt-5 rounded-full text-white`}>
-                    <ScreenRotationAlt className='p-1'/>
-                    <p className='text-sm opacity-60 cursor-pointer'>{posts?.posts[posts.posts.length-index-1]?.retakeCounter ? posts.posts[posts.posts.length-index-1].retakeCounter > 1 ? t("Retakes", {number: posts.posts[posts.posts.length-index-1].retakeCounter}) : t("OneRetake") : ""}</p>
+                <div className={`${posts?.posts[posts.posts.length-index-1]?.retakeCounter ? posts.posts[posts.posts.length-index-1].retakeCounter > 0 ? posts.posts[posts.posts.length-index-1].retakeCounter > 1 ? "block w-[95px]" : "block w-[87px]": "hidden" : "hidden"} mx-2 bg-zinc-800 flex pl-1 mt-5 items-center rounded-full text-white`}>
+                    <MdOutlineScreenRotationAlt className='p-0.5 h-5 w-5 text-white/60'/>
+                    <p className='text-sm -mt-0.5 opacity-60 cursor-pointer'>{posts?.posts[posts.posts.length-index-1]?.retakeCounter ? posts.posts[posts.posts.length-index-1].retakeCounter > 1 ? t("Retakes", {number: posts.posts[posts.posts.length-index-1].retakeCounter}) : t("OneRetake") : ""}</p>
                 </div>
             </div>
             <span className='mt-5 mb-3 h-[1px] bg-white opacity-20'/>

@@ -44,8 +44,7 @@ export function UTCtoParisDate(utcTime: string, lng: "fr" | "en"): string {
   return localTime;
 };
 
-export function formatDate(dateString: string, lng: string): string {
-  const { t } = useTranslation(lng, 'client-page', {})
+export function formatDate(dateString: string, t: Function): string {
   const date = new Date(dateString);
   const currentDate = new Date();
   const elapsedMilliseconds = currentDate.getTime() - date.getTime();
