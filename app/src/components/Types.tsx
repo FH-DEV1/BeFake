@@ -133,8 +133,8 @@ interface pageData {
 export interface FeedType {
     userPosts?: UserPosts;
     friendsPosts?: FriendPost[];
-    maxPostsPerMoment: number;
-    remainingPosts: number;
+    maxPostsPerMoment?: number;
+    remainingPosts?: number;
     data?: pageData
 }
 
