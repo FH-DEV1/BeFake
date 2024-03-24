@@ -104,7 +104,7 @@ export default function MyProfile({ params }: { params: { lng: string }}) {
                     </div>
                 ) : (
                     <div className='flex flex-col items-center'>
-                        {MyInfo?.data.profilePicture.url ? (
+                        {MyInfo?.data.profilePicture ? (
                             <Image className='h-36 w-36 rounded-full' src={MyInfo?.data.profilePicture?.url} height={1000} width={1000} alt='Profile Picture' />
                         ) : (
                             <div className='h-36 w-36 rounded-full bg-white/5 relative border-full border-black justify-center align-middle flex mx-auto'>
