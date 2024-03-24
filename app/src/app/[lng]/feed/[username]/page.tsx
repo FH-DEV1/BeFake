@@ -103,7 +103,7 @@ export default function Page({ params }: { params: { username: string, lng: stri
             <div>
                 {posts?.posts[posts.posts.length-index-1]?.comments?.map((comment) => (
                     <div className='flex mt-3 mb-5 ml-2'>
-                        <img src={JSON.stringify(comment.user.profilePicture) == "null" ? "/icon.png" : comment.user.profilePicture.url} alt={`${comment.user.username}'s profile`} className='w-9 h-9 rounded-full'/>
+                        <img src={JSON.stringify(comment.user.profilePicture) == "null" ? "/icon.png" : comment.user.profilePicture ? comment.user.profilePicture.url : "/icon.png"} alt={`${comment.user.username}'s profile`} className='w-9 h-9 rounded-full'/>
                         <div className='flex flex-col ml-2'>
                             <div className='flex flex-row text-sm'>
                                 <p>{comment.user.username}</p>
