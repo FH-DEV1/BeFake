@@ -6,6 +6,9 @@ interface Image {
 }
 
 interface User {
+    relationship?: {
+        commonFriends: CommonFriend[];
+    };
     id: string;
     username: string;
     profilePicture: Image | null;
@@ -165,6 +168,7 @@ export interface FOFPost {
     realmojis: FOFRealMojis;
     location?: Location;
     tags: TagUser[];
+    btsMedia?: Image;
 }
 
 export interface FOFfeedType {
@@ -231,11 +235,7 @@ export interface ReverseGeocodeData {
 }
 
 export interface PostProps {
-    post: {
-        primary: Image;
-        secondary: Image;
-        location?: Location;
-    };
+    post: PostType | FOFPost | PinnedMemory
     width: string;
     swipeable: boolean;
     setSwipeable: React.Dispatch<React.SetStateAction<boolean>>;
@@ -263,6 +263,7 @@ interface PinnedMemory {
     isLate: boolean;
     isMain: boolean;
     momentId: string;
+    btsMedia?: Image
 }
 
 export interface token {
