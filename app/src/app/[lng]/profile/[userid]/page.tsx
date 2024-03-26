@@ -259,7 +259,7 @@ export default function Page({ params }: { params: { userid: string, lng: string
                                         }}>
                                             {
                                                 friend.profilePicture?.url ?
-                                                    <img
+                                                    <Image
                                                         className="w-12 h-12 rounded-lg border-black border-2 mr-4"
                                                         src={friend.profilePicture?.url}
                                                         alt="Profile picture"

@@ -246,10 +246,13 @@ export default function Feed({ params }: { params: { lng: string }}) {
                 </svg>
                 <div onClick={() => router.push(`/${params.lng}/profile/me`)}>
                     {parsedLSUser.profilePicture ? (
-                    <img
+                    <Image
+                        height={parsedLSUser.profilePicture.height}
+                        width={parsedLSUser.profilePicture.width}
                         className='w-8 h-8 rounded-full mr-4 cursor-pointer'
                         src={parsedLSUser.profilePicture.url}
                         alt="my profile"
+                        referrerPolicy='no-referrer'
                     />
                     ) : (
                     <div className='w-8 h-8 rounded-full bg-white/5 border-full border-black justify-center align-middle flex mr-2 cursor-pointer'>
@@ -308,14 +311,16 @@ export default function Feed({ params }: { params: { lng: string }}) {
                                                     className="w-[32vw] rounded-xl object-cover"
                                                     src={post.primary.url}
                                                     alt={`Image ${indx}`}
-                                                    placeholder={placeholder} />
+                                                    placeholder={placeholder}
+                                                    referrerPolicy='no-referrer'/>
                                                 <Image
                                                     width={1500}
                                                     height={2000}
                                                     className={`top-1 left-1 absolute w-[10vw] rounded-lg border-2 border-black object-cover ${swipeable ? "" : "transition-transform duration-500"}`}
                                                     src={post.secondary.url}
                                                     alt={`Image ${indx}`}
-                                                    placeholder={placeholder} />
+                                                    placeholder={placeholder}
+                                                    referrerPolicy='no-referrer'/>
                                             </div>
                                             <div className={`-ml-[3vw] absolute flex flex-row justify-center bottom-0 left-1/2 -translate-x-1/2 w-[30vw] transition-opacity duration-200 ${(!index["userpost"] && indx == 0) || index["userpost"] == indx ? 'opacity-100' : 'opacity-0'}`} key={`${post.id}_realMojis_${index}`}>
                                                 {post.realMojis.slice(0, 3).map((realMojis: RealMojis, index: number) => (
@@ -326,6 +331,7 @@ export default function Feed({ params }: { params: { lng: string }}) {
                                                             className={`w-8 h-8 rounded-full border border-black`}
                                                             src={realMojis.media.url}
                                                             alt={realMojis.emoji}
+                                                            referrerPolicy='no-referrer'
                                                         />
                                                     </div>
                                                 ))}
@@ -356,11 +362,14 @@ export default function Feed({ params }: { params: { lng: string }}) {
                         <div className="mt-10 overflow-visible" key={post.user.id}>
                             <div className={`flex mb-1.5`}>
                                 {post.user.profilePicture ? (
-                                    <img 
+                                    <Image
+                                        width={post.user.profilePicture.width}
+                                        height={post.user.profilePicture.height}
                                         className='w-9 h-9 rounded-full ml-2'
                                         src={post.user.profilePicture.url}
                                         alt={`${post.user.username}'s profile`}
                                         onClick={() => router.push(`/${params.lng}/profile/${post.user.id}`)}
+                                        referrerPolicy='no-referrer'
                                     /> 
                                 ) : (
                                     <div className='w-9 h-9 rounded-full bg-white/5 border-full border-black justify-center align-middle flex ml-2'>
@@ -434,10 +443,13 @@ export default function Feed({ params }: { params: { lng: string }}) {
                                         }}>
                                             {userPost.realMojis.slice(0, 3).map((realMojis: RealMojis, index: number) => (
                                                 <div className='flex flex-row -ml-2.5' key={`${userPost.id}_realMojis_${index}`}>
-                                                    <img
+                                                    <Image
+                                                        width={realMojis.media.width}
+                                                        height={realMojis.media.height}
                                                         className={`w-8 h-8 rounded-full border border-black `}
                                                         src={realMojis.media.url}
-                                                        alt={`Realmoji ${index + 1}`} />
+                                                        alt={`Realmoji ${index + 1}`}
+                                                        referrerPolicy='no-referrer'/>
                                                     {index === 2 && userPost.realMojis.length > 3 && (
                                                         <div className={`absolute flex items-center justify-center text-white text-sm h-8 w-8 rounded-full bg-black bg-opacity-70`}>
                                                             {userPost.realMojis.length > 4 ? "3+" : "+2"}
@@ -482,14 +494,16 @@ export default function Feed({ params }: { params: { lng: string }}) {
                                     className="w-[32vw] rounded-lg object-cover"
                                     src={userPost.posts[0].primary.url}
                                     alt={`Image ${imageIndex}`}
-                                    placeholder={placeholder} />
+                                    placeholder={placeholder} 
+                                    referrerPolicy='no-referrer'/>
                                 <Image
                                     width={1500}
                                     height={2000}
                                     className={`top-1 left-1 absolute w-[10vw] rounded-lg border-2 border-black object-cover ${swipeable ? "" : "transition-transform duration-500"}`}
                                     src={userPost.posts[0].secondary.url}
                                     alt={`Image ${imageIndex}`}
-                                    placeholder={placeholder} />
+                                    placeholder={placeholder} 
+                                    referrerPolicy='no-referrer'/>
                                 <div className={`absolute -top-1 -right-1 bg-white w-6 h-6 text-center font-bold rounded-full text-stone-700 ${userPost.posts.length > 1 ? "block" : "hidden"}`}>{userPost.posts.length > 2 ? "3" : "2"}</div>
                                 <div className="bottom-0 pt-2 w-full pl-1 pb-1 absolute bg-gradient-to-b from-transparent to-black">
                                     <p className="text-sm">{userPost.user.username}</p>

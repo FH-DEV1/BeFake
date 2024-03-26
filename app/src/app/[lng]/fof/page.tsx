@@ -127,10 +127,13 @@ export default function FOF({ params }: { params: { lng: string }}) {
                 </svg>
                 <div onClick={() => router.push(`/${params.lng}/profile/me`)}>
                     {parsedLSUser.profilePicture ? (
-                    <img 
+                    <Image
+                        width={parsedLSUser.profilePicture.width}
+                        height={parsedLSUser.profilePicture.height}
                         className='w-8 h-8 rounded-full mr-4'
                         src={parsedLSUser.profilePicture.url}
                         alt="my profile"
+                        referrerPolicy='no-referrer'
                     />
                     ) : (
                     <div className='w-8 h-8 rounded-full bg-white/5 border-full border-black justify-center align-middle flex mr-2'>
@@ -194,11 +197,14 @@ export default function FOF({ params }: { params: { lng: string }}) {
                             <div className='flex flex-col' key={`${post.id}_${imageIndex}`}>
                                 <div className='flex mb-1.5'>
                                     {post.user.profilePicture ? (
-                                        <img 
+                                        <Image 
+                                            width={post.user.profilePicture.width}
+                                            height={post.user.profilePicture.height}
                                             className='w-9 h-9 rounded-full ml-2'
                                             src={post.user.profilePicture.url}
                                             alt={`${post.user.username}'s profile`}
                                             onClick={() => router.push(`/${params.lng}/profile/${post.user.id}`)}
+                                            referrerPolicy='no-referrer'
                                         />
                                     ) : (
                                         <div className='w-9 h-9 rounded-full bg-white/5 border-full border-black justify-center align-middle flex ml-2'>
@@ -237,10 +243,13 @@ export default function FOF({ params }: { params: { lng: string }}) {
                                 }}>
                                     {post.realmojis.sample.slice(0, 3).map((realMojis, index) => (
                                         <div className='flex flex-row -ml-2.5' key={`${post.id}_realMojis_${index}`}>
-                                            <img
+                                            <Image
+                                                height={realMojis.media.height}
+                                                width={realMojis.media.width}
                                                 className={`w-8 h-8 rounded-full border border-black `}
                                                 src={realMojis.media.url}
-                                                alt={`Realmoji ${index + 1}`} />
+                                                alt={`Realmoji ${index + 1}`}
+                                                referrerPolicy='no-referrer' />
                                             {index === 2 && post.realmojis.sample.length > 3 && (
                                                 <div className={`absolute flex items-center justify-center text-white text-sm h-8 w-8 rounded-full bg-black bg-opacity-70`}>
                                                     {post.realmojis.sample.length > 4 ? "3+" : "+2"}
@@ -276,14 +285,16 @@ export default function FOF({ params }: { params: { lng: string }}) {
                                     className="w-[32vw] rounded-lg object-cover"
                                     src={post.primary.url}
                                     alt={`Image ${imageIndex}`}
-                                    placeholder={placeholder} />
+                                    placeholder={placeholder}
+                                    referrerPolicy='no-referrer' />
                                 <Image
                                     width={1500}
                                     height={2000}
                                     className={`top-1 left-1 absolute w-[10vw] rounded-lg border-2 border-black object-cover ${swipeable ? "" : "transition-transform duration-500"}`}
                                     src={post.secondary.url}
                                     alt={`Image ${imageIndex}`}
-                                    placeholder={placeholder} />
+                                    placeholder={placeholder}
+                                    referrerPolicy='no-referrer' />
                                 <div className="bottom-0 pt-2 w-full pl-1 pb-1 absolute bg-gradient-to-b from-transparent to-black">
                                     <p className="text-sm">{post.user.username}</p>
                                     <p className="text-xs opacity-80">{post.lateInSeconds ? t("TimeLate", {time: formatTimeLate(post.lateInSeconds)}) : UTCtoParisTime(post.takenAt)}</p>

@@ -10,6 +10,7 @@ import SwipeableViews from 'react-swipeable-views'
 import { IoArrowBack, IoPerson } from 'react-icons/io5'
 import { FaLocationArrow } from "react-icons/fa";
 import { MdOutlineScreenRotationAlt } from "react-icons/md";
+import Image from 'next/image'
 
 export default function Page({ params }: { params: { username: string, lng: string } }) {
     const { t } = useTranslation(params.lng, 'client-page', {})
@@ -92,7 +93,7 @@ export default function Page({ params }: { params: { username: string, lng: stri
                 <div className="flex flex-nowrap overflow-auto pb-2">
                     {posts?.posts[posts.posts.length-index-1].realMojis?.map((item, index) => (
                         <div key={index} className="flex flex-col items-center -mr-2">
-                            <img src={item.media.url} alt={`Image ${index}`} className="w-16 h-16 rounded-full" />
+                            <Image src={item.media.url} alt={`Image ${index}`} className="w-16 h-16 rounded-full" referrerPolicy='no-referrer'/>
                             <div className="text-right ml-16 -mt-8 text-3xl">{item.emoji}</div>
                             <div className="text-center mb-1 text-xs">{item.user.username}</div>
                         </div>
@@ -103,7 +104,7 @@ export default function Page({ params }: { params: { username: string, lng: stri
             <div>
                 {posts?.posts[posts.posts.length-index-1]?.comments?.map((comment) => (
                     <div className='flex mt-3 mb-5 ml-2'>
-                        <img src={JSON.stringify(comment.user.profilePicture) == "null" ? "/icon.png" : comment.user.profilePicture ? comment.user.profilePicture.url : "/icon.png"} alt={`${comment.user.username}'s profile`} className='w-9 h-9 rounded-full'/>
+                        <Image src={JSON.stringify(comment.user.profilePicture) == "null" ? "/icon.png" : comment.user.profilePicture ? comment.user.profilePicture.url : "/icon.png"} alt={`${comment.user.username}'s profile`} className='w-9 h-9 rounded-full' referrerPolicy='no-referrer'/>
                         <div className='flex flex-col ml-2'>
                             <div className='flex flex-row text-sm'>
                                 <p>{comment.user.username}</p>

@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { IoArrowBack, IoPerson } from 'react-icons/io5'
 import { FaLocationArrow } from "react-icons/fa";
+import Image from 'next/image'
 
 export default function Page({ params }: { params: { username: string, lng: string } }) {
     const { t } = useTranslation(params.lng, 'client-page', {})
@@ -75,7 +76,7 @@ export default function Page({ params }: { params: { username: string, lng: stri
                 <div className="flex flex-nowrap overflow-auto pb-2">
                     {post?.realmojis.sample?.map((item, index) => (
                         <div key={index} className="flex flex-col items-center -mr-2">
-                            <img src={item.media.url} alt={`Image ${index}`} className="w-16 h-16 rounded-full" />
+                            <Image src={item.media.url} alt={`Image ${index}`} className="w-16 h-16 rounded-full" referrerPolicy='no-referrer'/>
                             <div className="text-right ml-16 -mt-8 text-3xl">{item.emoji}</div>
                             <div className="text-center mb-1 text-xs">{item.user.username}</div>
                         </div>
