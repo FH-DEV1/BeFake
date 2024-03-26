@@ -9,6 +9,7 @@ import { getSelf } from '../../routes/me.ts';
 import { getPinnedMemories } from '../../routes/pinnedMemories.ts';
 import { sendCode } from '../../routes/sendCode.ts';
 import { profiles } from '../../routes/profiles.ts';
+import { uploadComment } from '../../routes/comment/upload/index.ts';
 
 // Initialize express app and router
 const api: express.Application = express();
@@ -79,6 +80,10 @@ router.get('/pinned-memories', getPinnedMemories, (_req: Request, res: Response)
 
 // Route for getting profiles
 router.get('/profiles', profiles, (_req: Request, res: Response) => {
+  res.json(res.locals.response);
+});
+
+router.get('/comment/upload', uploadComment, (_req: Request, res: Response) => {
   res.json(res.locals.response);
 });
 
