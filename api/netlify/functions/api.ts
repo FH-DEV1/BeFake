@@ -1,71 +1,89 @@
-import express, { Router } from "express";
-import serverless from "serverless-http";
+import express, { Router, Request, Response, NextFunction } from 'express';
+import serverless from 'serverless-http';
 import cors from 'cors';
 import { refreshToken } from '../../routes/refresh.ts';
 import { verifyOTP } from '../../routes/verifyOTP.ts';
-import { getFeed } from "../../routes/feed.ts";
-import { getData } from "../../routes/fof.ts";
-import { getSelf } from "../../routes/me.ts";
-import { getPinnedMemories } from "../../routes/pinnedMemories.ts";
-import { sendCode } from "../../routes/sendCode.ts";
+import { getFeed } from '../../routes/feed.ts';
+import { getData } from '../../routes/fof.ts';
+import { getSelf } from '../../routes/me.ts';
+import { getPinnedMemories } from '../../routes/pinnedMemories.ts';
+import { sendCode } from '../../routes/sendCode.ts';
 import { profiles } from '../../routes/profiles.ts';
 
-const api = express();
-const router = Router();
-const AllowedUrls = [
-  'https://bereal-fhdev.vercel.app', 
-  'https://befake.website'
-]
+// Initialize express app and router
+const api: express.Application = express();
+const router: Router = Router();
+
+// Allowed URLs for CORS
+const AllowedUrls: string[] = [
+  'https://bereal-fhdev.vercel.app',
+  'https://befake.website',
+];
+
 if (process.env.PRODUCTION !== 'true') {
   AllowedUrls.push('http://localhost:3000');
 }
-const corsOptions = {
+
+// CORS options
+const corsOptions: cors.CorsOptions = {
   origin: AllowedUrls,
 };
+
+// Apply CORS middleware
 router.use(cors(corsOptions));
 
-router.get("/refresh", refreshToken, (req, res) => {
- res.json({
-      token: res.locals.token,
-      refresh_token: res.locals.refresh_token,
-      token_expiration: res.locals.token_expiration
- });
+// Route for refreshing token
+router.get('/refresh', refreshToken, (_req: Request, res: Response) => {
+  res.json({
+    token: res.locals.token,
+    refresh_token: res.locals.refresh_token,
+    token_expiration: res.locals.token_expiration
+  });
 });
 
-router.get("/verify-otp", verifyOTP, (req, res) => {
- res.json({
+// Route for verifying OTP
+router.get('/verify-otp', verifyOTP, (_req: Request, res: Response) => {
+  res.json({
     refresh_data: {
       token: res.locals.access_token,
       refresh_token: res.locals.access_refresh_token,
       token_expiration: res.locals.access_expiration
     }
- });
+  });
 });
 
-router.get("/send-code", sendCode, (req, res) => {
+// Route for sending code
+router.get('/send-code', sendCode, (_req: Request, res: Response) => {
   res.json(res.locals.response);
 });
 
-router.get("/feed", getFeed, (req, res) => {
+// Route for getting feed
+router.get('/feed', getFeed, (_req: Request, res: Response) => {
   res.json(res.locals.response);
 });
 
-router.get("/fof", getData, (req, res) => {
+// Route for getting fof (friends of friends)
+router.get('/fof', getData, (_req: Request, res: Response) => {
   res.json(res.locals.response);
 });
 
-router.get("/me", getSelf, (req, res) => {
+// Route for getting self
+router.get('/me', getSelf, (_req: Request, res: Response) => {
   res.json(res.locals.response);
 });
 
-router.get("/pinned-memories", getPinnedMemories, (req, res) => {
+// Route for getting pinned memories
+router.get('/pinned-memories', getPinnedMemories, (_req: Request, res: Response) => {
   res.json(res.locals.response);
 });
 
-router.get("/profiles", profiles, (req, res) => {
+// Route for getting profiles
+router.get('/profiles', profiles, (_req: Request, res: Response) => {
   res.json(res.locals.response);
 });
 
-api.use("/api/", router);
+// Mount router at '/api/'
+api.use('/api/', router);
 
+// Export the serverless handler
 export const handler = serverless(api);

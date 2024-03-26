@@ -2,8 +2,10 @@ import axios from 'axios';
 import { Request, Response, NextFunction } from 'express';
 import { refreshDataType } from '../types/Types';
 
-const domain = process.env.DOMAIN
+// Retrieve domain from environment variables
+const domain: string | undefined = process.env.DOMAIN;
 
+// Middleware function to fetch data
 export const getData = async (req: Request, res: Response, next: NextFunction) => {
     try {
         let token: string | null = req.headers.token as string;
@@ -12,8 +14,9 @@ export const getData = async (req: Request, res: Response, next: NextFunction) =
         let refreshData: refreshDataType | undefined = undefined;
         let data: any[] = [];
 
+        // Check if necessary headers are present
         if (token && tokenExpiration && refreshToken) {
-            let now = Date.now();
+            const now = Date.now();
    
             if (now > parseInt(tokenExpiration)) {
                 const response = await axios.get(`${domain}/api/refresh`, {
@@ -26,11 +29,13 @@ export const getData = async (req: Request, res: Response, next: NextFunction) =
                 token = response.data.token;
             }
         } else {
-            return res.status(400).json({ error: `Error: token, token_expiration, or refresh_token is undefined` });
+            // If any of the required headers is missing, return an error response
+            return res.status(400).json({ error: 'Error: token, token_expiration, or refresh_token is undefined' });
         }
 
         let nextPage: string | null = 'https://mobile.bereal.com/api/feeds/friends-of-friends';
         
+        // Fetch data from multiple pages if pagination exists
         while (nextPage) {
             const response: any = await axios.get(nextPage, {
                 headers: {
@@ -46,15 +51,18 @@ export const getData = async (req: Request, res: Response, next: NextFunction) =
             nextPage = response.data.next ? `https://mobile.bereal.com/api/feeds/friends-of-friends?page=${response.data.next}` : null;
         }
 
+        // Attach fetched data to response locals
         if (refreshData) {
-            res.locals.response = {data: data, refresh_data: refreshData}
+            res.locals.response = { data: data, refresh_data: refreshData };
         } else {
-            res.locals.response = {data: data}
+            res.locals.response = { data: data };
         }
 
+        // Move to the next middleware
         return next();
     } catch (error: any) {
-        if (error.response.data) {
+        // Handle errors
+        if (error.response && error.response.data) {
             return res.status(400).json({ error: error.response.data });
         } else {
             return res.status(400).json({ error: error });
