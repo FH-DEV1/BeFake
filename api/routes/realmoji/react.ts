@@ -54,7 +54,7 @@ export const reactRealmoji = async (req: Request, res: Response, next: NextFunct
             headers: {
             Authorization: `Bearer ${token}`,
             'bereal-app-version-code': '14549',
-            'bereal-signature': 'MToxNzEwOTU4NjQxOpg0j8sNuUN6oL3/h9GtyvzOPwPz1Rqf+euE+QfDPQlA',
+            'bereal-signature': process.env.SIGNATURE,
             'bereal-device-id': 'XKFg0Nkarwqyds17',
             'bereal-timezone': 'Europe/Paris'
             },

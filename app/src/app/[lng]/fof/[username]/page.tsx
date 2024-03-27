@@ -77,12 +77,13 @@ export default function Page({ params }: { params: { username: string, lng: stri
                     {post?.realmojis.sample?.map((item, index) => (
                         <div key={index} className="flex flex-col items-center -mr-2">
                             <Image
-                            width={item.media.width}
-                            height={item.media.height}
-                            src={item.media.url} 
-                            alt={`Image ${index}`} 
-                            className="w-16 h-16 rounded-full" 
-                            referrerPolicy='no-referrer'/>
+                                width={item.media.width}
+                                height={item.media.height}
+                                src={item.media.url} 
+                                alt={`Image ${index}`} 
+                                className="w-16 h-16 rounded-full" 
+                                referrerPolicy='no-referrer'
+                            />
                             <div className="text-right ml-16 -mt-8 text-3xl">{item.emoji}</div>
                             <div className="text-center mb-1 text-xs">{item.user.username}</div>
                         </div>

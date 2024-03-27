@@ -41,7 +41,7 @@ export const getPinnedMemories = async (req: Request, res: Response, next: NextF
         headers: {
             'authorization': `Bearer ${token}`,
             'bereal-app-version-code': '14549',
-            'bereal-signature': 'MToxNzA3NDgwMjI4OvR2hbFOdgnyAz1bfiCp68ul5sVZiHnv+NAZNySEcBfD',
+            'bereal-signature': process.env.SIGNATURE,
             'bereal-timezone': 'Europe/Paris',
             'bereal-device-id': '937v3jb942b0h6u9'
         }
