@@ -1,13 +1,11 @@
 import axios from 'axios';
 import { Request, Response, NextFunction } from 'express';
 
-// Middleware function to verify OTP
 export const verifyOTP = async (req: Request, res: Response, next: NextFunction) => {
     let otp_code: string | undefined = req.headers.otp_code as string;
     let otp_session: string | undefined = req.headers.otp_session as string;
     let login_type: string | undefined = req.headers.login_type as string;
 
-    // Function to check the response status
     function check_response(response: { status: number; data: any; }) {
         if (response.status > 350 || response.status == 16) {
             return res.status(400).json({ error: response });
@@ -15,7 +13,6 @@ export const verifyOTP = async (req: Request, res: Response, next: NextFunction)
         return false;
     }
 
-    // Firebase login type verification
     if (login_type == 'firebase' && otp_session && otp_code) {
         try {
             let headers_list = {
@@ -91,11 +88,10 @@ export const verifyOTP = async (req: Request, res: Response, next: NextFunction)
 
             let access_grant_response = await axios.request(access_grant_options);
 
-            res.locals.access_token = access_grant_response.data.access_token;
-            res.locals.access_refresh_token = access_grant_response.data.refresh_token;
-            res.locals.access_expiration = Date.now() + access_grant_response.data.expires_in * 1000;
-
+            let access_expiration = Date.now() + access_grant_response.data.expires_in * 1000;
+            res.locals.response = { token: access_grant_response.data.access_token, refresh_token: access_grant_response.data.refresh_token, token_expiration: access_expiration }
             return next();
+            
         } catch (error: any) {
             let error_message;
 
@@ -108,7 +104,6 @@ export const verifyOTP = async (req: Request, res: Response, next: NextFunction)
             return res.status(400).json({ error: error_message });
         }
 
-        // Vonage login type verification
     } else if (login_type == 'vonage' && otp_session && otp_code) {
         try {
     
@@ -122,8 +117,6 @@ export const verifyOTP = async (req: Request, res: Response, next: NextFunction)
                 'Content-Type': 'application/json'
             };
     
-            // Vonage OTP verification process
-    
             let vonage_body_content = JSON.stringify({ 'code': otp, 'vonageRequestId': vonage_request_id });
             let vonage_options = {
                 url: 'https://auth.bereal.team/api/vonage/check-code',
@@ -132,18 +125,13 @@ export const verifyOTP = async (req: Request, res: Response, next: NextFunction)
                 data: vonage_body_content,
             };
 
-            // Send Vonage OTP code for verification
             let response = await axios.request(vonage_options);
 
-            // Check if there's an error in the response
             if (check_response(response)) {
                 return;
             }
 
             let token = response.data.token;
-            let uid = response.data.uid;
-
-            // Refresh the custom token for Firebase authentication
 
             let refresh_body = JSON.stringify({ 'token': token, 'returnSecureToken': 'True' });
             let refresh_options = {
@@ -152,13 +140,11 @@ export const verifyOTP = async (req: Request, res: Response, next: NextFunction)
                 headers: headers_list,
                 data: refresh_body,
             };
-            
-            // Refresh the custom token
+
             let refresh_response = await axios.request(refresh_options)
 
             let refresh_token = refresh_response.data.refreshToken;
 
-            // Refresh Firebase token
             let firebase_refresh_data = JSON.stringify({
                 'grantType': 'refresh_token',
                 'refreshToken': refresh_token
@@ -177,8 +163,6 @@ export const verifyOTP = async (req: Request, res: Response, next: NextFunction)
     
             let firebase_token = firebase_refresh_response.data.id_token;
     
-            // Get access token for Firebase authentication
-    
             let access_grant = JSON.stringify({
                 'grant_type': 'firebase',
                 'client_id': 'ios',
@@ -196,13 +180,9 @@ export const verifyOTP = async (req: Request, res: Response, next: NextFunction)
             if (check_response(access_grant_response)) {
                 return;
             }
-            
-            // Set response locals with access token details
-    
-            res.locals.access_token = access_grant_response.data.access_token;
-            res.locals.access_refresh_token = access_grant_response.data.refresh_token;
-            res.locals.access_expiration = Date.now() + access_grant_response.data.expires_in * 1000;
-    
+
+            let access_expiration = Date.now() + access_grant_response.data.expires_in * 1000;
+            res.locals.response = { token: access_grant_response.data.access_token, refresh_token: access_grant_response.data.refresh_token, token_expiration: access_expiration }
             return next();
         
         } catch (error: any) {

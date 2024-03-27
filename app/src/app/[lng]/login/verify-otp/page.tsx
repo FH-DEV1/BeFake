@@ -33,9 +33,9 @@ export default function OTPValidate({ params }: { params: { lng: string }}) {
             }).then(response => {
                 if (typeof window !== "undefined") {
                     console.log("===== refreshed data =====")
-                    console.log(response.data.refresh_data)
+                    console.log(response.data)
                     localStorage.removeItem('OTPSession');
-                    localStorage.setItem("token", JSON.stringify(response.data.refresh_data))
+                    localStorage.setItem("token", JSON.stringify(response.data))
                     localStorage.setItem("v", process.env.NEXT_PUBLIC_VERSION || "")
                     router.replace(`/${params.lng}/`)
                 }

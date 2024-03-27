@@ -2,40 +2,42 @@ import axios from 'axios';
 import { Request, Response, NextFunction } from 'express';
 import { refreshDataType } from '../types/Types';
 
-// Retrieve domain from environment variables
 const domain: string | undefined = process.env.DOMAIN;
 
-// Middleware function to fetch data
 export const getData = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        let token: string | null = req.headers.token as string;
-        let tokenExpiration: string | null = req.headers.token_expiration as string;
-        let refreshToken: string | null = req.headers.refresh_token as string;
-        let refreshData: refreshDataType | undefined = undefined;
-        let data: any[] = [];
+    let token: string | null = req.headers.token as string;
+    let token_expiration: string | null = req.headers.token_expiration as string;
+    let refresh_token: string | null = req.headers.refresh_token as string;
+    let refreshData: refreshDataType | undefined = undefined;
 
-        // Check if necessary headers are present
-        if (token && tokenExpiration && refreshToken) {
-            const now = Date.now();
-   
-            if (now > parseInt(tokenExpiration)) {
-                const response = await axios.get(`${domain}/api/refresh`, {
-                    headers: {
-                        refresh_token: refreshToken
-                    }
-                });
-
+    if (token && token_expiration && refresh_token) {
+        const now = Date.now();
+        if (now > parseInt(token_expiration)) {
+            await axios.get(`${domain}/api/refresh`, {
+                headers: {
+                    refresh_token: refresh_token
+                }
+            }).then(response => {
                 refreshData = response.data;
                 token = response.data.token;
-            }
-        } else {
-            // If any of the required headers is missing, return an error response
-            return res.status(400).json({ error: 'Error: token, token_expiration, or refresh_token is undefined' });
+            }).catch(error => {
+                return res.status(400).json({ error: {message: "Error refreshing token", error: error.response.data} });
+            });
         }
+    } else if (!token) {
+        return res.status(400).json({ error: 'Error: token is undefined' });
+    } else if (!token_expiration) {
+        return res.status(400).json({ error: 'Error: token_expiration is undefined' });
+    } else if (!refresh_token) {
+        return res.status(400).json({ error: 'Error: refresh_token is undefined' });
+    } else {
+        return res.status(400).json({ error: 'Error: Impossible error' });
+    }
 
-        let nextPage: string | null = 'https://mobile.bereal.com/api/feeds/friends-of-friends';
+    let nextPage: string | null = 'https://mobile.bereal.com/api/feeds/friends-of-friends';
+    let data: any[] = [];
         
-        // Fetch data from multiple pages if pagination exists
+    try {
         while (nextPage) {
             const response: any = await axios.get(nextPage, {
                 headers: {
@@ -50,22 +52,13 @@ export const getData = async (req: Request, res: Response, next: NextFunction) =
             data = data.concat(response.data.data);
             nextPage = response.data.next ? `https://mobile.bereal.com/api/feeds/friends-of-friends?page=${response.data.next}` : null;
         }
-
-        // Attach fetched data to response locals
         if (refreshData) {
             res.locals.response = { data: data, refresh_data: refreshData };
         } else {
             res.locals.response = { data: data };
         }
-
-        // Move to the next middleware
         return next();
-    } catch (error: any) {
-        // Handle errors
-        if (error.response && error.response.data) {
-            return res.status(400).json({ error: error.response.data });
-        } else {
-            return res.status(400).json({ error: error });
-        }
+    } catch (error) {
+        return res.status(400).json({ error: error.response.data, refreshData: refreshData });
     }
 };
