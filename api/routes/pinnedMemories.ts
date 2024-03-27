@@ -43,7 +43,7 @@ export const getPinnedMemories = async (req: Request, res: Response, next: NextF
             'bereal-app-version-code': '14549',
             'bereal-signature': process.env.SIGNATURE,
             'bereal-timezone': 'Europe/Paris',
-            'bereal-device-id': '937v3jb942b0h6u9'
+            'bereal-device-id': process.env.DEVICEID
         }
     }).then(response => {
         if (refreshData) {

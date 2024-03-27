@@ -44,7 +44,7 @@ export const getData = async (req: Request, res: Response, next: NextFunction) =
                     'authorization': `Bearer ${token}`,
                     'bereal-app-version-code': '14549',
                     'bereal-signature': process.env.SIGNATURE,
-                    'bereal-device-id': 'XKFg0Nkarwqyds17',
+                    'bereal-device-id': process.env.DEVICEID,
                     'bereal-timezone': 'Europe/Paris'
                 }
             });
