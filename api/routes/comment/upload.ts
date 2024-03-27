@@ -11,9 +11,9 @@ export const uploadComment = async (req: Request, res: Response, next: NextFunct
         let token: string | undefined = req.headers.token as string;
         let token_expiration: string | undefined = req.headers.token_expiration as string;
         let refresh_token: string | undefined = req.headers.refresh_token as string;
-        let postId: string | undefined = req.headers.postId as string;
+        let postId: string | undefined = req.headers.postid as string;
         let userId: string | undefined = req.headers.userid as string;
-        let comment: string | undefined = req.body.comment as string;
+        let comment: string | undefined = JSON.parse(req.body).comment as string;
 
          // Check if necessary headers are present
          if (token && token_expiration && refresh_token && userId) {

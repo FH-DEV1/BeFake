@@ -88,7 +88,7 @@ router.post('/comment/upload', uploadComment, (_req: Request, res: Response) => 
   res.json(res.locals.response);
 });
 
-router.post('/realmoji/upload', reactRealmoji, (_req: Request, res: Response) => {
+router.post('/realmoji/react', reactRealmoji, (_req: Request, res: Response) => {
   res.json(res.locals.response);
 });
 

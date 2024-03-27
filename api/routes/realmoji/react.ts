@@ -45,7 +45,7 @@ export const reactRealmoji = async (req: Request, res: Response, next: NextFunct
             }
         }
 
-        // Send POST request to upload comment
+        // Send PUT request to upload reaction
         const response = await axios.put(
             `https://mobile.bereal.com/api/content/realmojis?postId=${postId}&postUserId=${userId}`,
             {
