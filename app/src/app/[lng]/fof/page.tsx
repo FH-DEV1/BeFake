@@ -227,7 +227,7 @@ export default function FOF({ params }: { params: { lng: string }}) {
                                             } }
                                         >
                                             {post.location?.ReverseGeocode ? `${post.location.ReverseGeocode.City}, ${post.location.ReverseGeocode.CntryName} • ` : ""}
-                                            {post.lateInSeconds !== 0 ? t("TimeLate", {time: formatTimeLate(post.lateInSeconds)}) : UTCtoParisTime(post.takenAt)}
+                                            {post.lateInSeconds !== 0 ? t("TimeLate", {time: formatTimeLate(post.lateInSeconds)}) : UTCtoParisTime(post.takenAt, t)}
                                         </a>
                                     </div>
                                 </div>
@@ -297,7 +297,7 @@ export default function FOF({ params }: { params: { lng: string }}) {
                                     referrerPolicy='no-referrer' />
                                 <div className="bottom-0 pt-2 w-full pl-1 pb-1 absolute bg-gradient-to-b from-transparent to-black">
                                     <p className="text-sm">{post.user.username}</p>
-                                    <p className="text-xs opacity-80">{post.lateInSeconds ? t("TimeLate", {time: formatTimeLate(post.lateInSeconds)}) : UTCtoParisTime(post.takenAt)}</p>
+                                    <p className="text-xs opacity-80">{post.lateInSeconds ? t("TimeLate", {time: formatTimeLate(post.lateInSeconds)}) : UTCtoParisTime(post.takenAt, t)}</p>
                                 </div>
                             </div>
                     </div>

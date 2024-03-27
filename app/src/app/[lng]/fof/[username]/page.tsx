@@ -37,7 +37,7 @@ export default function Page({ params }: { params: { username: string, lng: stri
                 </div>
                 <div className='flex flex-col justify-center items-center'>
                     <h1 className='text-xl'>{t("FriendBerealTitle", {name: params.username})}</h1>
-                    <p className='opacity-60'>{UTCtoParisTime(post?.takenAt ? post?.takenAt : "1999-12-31T23:00:00.000Z")}{post?.lateInSeconds !== 0 ? ` - ${t("TimeLate", {time: formatTimeLate(post?.lateInSeconds ? post?.lateInSeconds : 0)})}` : ""}</p>
+                    <p className='opacity-60'>{UTCtoParisTime(post?.takenAt ? post?.takenAt : "1999-12-31T23:00:00.000Z", t)}{post?.lateInSeconds !== 0 ? ` - ${t("TimeLate", {time: formatTimeLate(post?.lateInSeconds ? post?.lateInSeconds : 0)})}` : ""}</p>
                 </div>
                 <div className='' onClick={() => router.push(`/${params.lng}/profile/${post?.user.id}`)}>
                     <IoPerson className='h-8 w-8'/>
@@ -76,7 +76,13 @@ export default function Page({ params }: { params: { username: string, lng: stri
                 <div className="flex flex-nowrap overflow-auto pb-2">
                     {post?.realmojis.sample?.map((item, index) => (
                         <div key={index} className="flex flex-col items-center -mr-2">
-                            <Image src={item.media.url} alt={`Image ${index}`} className="w-16 h-16 rounded-full" referrerPolicy='no-referrer'/>
+                            <Image
+                            width={item.media.width}
+                            height={item.media.height}
+                            src={item.media.url} 
+                            alt={`Image ${index}`} 
+                            className="w-16 h-16 rounded-full" 
+                            referrerPolicy='no-referrer'/>
                             <div className="text-right ml-16 -mt-8 text-3xl">{item.emoji}</div>
                             <div className="text-center mb-1 text-xs">{item.user.username}</div>
                         </div>

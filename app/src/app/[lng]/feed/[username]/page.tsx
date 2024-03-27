@@ -41,7 +41,7 @@ export default function Page({ params }: { params: { username: string, lng: stri
                 </div>
                 <div className='flex flex-col justify-center items-center'>
                     <h1 className='text-xl'>{t("FriendBerealTitle", {name: params.username})}</h1>
-                    <p className='opacity-60'>{UTCtoParisTime(posts?.posts[posts.posts.length-index-1]?.takenAt ? posts?.posts[posts.posts.length-index-1]?.takenAt : "1999-12-31T23:00:00.000Z")}{posts?.posts[index]?.lateInSeconds !== 0 ? ` - ${t("TimeLate", {time: formatTimeLate(posts?.posts[index]?.lateInSeconds ? posts.posts[index].lateInSeconds : 0)})}` : ""}</p>
+                    <p className='opacity-60'>{UTCtoParisTime(posts?.posts[posts.posts.length-index-1]?.takenAt ? posts?.posts[posts.posts.length-index-1]?.takenAt : "1999-12-31T23:00:00.000Z", t)}{posts?.posts[index]?.lateInSeconds !== 0 ? ` - ${t("TimeLate", {time: formatTimeLate(posts?.posts[index]?.lateInSeconds ? posts.posts[index].lateInSeconds : 0)})}` : ""}</p>
                 </div>
                 <div className='' onClick={() => router.push(`/${params.lng}/profile/${posts?.user.id}`)}>
                     <IoPerson className='h-8 w-8'/>
@@ -93,7 +93,13 @@ export default function Page({ params }: { params: { username: string, lng: stri
                 <div className="flex flex-nowrap overflow-auto pb-2">
                     {posts?.posts[posts.posts.length-index-1].realMojis?.map((item, index) => (
                         <div key={index} className="flex flex-col items-center -mr-2">
-                            <Image src={item.media.url} alt={`Image ${index}`} className="w-16 h-16 rounded-full" referrerPolicy='no-referrer'/>
+                            <Image 
+                            width={item.media.width}
+                            height={item.media.height}
+                            src={item.media.url} 
+                            alt={`Image ${index}`} 
+                            className="w-16 h-16 rounded-full" 
+                            referrerPolicy='no-referrer'/>
                             <div className="text-right ml-16 -mt-8 text-3xl">{item.emoji}</div>
                             <div className="text-center mb-1 text-xs">{item.user.username}</div>
                         </div>
@@ -104,11 +110,25 @@ export default function Page({ params }: { params: { username: string, lng: stri
             <div>
                 {posts?.posts[posts.posts.length-index-1]?.comments?.map((comment) => (
                     <div className='flex mt-3 mb-5 ml-2'>
-                        <Image src={JSON.stringify(comment.user.profilePicture) == "null" ? "/icon.png" : comment.user.profilePicture ? comment.user.profilePicture.url : "/icon.png"} alt={`${comment.user.username}'s profile`} className='w-9 h-9 rounded-full' referrerPolicy='no-referrer'/>
+                        {comment.user.profilePicture ? (
+                        <Image
+                        width={comment.user.profilePicture.width}
+                        height={comment.user.profilePicture.height}
+                        src={comment.user.profilePicture.url}
+                        alt={`${comment.user.username}'s profile`} 
+                        className='w-9 h-9 rounded-full' 
+                        referrerPolicy='no-referrer'/>
+                        ) : (
+                        <div className='w-8 h-8 rounded-full bg-white/5 border-full border-black justify-center align-middle flex mr-2 cursor-pointer'>
+                            <div className='m-auto text-xl uppercase font-bold'>
+                                {comment.user.username ? comment.user.username.slice(0, 1) : ''}
+                            </div>
+                        </div>
+                        )}
                         <div className='flex flex-col ml-2'>
                             <div className='flex flex-row text-sm'>
                                 <p>{comment.user.username}</p>
-                                <p className='ml-2 opacity-60'>{UTCtoParisTime(comment.postedAt)}</p>
+                                <p className='ml-2 opacity-60'>{UTCtoParisTime(comment.postedAt, t)}</p>
                             </div>
                             <p>{comment.content}</p>
                         </div>

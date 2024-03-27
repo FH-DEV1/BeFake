@@ -1,4 +1,5 @@
 {
+  "lng": "fr",
   "Friends": "Mes Amis",
   "FOF": "Amis d'Amis",
   "UnavailableYet": "Option pas disponible pour l'instant",
@@ -55,5 +56,7 @@
   "Validate": "Valider",
   "FriendsWith": "Ami(e) avec ",
   "AndManyOthers": " et {{number}} autres",
-  "UnLockMoreBeReal": "Débloque plus de BeReal en postant à l'heure"
+  "UnlockMoreBeReal": "Débloque plus de BeReal en postant à l'heure",
+  "YesterdayAt": "Hier à {{timestring}}",
+  "RemainingPosts": "{{number}} de plus"
 }

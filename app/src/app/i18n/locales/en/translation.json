@@ -1,4 +1,5 @@
 {
+  "lng": "en",
   "Friends": "Friends",
   "FOF": "Friends of friends",
   "UnavailableYet": "This option is not available at the moment",
@@ -55,5 +56,7 @@
   "Validate": "Verify Code",
   "FriendsWith": "Friends with ",
   "AndManyOthers": " and {{number}} more",
-  "UnLockMoreBeReal": "Post on time to unlock more BeReal's"
+  "UnlockMoreBeReal": "Post on time to unlock more BeReal's",
+  "YesterdayAt": "Yesterday at {{timestring}}",
+  "RemainingPosts": "{{number}} left"
 }

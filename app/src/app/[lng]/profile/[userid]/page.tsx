@@ -179,6 +179,7 @@ export default function Page({ params }: { params: { userid: string, lng: string
             </div>
 
             <p className='text-normal mt-6 ml-2 font-semibold'>{Info?.pinnedMemories && Info.pinnedMemories.length !== 0 ? t('Pins'): ""}</p>
+            {Info?.data.relationship.status == "accepted" && (
             <div className="flex w-full justify-around">
                 {Info?.pinnedMemories ? 
                     Info.pinnedMemories.map((pinnedMemory, index) => (
@@ -209,6 +210,7 @@ export default function Page({ params }: { params: { userid: string, lng: string
                     </div>
                 )}
             </div>
+            )}
 
             {/*Common Friends Modal */}
             <Modal 

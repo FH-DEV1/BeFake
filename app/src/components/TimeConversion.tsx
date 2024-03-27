@@ -1,13 +1,16 @@
-import { useTranslation } from '@/app/i18n/client';
 import { formatToTimeZone } from 'date-fns-timezone';
 
-export function UTCtoParisTime(utcTime: string): string {
+export function UTCtoParisTime(utcTime: string, t: Function): string {
+  const timezone = {
+    "fr": "fr-FR",
+    "en": "en-US"
+  }
   const frTime = formatToTimeZone(new Date(utcTime), 'YYYY-MM-DDTHH:mm:ss.SSSSZ', { timeZone: 'Europe/Paris' });
   const date = new Date(frTime)
   const UTCdate = new Date();
-  let timeString = date.toLocaleTimeString('fr-FR');
+  let timeString = date.toLocaleTimeString(timezone[t("lng") as "fr" | "en"]);
   if (date.getDate() < UTCdate.getDate()) {
-    timeString = `Hier a ${timeString}`;
+    timeString = t("YesterdayAt", {timestring: timeString});
   }
   return timeString;
 }

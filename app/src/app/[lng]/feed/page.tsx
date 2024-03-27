@@ -342,18 +342,18 @@ export default function Feed({ params }: { params: { lng: string }}) {
                                 ))}
                                 
                                 {feed.remainingPosts === 0 ? (
-                                    <div className='flex flex-col items-center mt-4 w-[25vw] rounded-xl border border-gray-500 text-white opacity-80 justify-center aspect-[1.5/2]'>
+                                    <div className='flex flex-col items-center mt-4 w-[25vw] px-1 rounded-xl border border-gray-500 text-white opacity-80 justify-center aspect-[1.5/2]'>
                                         <FaLock className='h-4 w-4 mb-2'/>
                                         <div className='text-xs text-white opacity-60 text-center'>
-                                            {t('UnLockMoreBeReal')}
+                                            {t('UnlockMoreBeReal')}
                                         </div>
                                     </div>
                                 ) : feed.remainingPosts === 1 || feed.remainingPosts === 2 ? (
-                                    <div
-                                        className='mt-4 w-[25vw] rounded-xl border-2 border-dashed border-gray-500 text-white opacity-80 flex justify-center items-center aspect-[1.5/2]'
-                                        onClick={() => toast.warning(t('UnavailableYet'))}
-                                    >
-                                        <FaPlus className='h-6 w-6'/>
+                                    <div className='flex flex-col items-center mt-4 w-[25vw] rounded-xl border border-gray-500 text-white opacity-80 justify-center aspect-[1.5/2]'>
+                                        <FaPlus className='h-4 w-4 mb-2'/>
+                                        <div className='text-xs text-white opacity-60 text-center'>
+                                            {t('RemainingPosts', {number: feed.remainingPosts})}
+                                        </div>
                                     </div>
                                 ) : null}
                             </SwipeableViews>
@@ -395,7 +395,7 @@ export default function Feed({ params }: { params: { lng: string }}) {
                                             }}
                                         >
                                             {post.posts[post.posts.length-index[post.user.id]-1? post.posts.length-index[post.user.id]-1 : 0].location?.ReverseGeocode ? `${post.posts[post.posts.length-index[post.user.id]-1? post.posts.length-index[post.user.id]-1 : 0].location?.ReverseGeocode?.City}, ${post.posts[post.posts.length-index[post.user.id]-1? post.posts.length-index[post.user.id]-1 : 0].location?.ReverseGeocode?.CntryName} • ` : ''}
-                                            {post.posts[post.posts.length-index[post.user.id]-1? post.posts.length-index[post.user.id]-1 : 0].isLate ? t('TimeLate', { time: formatTimeLate(post.posts[post.posts.length-index[post.user.id]-1? post.posts.length-index[post.user.id]-1 : 0].lateInSeconds)}) : UTCtoParisTime(post.posts[post.posts.length-index[post.user.id]-1? post.posts.length-index[post.user.id]-1 : 0].takenAt)}
+                                            {post.posts[post.posts.length-index[post.user.id]-1? post.posts.length-index[post.user.id]-1 : 0].isLate ? t('TimeLate', { time: formatTimeLate(post.posts[post.posts.length-index[post.user.id]-1? post.posts.length-index[post.user.id]-1 : 0].lateInSeconds)}) : UTCtoParisTime(post.posts[post.posts.length-index[post.user.id]-1? post.posts.length-index[post.user.id]-1 : 0].takenAt, t)}
                                         </a>
                                     </div>
                                 </div>
@@ -508,7 +508,7 @@ export default function Feed({ params }: { params: { lng: string }}) {
                                 <div className={`absolute -top-1 -right-1 bg-white w-6 h-6 text-center font-bold rounded-full text-stone-700 ${userPost.posts.length > 1 ? "block" : "hidden"}`}>{userPost.posts.length > 2 ? "3" : "2"}</div>
                                 <div className="bottom-0 pt-2 w-full pl-1 pb-1 absolute bg-gradient-to-b from-transparent to-black">
                                     <p className="text-sm">{userPost.user.username}</p>
-                                    <p className="text-xs opacity-80">{userPost.posts[0].isLate ? t('TimeLate', { time: formatTimeLate(userPost.posts[0].lateInSeconds)}) : UTCtoParisTime(userPost.posts[0].takenAt)}</p>
+                                    <p className="text-xs opacity-80">{userPost.posts[0].isLate ? t('TimeLate', { time: formatTimeLate(userPost.posts[0].lateInSeconds)}) : UTCtoParisTime(userPost.posts[0].takenAt, t)}</p>
                                 </div>
                             </div>
                         </div>

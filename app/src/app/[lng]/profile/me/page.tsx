@@ -105,7 +105,12 @@ export default function MyProfile({ params }: { params: { lng: string }}) {
                 ) : (
                     <div className='flex flex-col items-center'>
                         {MyInfo?.data.profilePicture ? (
-                            <Image className='h-36 w-36 rounded-full' src={MyInfo?.data.profilePicture?.url} height={1000} width={1000} alt='Profile Picture' />
+                            <Image 
+                            className='h-36 w-36 rounded-full' 
+                            src={MyInfo?.data.profilePicture?.url} 
+                            height={1000} 
+                            width={1000} 
+                            alt='Profile Picture' />
                         ) : (
                             <div className='h-36 w-36 rounded-full bg-white/5 relative border-full border-black justify-center align-middle flex mx-auto'>
                                 <div className='m-auto text-2xl uppercase font-bold'>
@@ -137,7 +142,12 @@ export default function MyProfile({ params }: { params: { lng: string }}) {
                                         <div key={emoji} className='flex flex-col items-end'>
                                             {realmoji?.media.url ? (
                                                 <>
-                                                    <Image className='rounded-full h-16 w-16' src={realmoji.media.url} height={500} width={500} alt={emoji} />
+                                                    <Image 
+                                                    className='rounded-full h-16 w-16' 
+                                                    src={realmoji.media.url} 
+                                                    height={500} 
+                                                    width={500} 
+                                                    alt={emoji} />
                                                     <p className='-mt-6 -mr-2 text-2xl'>{emoji}</p>
                                                 </>
                                             ) : (
