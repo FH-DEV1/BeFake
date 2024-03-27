@@ -2,14 +2,14 @@
 import { useTranslation } from "@/app/i18n/client"
 import Post from "@/components/Post"
 import { formatDate } from "@/components/TimeConversion"
-import { FriendData } from "@/components/Types"
+import { FriendData, OptionsMenu } from "@/components/Types"
 import { IoArrowBack } from "react-icons/io5";
 import axios from "axios"
 import { useRouter } from "next/navigation"
-import React, { Fragment } from "react"
 import { useEffect, useState } from "react"
 import Image from "next/image"
-import { Dialog, Transition } from "@headlessui/react"
+import Modal from "@/components/Modal"
+import React from "react"
 
 export default function Page({ params }: { params: { userid: string, lng: string } }) {
     const domain = process.env.NODE_ENV === "development" ? process.env.NEXT_PUBLIC_DEV_DOMAIN : process.env.NEXT_PUBLIC_DOMAIN
@@ -18,7 +18,10 @@ export default function Page({ params }: { params: { userid: string, lng: string
     const [Info, setInfo] = useState<FriendData>()
     const [swipeable, setSwipeable] = useState(true)
     const [loading, setLoading] = useState(false)
-    const [ModalVisible, setModalVisible] = useState(false)
+    const [OptionsModal, setOptionsModal] = useState<OptionsMenu>({
+        show: false,
+        disabled: true
+    });
 
     useEffect (() => {
         let ls = typeof window !== "undefined" ? localStorage.getItem('token') : null
@@ -117,7 +120,10 @@ export default function Page({ params }: { params: { userid: string, lng: string
                 <div className='absolute -bottom-[1px] w-full h-48 bg-gradient-to-t from-black to-transparent'></div>
             </div>
 
-            <div onClick={() => setModalVisible(true)}>
+            <div onClick={() => setOptionsModal({
+                show: true,
+                disabled: false,
+            })}>
             {Info?.data.relationship?.commonFriends &&
             Info?.data.relationship?.commonFriends?.total > 0 && (
                 <div className='ml-5 mt-4 flex flex-row items-center z-40'>
@@ -204,102 +210,44 @@ export default function Page({ params }: { params: { userid: string, lng: string
                 )}
             </div>
 
-            
-            {/* heavily inspired from https://github.com/macedonga/beunblurred */}
-            <Transition appear show={ModalVisible} as={Fragment}>
-                <Dialog
-                    as="div"
-                    className="relative z-[60]"
-                    onClose={() => setModalVisible(false)}
-                >
-                        <Transition.Child
-                        as={Fragment}
-                        enter="ease-out duration-300"
-                        enterFrom="opacity-0"
-                        enterTo="opacity-100"
-                        leave="ease-in duration-200"
-                        leaveFrom="opacity-100"
-                        leaveTo="opacity-0"
-                        >
-                        <div className="fixed inset-0 bg-black backdrop-blur bg-opacity-25" />
-                        </Transition.Child>
-
-                        <div className="fixed lg:inset-0 bottom-0 inset-x-0 overflow-y-hidden w-full">
-                        <div className="flex min-h-full items-center justify-center text-center">
-                            <Transition.Child
-                            as={Fragment}
-                            enter="ease-out duration-300"
-                            enterFrom="bottom-0 opacity-0 lg:scale-95 translate-y-10 lg:translate-y-0 translate-x-0"
-                            enterTo="opacity-100 lg:scale-100 translate-y-0 translate-x-0"
-                            leave="ease-in duration-200"
-                            leaveFrom="opacity-100 lg:scale-100 translate-y-0 translate-x-0"
-                            leaveTo="opacity-0 lg:scale-95 translate-y-10 lg:translate-y-0 translate-x-0"
-                            >
-                            <Dialog.Panel
-                                className={`
-                                    lg:max-w-md max-w-none w-full z-[70]
-                                    transform overflow-hidden rounded-t-lg lg:rounded-b-lg mx-4 max-h-[90vh]
-                                    border-2 border-white/10 bg-[#0d0d0d] lg:border-b-2 border-b-0
-                                    text-left align-middle shadow-xl transition-all overflow-y-auto
-                                `}
-                            >
-                                <div className="m-6 mb-4 pb-4 border-b-2 border-white/10">
-                                <Dialog.Title
-                                    as="h2"
-                                    className={"m-0 text-center text-2xl font-bold"}
-                                >
-                                    {t("CommonFriends", {number: Info?.data.relationship.commonFriends.sample.length})}
-                                </Dialog.Title>
+            {/*Common Friends Modal */}
+            <Modal 
+                title={t("CommonFriends", {number: Info?.data.relationship.commonFriends.sample.length})}
+                options={OptionsModal}
+                setOptions={setOptionsModal}
+                t={t}
+            >
+                {Info?.data.relationship.commonFriends.sample.map((friend) => (
+                    <div key={friend.id} className="bg-white/5 rounded-lg py-2 px-4 mt-2 flex items-center" onClick={() => {
+                        router.push(`/${params.lng}/profile/${friend.id}`)
+                    }}>
+                        {
+                            friend.profilePicture?.url ?
+                                <Image
+                                    width={friend.profilePicture.width}
+                                    height={friend.profilePicture.height}
+                                    className="w-12 h-12 rounded-lg border-black border-2 mr-4"
+                                    src={friend.profilePicture?.url}
+                                    alt="Profile picture"
+                                /> :
+                                <div className="w-12 h-12 rounded-lg bg-white/5 relative border-full border-black justify-center align-middle flex mr-4">
+                                    <div className="m-auto text-2xl uppercase font-bold">{friend.username.slice(0, 1)}</div>
                                 </div>
-
-                                <div className="mx-6 mb-3 mt-2">
-                                    {Info?.data.relationship.commonFriends.sample.map((friend) => (
-                                        <div key={friend.id} className="bg-white/5 rounded-lg py-2 px-4 mt-2 flex items-center" onClick={() => {
-                                            router.push(`/${params.lng}/profile/${friend.id}`)
-                                        }}>
-                                            {
-                                                friend.profilePicture?.url ?
-                                                    <Image
-                                                        className="w-12 h-12 rounded-lg border-black border-2 mr-4"
-                                                        src={friend.profilePicture?.url}
-                                                        alt="Profile picture"
-                                                    /> :
-                                                    <div className="w-12 h-12 rounded-lg bg-white/5 relative border-full border-black justify-center align-middle flex mr-4">
-                                                        <div className="m-auto text-2xl uppercase font-bold">{friend.username.slice(0, 1)}</div>
-                                                    </div>
-                                            }
-                                            <p className="text-sm text-white">
-                                                {friend.fullname || "@" + friend.username}
-                                                {
-                                                    friend.fullname && <>
-                                                        <br />
-                                                        <span className="text-xs opacity-75">
-                                                            {"@" + friend.username}
-                                                        </span>
-                                                    </>
-                                                }
-                                            </p>
-                                        </div>
-                                    ))}
-                                </div>
-
-                                <div className="grid gap-y-4 mb-6 mx-6">
-                                <button
-                                    className={`
-                                        text-center  py-2 px-4 w-full rounded-lg outline-none bg-red-600 relative 
-                                        disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 ease-in-out hover:bg-red-500 
-                                    `}
-                                    onClick={() => setModalVisible(false)}
-                                >
-                                    {t("Close")}
-                                </button>
-                                </div>
-                            </Dialog.Panel>
-                            </Transition.Child>
-                        </div>
-                        </div>
-                    </Dialog>
-            </Transition>
+                        }
+                        <p className="text-sm text-white">
+                            {friend.fullname || "@" + friend.username}
+                            {
+                                friend.fullname && <>
+                                    <br />
+                                    <span className="text-xs opacity-75">
+                                        {"@" + friend.username}
+                                    </span>
+                                </>
+                            }
+                        </p>
+                    </div>
+                ))}
+            </Modal>
         </div>
     )
 }

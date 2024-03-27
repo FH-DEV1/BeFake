@@ -1,7 +1,7 @@
 "use client"
 import SwipeableViews from "react-swipeable-views";
 import { FeedType, FriendPost, Index, OptionsMenu, PostType, RealMojis } from '@/components/Types';
-import { Fragment, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { UTCtoParisTime, formatTimeLate } from "@/components/TimeConversion";
 import { useSwipeable } from "react-swipeable";
@@ -14,6 +14,7 @@ import { useTranslation } from '@/app/i18n/client'
 import { MdAddAPhoto } from "react-icons/md";
 import { FaPlus, FaLock } from "react-icons/fa";
 import Image from 'next/image'
+import Modal from "@/components/Modal"
 
 export default function Feed({ params }: { params: { lng: string }}) {
     const { t } = useTranslation(params.lng, 'client-page', {})
@@ -401,7 +402,7 @@ export default function Feed({ params }: { params: { lng: string }}) {
 
                                 <button className="ml-auto my-auto p-2 rounded-lg transition-all transform hover:scale-105" onClick={() => setOptionsMenu({
                                     show: true,
-                                    username: post.user.username,
+                                    subtitle: post.user.username,
                                     disabled: false,
                                     takenAt: post.posts[post.posts.length-index[post.user.id]-1? post.posts.length-index[post.user.id]-1 : 0].takenAt,
                                     primary: post.posts[post.posts.length-index[post.user.id]-1? post.posts.length-index[post.user.id]-1 : 0].primary.url,
@@ -514,98 +515,29 @@ export default function Feed({ params }: { params: { lng: string }}) {
                     ))}
                 </div>
 
-                {/* heavily inspired (copied) from https://github.com/macedonga/beunblurred */}
-                <Transition appear show={OptionsMenu.show} as={Fragment}>
-                    <Dialog
-                        as="div"
-                        className="relative z-[60]"
-                        onClose={() => setOptionsMenu(prevState => ({
-                            ...prevState,
-                            show: false
-                        }))}
-                    >
-                        <Transition.Child
-                        as={Fragment}
-                        enter="ease-out duration-300"
-                        enterFrom="opacity-0"
-                        enterTo="opacity-100"
-                        leave="ease-in duration-200"
-                        leaveFrom="opacity-100"
-                        leaveTo="opacity-0"
-                        >
-                        <div className="fixed inset-0 bg-black backdrop-blur bg-opacity-25" />
-                        </Transition.Child>
-
-                        <div className="fixed lg:inset-0 bottom-0 inset-x-0 overflow-y-hidden w-full">
-                        <div className="flex min-h-full items-center justify-center text-center">
-                            <Transition.Child
-                            as={Fragment}
-                            enter="ease-out duration-300"
-                            enterFrom="bottom-0 opacity-0 lg:scale-95 translate-y-10 lg:translate-y-0 translate-x-0"
-                            enterTo="opacity-100 lg:scale-100 translate-y-0 translate-x-0"
-                            leave="ease-in duration-200"
-                            leaveFrom="opacity-100 lg:scale-100 translate-y-0 translate-x-0"
-                            leaveTo="opacity-0 lg:scale-95 translate-y-10 lg:translate-y-0 translate-x-0"
-                            >
-                            <Dialog.Panel
+                {/* Options Modal */}
+                <Modal 
+                    title={t("PostOptions")}
+                    options={OptionsMenu}
+                    setOptions={setOptionsMenu}
+                    t={t}
+                >
+                    {PostOptions.map((option) => (
+                        <div className="mb-2" key={option.id}>
+                            <button
+                                disabled={OptionsMenu.disabled}
+                                onClick={() => option.action()}
                                 className={`
-                                    lg:max-w-md max-w-none w-full z-[70]
-                                    transform overflow-hidden rounded-t-lg lg:rounded-b-lg mx-4 max-h-[90vh]
-                                    border-2 border-white/10 bg-[#0d0d0d] lg:border-b-2 border-b-0
-                                    text-left align-middle shadow-xl transition-all overflow-y-auto
+                                    text-center py-2 px-4 w-full rounded-lg outline-none bg-white/5 relative
+                                    disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 ease-in-out hover:bg-white/10
+                                    ${OptionsMenu.disabled ? "animate-pulse" : ""}
                                 `}
                             >
-                                <div className="m-6 mb-4 pb-4 border-b-2 border-white/10">
-                                <Dialog.Title
-                                    as="h2"
-                                    className={"m-0 text-center text-2xl font-bold"}
-                                >
-                                    {t("PostOptions")}
-                                </Dialog.Title>
-                                <p className={"m-0 text-center opacity-75 text-sm mt-2"}>
-                                    {OptionsMenu.username ? OptionsMenu.username : ""}
-                                </p>
-                                </div>
-
-                                <div className="mx-6 mb-2 mt-2">
-                                    {PostOptions.map((option) => (
-                                        <div className="mb-2" key={option.id}>
-                                            <button
-                                                disabled={OptionsMenu.disabled}
-                                                onClick={() => option.action()}
-                                                className={`
-                                                    text-center py-2 px-4 w-full rounded-lg outline-none bg-white/5 relative
-                                                    disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 ease-in-out hover:bg-white/10
-                                                    ${OptionsMenu.disabled ? "animate-pulse" : ""}
-                                                `}
-                                            >
-                                                {option.name}
-                                            </button>
-                                        </div>
-                                    ))}
-                                </div>
-
-                                <div className="grid gap-y-4 mb-6 mx-6">
-                                <button
-                                    disabled={OptionsMenu.disabled}
-                                    className={`
-                                        text-center  py-2 px-4 w-full rounded-lg outline-none bg-red-600 relative 
-                                        disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 ease-in-out hover:bg-red-500 
-                                    `}
-                                    onClick={() => setOptionsMenu(prevState => ({
-                                        ...prevState,
-                                        show: false
-                                    }))}
-                                >
-                                    {t("Close")}
-                                </button>
-                                </div>
-                            </Dialog.Panel>
-                            </Transition.Child>
+                                {option.name}
+                            </button>
                         </div>
-                        </div>
-                    </Dialog>
-                </Transition>
+                    ))}
+                </Modal>
             </div>
         </div>
     )

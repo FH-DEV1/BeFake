@@ -285,7 +285,7 @@ export interface FeedResponse {
 
 export interface OptionsMenu {
     show: boolean;
-    username?: string;
+    subtitle?: string;
     disabled: boolean;
     takenAt?: string;
     primary?: string;
