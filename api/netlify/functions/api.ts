@@ -11,6 +11,11 @@ import { sendCode } from '../../routes/sendCode.ts';
 import { profiles } from '../../routes/profiles.ts';
 import { uploadComment } from '../../routes/comment/upload.ts';
 import { reactRealmoji } from '../../routes/realmoji/react.ts';
+import { getMemories } from '../../routes/memories.ts';
+import { uploadRealMoji } from '../../routes/realmoji/realmoji.ts';
+import { reactLightningRealmoji } from '../../routes/realmoji/react-lightning.ts';
+import { uploadPost } from '../../routes/post/post.ts';
+import { deletePost } from '../../routes/post/delete.ts';
 
 const api: express.Application = express();
 const router: Router = Router();
@@ -62,11 +67,31 @@ router.get('/profiles', profiles, (_req: Request, res: Response) => {
   res.json(res.locals.response);
 });
 
+router.get('/memories', getMemories, (_req: Request, res: Response) => {
+  res.json(res.locals.response);
+});
+
 router.post('/comment/upload', uploadComment, (_req: Request, res: Response) => {
   res.json(res.locals.response);
 });
 
 router.post('/realmoji/react', reactRealmoji, (_req: Request, res: Response) => {
+  res.json(res.locals.response);
+});
+
+router.post('/realmoji/upload', uploadRealMoji, (_req: Request, res: Response) => {
+  res.json(res.locals.response);
+});
+
+router.post('/realmoji/lightning', reactLightningRealmoji, (_req: Request, res: Response) => {
+  res.json(res.locals.response);
+});
+
+router.post('/post/upload', uploadPost, (_req: Request, res: Response) => {
+  res.json(res.locals.response);
+});
+
+router.delete('/post/delete', deletePost, (_req: Request, res: Response) => {
   res.json(res.locals.response);
 });
 

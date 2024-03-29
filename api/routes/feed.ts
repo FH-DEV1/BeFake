@@ -36,11 +36,20 @@ export const getFeed = async (req: Request, res: Response, next: NextFunction) =
 
     await axios.get('https://mobile.bereal.com/api/feeds/friends-v1', {
         headers: {
-            'authorization': `Bearer ${token}`,
-            'bereal-app-version-code': '14549',
-            'bereal-signature': process.env.SIGNATURE,
-            'bereal-device-id': process.env.DEVICEID,
-            'bereal-timezone': 'Europe/Paris'
+            'Bereal-Device-Language': 'fr',
+            'Bereal-App-Version': '2.2.0',
+            'Bereal-App-Version-Code': '15558',
+            'Authorization': `Bearer ${token}`,
+            'Accept': '*/*',
+            'Bereal-Platform': 'iPadOS',
+            'Bereal-Os-Version': '17.3',
+            'Accept-Language': 'fr-FR;q=1.0',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'Bereal-Device-Id': process.env.DEVICEID,
+            'User-Agent': 'BeReal/2.2.0 (AlexisBarreyat.BeReal; build:15558; iOS 17.3.0)',
+            'Bereal-App-Language': 'fr-FR',
+            'Bereal-Timezone': 'Europe/Paris',
+            'Bereal-Signature': process.env.SIGNATURE
         }
     }).then(response => {
         if (refreshData) {
@@ -50,6 +59,7 @@ export const getFeed = async (req: Request, res: Response, next: NextFunction) =
         }
         return next();
     }).catch(error => {
+        console.log('Error', error)
         return res.status(400).json({ error: error.response.data, refreshData: refreshData });
     });
 };

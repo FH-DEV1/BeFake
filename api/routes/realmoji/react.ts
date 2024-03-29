@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from 'axios';
 import { NextFunction, Request, Response } from 'express';
 import { refreshDataType } from '../../types/Types';
 
@@ -10,6 +10,7 @@ export const reactRealmoji = async (req: Request, res: Response, next: NextFunct
     } catch {
         return res.status(400).json({ error: 'Error: request body is missing' });
     }
+    
     let refreshData: refreshDataType | undefined;
     let token: string | undefined = req.headers.token as string;
     let token_expiration: string | undefined = req.headers.token_expiration as string;
@@ -29,7 +30,7 @@ export const reactRealmoji = async (req: Request, res: Response, next: NextFunct
                 refreshData = response.data;
                 token = response.data.token;
             }).catch(error => {
-                return res.status(400).json({ error: {message: "Error refreshing token", error: error.response.data} });
+                return res.status(400).json({ error: { message: 'Error refreshing token', error: error.response.data }});
             })
         }
     } else if (!token) {
@@ -52,11 +53,20 @@ export const reactRealmoji = async (req: Request, res: Response, next: NextFunct
             emoji: emoji,
         }, {
             headers: {
-            Authorization: `Bearer ${token}`,
-            'bereal-app-version-code': '14549',
-            'bereal-signature': process.env.SIGNATURE,
-            'bereal-device-id': process.env.DEVICEID,
-            'bereal-timezone': 'Europe/Paris'
+                'Bereal-Device-Language': 'fr',
+                'Bereal-App-Version': '2.2.0',
+                'Bereal-App-Version-Code': '15558',
+                'Authorization': `Bearer ${token}`,
+                'Accept': '*/*',
+                'Bereal-Platform': 'iPadOS',
+                'Bereal-Os-Version': '17.3',
+                'Accept-Language': 'fr-FR;q=1.0',
+                'Accept-Encoding': 'gzip, deflate, br',
+                'Bereal-Device-Id': process.env.DEVICEID,
+                'User-Agent': 'BeReal/2.2.0 (AlexisBarreyat.BeReal; build:15558; iOS 17.3.0)',
+                'Bereal-App-Language': 'fr-FR',
+                'Bereal-Timezone': 'Europe/Paris',
+                'Bereal-Signature': process.env.SIGNATURE
             },
         },
     ).then(response => {

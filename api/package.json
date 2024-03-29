@@ -13,6 +13,12 @@
     "axios": "^1.6.7",
     "cors": "^2.8.5",
     "express": "^4.18.3",
-    "serverless-http": "^3.2.0"
+    "moment": "^2.30.1",
+    "serverless-http": "^3.2.0",
+    "sharp": "^0.33.3",
+    "xmldom": "^0.6.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17"
   }
 }

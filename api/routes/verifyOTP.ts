@@ -106,7 +106,6 @@ export const verifyOTP = async (req: Request, res: Response, next: NextFunction)
 
     } else if (login_type == 'vonage' && otp_session && otp_code) {
         try {
-    
             let otp = otp_code;
             let vonage_request_id = otp_session;
     
@@ -114,7 +113,11 @@ export const verifyOTP = async (req: Request, res: Response, next: NextFunction)
                 'Accept': 'application/json',
                 'User-Agent': 'BeReal/8586 CFNetwork/1240.0.4 Darwin/20.6.0',
                 'x-ios-bundle-identifier': 'AlexisBarreyat.BeReal',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Bereal-App-version-Code': '15558',
+                'Bereal-Device-Id': process.env.DEVICEID,
+                'Bereal-Signature': process.env.SIGNATURE,
+                'Bereal-Timezone': 'Europe/Paris'
             };
     
             let vonage_body_content = JSON.stringify({ 'code': otp, 'vonageRequestId': vonage_request_id });
