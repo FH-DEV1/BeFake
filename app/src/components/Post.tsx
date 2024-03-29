@@ -106,6 +106,7 @@ const Post: React.FC<PostProps> = ({ post, width, swipeable, setSwipeable }) => 
                             ${ViewBTS ? 'block' : 'hidden'}
                         `}
                         preload='auto'
+                        playsInline
                     >
                         <source src={post.btsMedia?.url} type='video/mp4' />
                         Your browser does not support the video tag.
