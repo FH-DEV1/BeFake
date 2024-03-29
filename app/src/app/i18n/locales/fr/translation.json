@@ -58,5 +58,7 @@
   "AndManyOthers": " et {{number}} autres",
   "UnlockMoreBeReal": "Débloque plus de BeReal en postant à l'heure",
   "YesterdayAt": "Hier à {{timestring}}",
-  "RemainingPosts": "{{number}} de plus"
+  "RemainingPosts": "{{number}} de plus",
+  "ReactError": "Erreur lors de l'ajout de la réaction",
+  "UndefinedRealMoji": "Erreur emoji inexistant"
 }

@@ -58,5 +58,7 @@
   "AndManyOthers": " and {{number}} more",
   "UnlockMoreBeReal": "Post on time to unlock more BeReal's",
   "YesterdayAt": "Yesterday at {{timestring}}",
-  "RemainingPosts": "{{number}} left"
+  "RemainingPosts": "{{number}} left",
+  "ReactError": "Error adding reaction",
+  "UndefinedRealMoji": "Error emoji is not defined"
 }

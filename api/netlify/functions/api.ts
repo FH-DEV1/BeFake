@@ -26,6 +26,7 @@ if (process.env.PRODUCTION !== 'true') {
 
 const corsOptions: cors.CorsOptions = {
   origin: AllowedUrls,
+  preflightContinue: true,
 };
 
 router.use(cors(corsOptions));
@@ -67,6 +68,10 @@ router.post('/comment/upload', uploadComment, (_req: Request, res: Response) => 
 });
 
 router.post('/realmoji/react', reactRealmoji, (_req: Request, res: Response) => {
+  res.json(res.locals.response);
+});
+
+router.options('/realmoji/react', (_req: Request, res: Response) => {
   res.json(res.locals.response);
 });
 

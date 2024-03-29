@@ -9,10 +9,10 @@ import Post from "@/components/Post";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useFeedState } from "@/components/FeedContext";
 import axios from "axios";
-import { Dialog, Transition } from "@headlessui/react";
+import { Transition } from "@headlessui/react";
 import { useTranslation } from '@/app/i18n/client'
 import { MdAddAPhoto } from "react-icons/md";
-import { FaPlus, FaLock } from "react-icons/fa";
+import { FaPlus, FaLock, FaSmile } from "react-icons/fa";
 import Image from 'next/image'
 import Modal from "@/components/Modal"
 
@@ -25,6 +25,7 @@ export default function Feed({ params }: { params: { lng: string }}) {
     const gridViewParam = searchParams.get('gridView');
     const [gridView, setGridView] = useState<boolean>(gridViewParam !== null ? JSON.parse(gridViewParam) : false);
     const [isScrolled, setIsScrolled] = useState<boolean>(true);
+    const [ShowRealMojis, setShowRealMojis] = useState<{[key: string]: boolean}>({});
     const [prevScrollPos, setPrevScrollPos] = useState<number>(0);
     const [index, setIndex] = useState<Index>({})
     const [swipeable, setSwipeable] = useState(false);
@@ -113,6 +114,7 @@ export default function Feed({ params }: { params: { lng: string }}) {
     ]
     const lsUser = typeof window !== "undefined" ? localStorage.getItem('myself') : null
     const parsedLSUser = JSON.parse(lsUser !== null ? lsUser : "{}")
+    const realmoji = (emoji: string) => parsedLSUser.realmojis.find((rm: { emoji: string; }) => rm.emoji === emoji);
     const placeholder = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwMCIgaGVpZ2h0PSIyMDAwIiB2aWV3Qm94PSIwIDAgMTUwMCAyMDAwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPg0KPHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iIzExMTExMSIgLz4NCjxzdmcgeD0iNjMwcHgiIHk9Ijg4MCIgd2lkdGg9IjI0MCIgaGVpZ2h0PSIyNDAiIHZpZXdCb3g9IjAgMCAyNDAgMjQwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPg0KICAgIDxzdHlsZT4uc3Bpbm5lcl8xS0Q3e2FuaW1hdGlvbjpzcGlubmVyXzZRbkIgMS4ycyBpbmZpbml0ZX0uc3Bpbm5lcl9NSmc0e2FuaW1hdGlvbi1kZWxheTouMXN9LnNwaW5uZXJfc2o5WHthbmltYXRpb24tZGVsYXk6LjJzfS5zcGlubmVyX1d3Q2x7YW5pbWF0aW9uLWRlbGF5Oi4zc30uc3Bpbm5lcl92eTJKe2FuaW1hdGlvbi1kZWxheTouNHN9LnNwaW5uZXJfb3MxRnthbmltYXRpb24tZGVsYXk6LjVzfS5zcGlubmVyX2wxVHd7YW5pbWF0aW9uLWRlbGF5Oi42c30uc3Bpbm5lcl9XTkVne2FuaW1hdGlvbi1kZWxheTouN3N9LnNwaW5uZXJfa3VnVnthbmltYXRpb24tZGVsYXk6LjhzfS5zcGlubmVyXzR6T2x7YW5pbWF0aW9uLWRlbGF5Oi45c30uc3Bpbm5lcl83aGUye2FuaW1hdGlvbi1kZWxheToxc30uc3Bpbm5lcl9TZU83e2FuaW1hdGlvbi1kZWxheToxLjFzfUBrZXlmcmFtZXMgc3Bpbm5lcl82UW5CezAlLDUwJXthbmltYXRpb24tdGltaW5nLWZ1bmN0aW9uOmN1YmljLWJlemllcigwLjI3LC40MiwuMzcsLjk5KTtyOjB9MjUle2FuaW1hdGlvbi10aW1pbmctZnVuY3Rpb246Y3ViaWMtYmV6aWVyKDAuNTMsMCwuNjEsLjczKTtyOjJweH19PC9zdHlsZT4NCiAgICA8Y2lyY2xlIGNsYXNzPSJzcGlubmVyXzFLRDciIGN4PSIxMjAiIGN5PSIzMCIgcj0iMTAiIGZpbGw9IndoaXRlIi8+DQogICAgPGNpcmNsZSBjbGFzcz0ic3Bpbm5lcl8xS0Q3IHNwaW5uZXJfTUpnNCIgY3g9IjE2NS4wIiBjeT0iNDIuMSIgcj0iMTAiIGZpbGw9IndoaXRlIi8+DQogICAgPGNpcmNsZSBjbGFzcz0ic3Bpbm5lcl8xS0Q3IHNwaW5uZXJfU2VPNyIgY3g9Ijc1LjAiIGN5PSI0Mi4xIiByPSIxMCIgZmlsbD0id2hpdGUiLz4NCiAgICA8Y2lyY2xlIGNsYXNzPSJzcGlubmVyXzFLRDcgc3Bpbm5lcl9zajlYIiBjeD0iMTk3LjkiIGN5PSI3NS4wIiByPSIxMCIgZmlsbD0id2hpdGUiLz4NCiAgICA8Y2lyY2xlIGNsYXNzPSJzcGlubmVyXzFLRDcgc3Bpbm5lcl83aGUyIiBjeD0iNDIuMSIgY3k9Ijc1LjAiIHI9IjEwIiBmaWxsPSJ3aGl0ZSIvPg0KICAgIDxjaXJjbGUgY2xhc3M9InNwaW5uZXJfMUtENyBzcGlubmVyX1d3Q2wiIGN4PSIyMTAuMCIgY3k9IjEyMC4wIiByPSIxMCIgZmlsbD0id2hpdGUiLz4NCiAgICA8Y2lyY2xlIGNsYXNzPSJzcGlubmVyXzFLRDcgc3Bpbm5lcl80ek9sIiBjeD0iMzAuMCIgY3k9IjEyMC4wIiByPSIxMCIgZmlsbD0id2hpdGUiLz4NCiAgICA8Y2lyY2xlIGNsYXNzPSJzcGlubmVyXzFLRDcgc3Bpbm5lcl92eTJKIiBjeD0iMTk3LjkiIGN5PSIxNjUuMCIgcj0iMTAiIGZpbGw9IndoaXRlIi8+DQogICAgPGNpcmNsZSBjbGFzcz0ic3Bpbm5lcl8xS0Q3IHNwaW5uZXJfa3VnViIgY3g9IjQyLjEiIGN5PSIxNjUuMCIgcj0iMTAiIGZpbGw9IndoaXRlIi8+DQogICAgPGNpcmNsZSBjbGFzcz0ic3Bpbm5lcl8xS0Q3IHNwaW5uZXJfb3MxRiIgY3g9IjE2NS4wIiBjeT0iMTk3LjkiIHI9IjEwIiBmaWxsPSJ3aGl0ZSIvPg0KICAgIDxjaXJjbGUgY2xhc3M9InNwaW5uZXJfMUtENyBzcGlubmVyX1dORWciIGN4PSI3NS4wIiBjeT0iMTk3LjkiIHI9IjEwIiBmaWxsPSJ3aGl0ZSIvPg0KICAgIDxjaXJjbGUgY2xhc3M9InNwaW5uZXJfMUtENyBzcGlubmVyX2wxVHciIGN4PSIxMjAiIGN5PSIyMTAiIHI9IjEwIiBmaWxsPSJ3aGl0ZSIvPg0KPC9zdmc+DQo8L3N2Zz4="
 
     const fetchLocations = async (feed: FeedType) => {
@@ -164,6 +166,11 @@ export default function Feed({ params }: { params: { lng: string }}) {
                 .then((response) => {
                     let feed: FeedType = response.data.feed
                     if (feed.friendsPosts) {
+                        if (feed.userPosts) {
+                            feed.userPosts.posts.forEach((post: PostType) => {
+                                post.realMojis.sort((a, b) => new Date(b.postedAt).getTime() - new Date(a.postedAt).getTime());
+                            })
+                        }
                         feed.friendsPosts.forEach((post: FriendPost) => {
                             post.posts.sort((a, b) => new Date(b.takenAt).getTime() - new Date(a.takenAt).getTime());
                             post.posts.forEach((post: PostType) => {
@@ -215,7 +222,7 @@ export default function Feed({ params }: { params: { lng: string }}) {
             setGridView(feed.data.gridView)
             window.scroll(0, feed.data.scrollY)
         }
-    }, [feed]);
+    }, []);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -231,6 +238,67 @@ export default function Feed({ params }: { params: { lng: string }}) {
             window.removeEventListener('scroll', handleScroll);
         };
     }, []);
+
+    const handleReactionClick = async (postId: string, userId: string, emoji: string) => {
+        if (realmoji(emoji)) {
+            let lsToken = typeof window !== "undefined" ? localStorage.getItem('token') : null
+            let parsedLSToken = JSON.parse(lsToken !== null ? lsToken : "{}")
+            let token: string|null = parsedLSToken.token
+            let token_expiration: string|null = parsedLSToken.token_expiration
+            let refresh_token: string|null = parsedLSToken.refresh_token
+
+            await axios.post(`${domain}/api/realmoji/react`, JSON.stringify({ "emoji": emoji }), {
+                headers: {
+                    "token": token,
+                    "token_expiration": token_expiration,
+                    "refresh_token": refresh_token,
+                    "userid": userId,
+                    "postid": postId
+                }
+            }).then((response) => {
+                console.log("===== RealMoji =====")
+                console.log(response.data)
+                const updatedFeed: FeedType = { ...feed };
+                if (updatedFeed.friendsPosts){
+                const postIndex = updatedFeed.friendsPosts.findIndex(post => post.posts.some(p => p.id === postId));
+                if (postIndex !== -1) {
+                    const post = updatedFeed.friendsPosts[postIndex].posts.find(p => p.id === postId);
+                    if (post) {
+
+                        const existingReactionIndex = post.realMojis.findIndex(rm => rm.user.id === parsedLSUser.id);
+                        if (existingReactionIndex !== -1) {
+                            post.realMojis.splice(existingReactionIndex, 1);
+                        }
+                        post.realMojis.push({
+                            emoji: response.data.data.emoji,
+                            id: response.data.data.id,
+                            isInstant: response.data.data.isInstant,
+                            postedAt: response.data.data.postedAt,
+                            user: response.data.data.user,
+                            media: response.data.data.media
+                        });
+                        post.realMojis.sort((a, b) => {
+                            const dateA = new Date(a.postedAt).getTime();
+                            const dateB = new Date(b.postedAt).getTime();
+                            if (a.user.id === userId) {
+                                return -1;
+                            } else if (b.user.id === userId) {
+                                return 1;
+                            } else {
+                                return dateB - dateA;
+                            }
+                        });
+                        setFeed(updatedFeed);
+                    }
+                }}
+            }).catch((error) => {
+                console.log(error)
+                toast.error(t("ReactError"))
+            })
+        } else {
+            toast.error(t("UndefinedRealMoji"))
+        }
+    }
 
     const handlers = useSwipeable({
         onSwipedDown: () => {if (window.scrollY <= 0) {setGridView(!gridView)}},
@@ -323,7 +391,7 @@ export default function Feed({ params }: { params: { lng: string }}) {
                                                     placeholder={placeholder}
                                                     referrerPolicy='no-referrer'/>
                                             </div>
-                                            <div className={`-ml-[3vw] absolute flex flex-row justify-center bottom-0 left-1/2 -translate-x-1/2 w-[30vw] transition-opacity duration-200 ${(!index["userpost"] && indx == 0) || index["userpost"] == indx ? 'opacity-100' : 'opacity-0'}`} key={`${post.id}_realMojis_${index}`}>
+                                            <div className={`-ml-2 absolute flex flex-row justify-center bottom-0 left-1/2 -translate-x-1/2 w-[30vw] transition-opacity duration-200 ${(!index["userpost"] && indx == 0) || index["userpost"] == indx ? 'opacity-100' : 'opacity-0'}`} key={`${post.id}_realMojis_${index}`}>
                                                 {post.realMojis.slice(0, 3).map((realMojis: RealMojis, index: number) => (
                                                     <div className={`${index !== 0 ? "-ml-2": ""}`}>
                                                         <Image
@@ -334,6 +402,9 @@ export default function Feed({ params }: { params: { lng: string }}) {
                                                             alt={realMojis.emoji}
                                                             referrerPolicy='no-referrer'
                                                         />
+                                                        {index == 2 && post.realMojis.length > 3 && (
+                                                            <p className="flex items-center justify-center w-8 h-8 absolute bg-black/70 rounded-full bottom-0">+{post.realMojis.length-2}</p>
+                                                        )}
                                                     </div>
                                                 ))}
                                             </div>
@@ -438,27 +509,109 @@ export default function Feed({ params }: { params: { lng: string }}) {
                                             swipeable={swipeable}
                                             setSwipeable={setSwipeable}
                                         />
-                                        <div className={`flex ml-7 -mt-12 ${userPost.realMojis[0] ? "mb-4" : "mb-12"} z-50`} onClick={() => {
-                                            feed.data = { scrollY: window.scrollY, gridView: false };
-                                            router.push(`/${params.lng}/feed/${post.user.username}?index=${post.posts.length - postIndex - 1}`)
-                                        }}>
-                                            {userPost.realMojis.slice(0, 3).map((realMojis: RealMojis, index: number) => (
-                                                <div className='flex flex-row -ml-2.5' key={`${userPost.id}_realMojis_${index}`}>
-                                                    <Image
-                                                        width={realMojis.media.width}
-                                                        height={realMojis.media.height}
-                                                        className={`w-8 h-8 rounded-full border border-black `}
-                                                        src={realMojis.media.url}
-                                                        alt={`Realmoji ${index + 1}`}
-                                                        referrerPolicy='no-referrer'/>
-                                                    {index === 2 && userPost.realMojis.length > 3 && (
-                                                        <div className={`absolute flex items-center justify-center text-white text-sm h-8 w-8 rounded-full bg-black bg-opacity-70`}>
-                                                            {userPost.realMojis.length > 4 ? "3+" : "+2"}
+
+                                        <Transition
+                                        show={ShowRealMojis[userPost.id] ? !ShowRealMojis[userPost.id] : true}
+                                        enter="transition-opacity duration-200"
+                                        enterFrom="opacity-0"
+                                        enterTo="opacity-100"
+                                        leave="transition-opacity duration-200"
+                                        leaveFrom="opacity-100"
+                                        leaveTo="opacity-0"
+                                        >
+                                            <div className={`flex ml-7 -mt-12 ${userPost.realMojis[0] ? "mb-4" : "mb-12"}`} onClick={() => {
+                                                feed.data = { scrollY: window.scrollY, gridView: false };
+                                                router.push(`/${params.lng}/feed/${post.user.username}?index=${post.posts.length - postIndex - 1}`);
+                                            } }>
+                                                {userPost.realMojis.slice(0, 3).map((realMojis: RealMojis, index: number) => (
+                                                    <div className='flex flex-row -ml-2.5' key={`${userPost.id}_realMojis_${index}`}>
+                                                        <Image
+                                                            width={realMojis.media.width}
+                                                            height={realMojis.media.height}
+                                                            className={`w-8 h-8 rounded-full border border-black z-0`}
+                                                            src={realMojis.media.url}
+                                                            alt={`Realmoji ${index + 1}`}
+                                                            referrerPolicy='no-referrer'
+                                                        />
+                                                        {index === 2 && userPost.realMojis.length > 3 && (
+                                                            <div className={`absolute flex items-center justify-center text-white text-sm h-8 w-8 rounded-full bg-black bg-opacity-70`}>
+                                                                {userPost.realMojis.length > 4 ? "3+" : "+2"}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            <div className="flex -mt-12 justify-end mr-6" onClick={() => setShowRealMojis(prev => ({
+                                                ...prev,
+                                                [userPost.id]: true
+                                            }))}>
+                                                <FaSmile className="h-8 w-8 z-0"/>
+                                            </div>
+                                        </Transition>
+
+                                        <Transition
+                                        enter="transition ease-in-out duration-300 transform"
+                                        enterFrom="translate-x-full"
+                                        enterTo="translate-x-0"
+                                        leave="transition ease-in-out duration-300 transform"
+                                        leaveFrom="translate-x-0"
+                                        leaveTo="translate-x-full"
+                                        show={ShowRealMojis[userPost.id] || false}
+                                        className="top-0 absolute w-[100vw] flex flex-row justify-center items-end mb-4 aspect-[1.5/2]"
+                                        onClick={() => setShowRealMojis(prev => ({
+                                            ...prev,
+                                            [userPost.id]: false
+                                        }))}>
+                                            {["👍", "😃", "😲", "😍", "😂"].map((emoji, index) => (
+                                                <div
+                                                    key={index}
+                                                    className={`w-14 h-16 mr-1`}
+                                                    onClick={() => handleReactionClick(
+                                                        userPost.id,
+                                                        post.user.id,
+                                                        emoji,
+                                                    )}
+                                                >
+                                                    <div
+                                                    className={`relative overflow-visible w-14 h-14 ${realmoji(emoji) ? "" : "border-dashed border-2"} border-white rounded-full aspect-square ${realmoji(emoji) ? "" : "bg-transparent"}`}
+                                                    >
+                                                    {realmoji(emoji) && realmoji(emoji).media && realmoji(emoji).media.url ? (
+                                                        <Image
+                                                        width={500}
+                                                        height={500}
+                                                        src={realmoji(emoji).media.url}
+                                                        alt={`${emoji} realmoji's`}
+                                                        className="rounded-full border-2 border-black aspect-square w-full h-full object-cover"
+                                                        />
+                                                    ) : (
+                                                        <div className="flex items-center justify-center rounded-full aspect-square">
+                                                            <span className={`text-2xl`}>{emoji}</span>
                                                         </div>
                                                     )}
+                                                    {realmoji(emoji) && realmoji(emoji).media && realmoji(emoji).media.url && (
+                                                        <span className="absolute text-2xl -bottom-2 -right-2">
+                                                            {realmoji(emoji).emoji}
+                                                        </span>
+                                                    )}
+                                                    </div>
                                                 </div>
                                             ))}
-                                        </div>
+
+                                            <div className="w-14" style={{ cursor: "pointer" }}>
+                                                <div
+                                                    className="flex items-center justify-center rounded-full bg-black aspect-square mb-2"
+                                                    onClick={() => toast.warn(t("UnavailableYet"))}
+                                                >
+                                                    <span
+                                                        className="text-xl"
+                                                        role="img"
+                                                        aria-label="Upload emoji"
+                                                    >
+                                                        ⚡
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </Transition>
                                     </div>
                                 )).reverse()}
                             </SwipeableViews>

@@ -94,12 +94,13 @@ export default function Page({ params }: { params: { username: string, lng: stri
                     {posts?.posts[posts.posts.length-index-1].realMojis?.map((item, index) => (
                         <div key={index} className="flex flex-col items-center -mr-2">
                             <Image 
-                            width={item.media.width}
-                            height={item.media.height}
-                            src={item.media.url} 
-                            alt={`Image ${index}`} 
-                            className="w-16 h-16 rounded-full" 
-                            referrerPolicy='no-referrer'/>
+                                width={item.media.width}
+                                height={item.media.height}
+                                src={item.media.url} 
+                                alt={`Image ${index}`} 
+                                className="w-16 h-16 rounded-full" 
+                                referrerPolicy='no-referrer'
+                            />
                             <div className="text-right ml-16 -mt-8 text-3xl">{item.emoji}</div>
                             <div className="text-center mb-1 text-xs">{item.user.username}</div>
                         </div>
@@ -112,12 +113,13 @@ export default function Page({ params }: { params: { username: string, lng: stri
                     <div className='flex mt-3 mb-5 ml-2'>
                         {comment.user.profilePicture ? (
                         <Image
-                        width={comment.user.profilePicture.width}
-                        height={comment.user.profilePicture.height}
-                        src={comment.user.profilePicture.url}
-                        alt={`${comment.user.username}'s profile`} 
-                        className='w-9 h-9 rounded-full' 
-                        referrerPolicy='no-referrer'/>
+                            width={comment.user.profilePicture.width}
+                            height={comment.user.profilePicture.height}
+                            src={comment.user.profilePicture.url}
+                            alt={`${comment.user.username}'s profile`} 
+                            className='w-9 h-9 rounded-full' 
+                            referrerPolicy='no-referrer'
+                        />
                         ) : (
                         <div className='w-8 h-8 rounded-full bg-white/5 border-full border-black justify-center align-middle flex mr-2 cursor-pointer'>
                             <div className='m-auto text-xl uppercase font-bold'>
@@ -130,7 +132,18 @@ export default function Page({ params }: { params: { username: string, lng: stri
                                 <p>{comment.user.username}</p>
                                 <p className='ml-2 opacity-60'>{UTCtoParisTime(comment.postedAt, t)}</p>
                             </div>
-                            <p>{comment.content}</p>
+                            <p>
+                                {comment.content.split(" ").map((word, index) => (
+                                <span
+                                    key={index}
+                                    className={
+                                    word.includes("@") ? "text-blue-500" : ""
+                                    }
+                                >
+                                    {word}{" "}
+                                </span>
+                                ))}
+                            </p>
                         </div>
                     </div>
                 ))}
