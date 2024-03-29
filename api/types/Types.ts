@@ -99,26 +99,6 @@ interface UserPosts {
     [postId: string]: PostType[];
 }
 
-export interface PostData {
-    isLate: boolean;
-    retakeCounter: number;
-    takenAt: string,
-    visibility: string[];
-    backCamera: {
-        bucket: string;
-        height: number;
-        width: number;
-        path: string;
-    },
-    frontCamera: {
-        bucket: string;
-        height: number;
-        width: number;
-        path: string;
-    },
-    location?: any;
-}
-
 export interface FeedType {
     userPosts?: UserPosts;
     friendsPosts?: FriendPost[];

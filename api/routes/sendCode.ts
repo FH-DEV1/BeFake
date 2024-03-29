@@ -56,10 +56,9 @@ export const sendCode = async (req: Request, res: Response, next: NextFunction) 
                     'User-Agent': 'BeReal/8586 CFNetwork/1240.0.4 Darwin/20.6.0',
                     'x-ios-bundle-identifier': 'AlexisBarreyat.BeReal',
                     'Content-Type': 'application/json',
-                    'Bereal-App-version-Code': '15558',
-                    'Bereal-Device-Id': process.env.DEVICEID,
-                    'Bereal-Signature': process.env.SIGNATURE,
-                    'Bereal-Timezone': 'Europe/Paris'
+                    'bereal-app-version-code': '14549',
+                    'bereal-signature': 'berealsignature',
+                    'bereal-device-id': 'berealdeviceid'
                 }
             });
 
