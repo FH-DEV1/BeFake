@@ -16,6 +16,7 @@ import { reactLightning } from '../../routes/realmoji/reactLightning.ts';
 import { uploadPost } from '../../routes/post/upload.ts';
 import { deletePost } from '../../routes/post/delete.ts';
 import { getMemories } from '../../routes/memories.ts';
+import { deleteComment } from '../../routes/comment/delete.ts';
 
 const api: express.Application = express();
 const router: Router = Router();
@@ -76,6 +77,10 @@ router.post('/comment/upload', uploadComment, (_req: Request, res: Response) => 
   res.json(res.locals.response);
 });
 
+router.get('/comment/delete', deleteComment, (_req: Request, res: Response) => {
+  res.json(res.locals.response);
+});
+
 router.post('/realmoji/react', reactRealmoji, (_req: Request, res: Response) => {
   res.json(res.locals.response);
 });
@@ -84,7 +89,7 @@ router.post('/realmoji/upload', uploadRealMoji, (_req: Request, res: Response) =
   res.json(res.locals.response);
 });
 
-router.post('/realmoji/lightning', reactLightning, (_req: Request, res: Response) => {
+router.post('/realmoji/instant', reactLightning, (_req: Request, res: Response) => {
   res.json(res.locals.response);
 });
 

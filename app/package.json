@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@headlessui/react": "^1.7.18",
+    "@types/leaflet": "^1.9.8",
     "@vercel/analytics": "^1.2.2",
     "@vercel/speed-insights": "^1.0.10",
     "accept-language": "^3.0.18",
@@ -19,6 +20,7 @@
     "i18next-browser-languagedetector": "^7.2.0",
     "i18next-resources-to-backend": "^1.2.0",
     "install": "^0.13.0",
+    "leaflet": "^1.9.4",
     "next": "14.0.3",
     "next-pwa": "^5.6.0",
     "npm": "^10.5.0",
@@ -28,6 +30,7 @@
     "react-draggable": "^4.4.6",
     "react-i18next": "^14.1.0",
     "react-icons": "^5.0.1",
+    "react-leaflet": "^4.2.1",
     "react-phone-number-input": "^3.3.7",
     "react-swipeable": "^7.0.1",
     "react-swipeable-views": "^0.14.0",

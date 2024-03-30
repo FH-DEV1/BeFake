@@ -1,7 +1,7 @@
 "use client"
 import SwipeableViews from "react-swipeable-views";
 import { FeedType, FriendPost, Index, OptionsMenu, PostType, RealMojis } from '@/components/Types';
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { UTCtoParisTime, formatTimeLate } from "@/components/TimeConversion";
 import { useSwipeable } from "react-swipeable";
@@ -12,9 +12,10 @@ import axios from "axios";
 import { Transition } from "@headlessui/react";
 import { useTranslation } from '@/app/i18n/client'
 import { MdAddAPhoto } from "react-icons/md";
-import { FaPlus, FaLock, FaSmile } from "react-icons/fa";
+import { FaPlus, FaLock, FaMapMarkedAlt } from "react-icons/fa";
 import Image from 'next/image'
 import Modal from "@/components/Modal"
+import Realmojis from "@/components/Realmojis";
 
 export default function Feed({ params }: { params: { lng: string }}) {
     const { t } = useTranslation(params.lng, 'client-page', {})
@@ -29,93 +30,105 @@ export default function Feed({ params }: { params: { lng: string }}) {
     const [prevScrollPos, setPrevScrollPos] = useState<number>(0);
     const [index, setIndex] = useState<Index>({})
     const [swipeable, setSwipeable] = useState(false);
-    const router = useRouter()
+    const router = useRouter()    
+    const lsUser = typeof window !== "undefined" ? localStorage.getItem('myself') : null
+    const parsedLSUser = JSON.parse(lsUser !== null ? lsUser : "{}")
+    const placeholder = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwMCIgaGVpZ2h0PSIyMDAwIiB2aWV3Qm94PSIwIDAgMTUwMCAyMDAwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPg0KPHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iIzExMTExMSIgLz4NCjxzdmcgeD0iNjMwcHgiIHk9Ijg4MCIgd2lkdGg9IjI0MCIgaGVpZ2h0PSIyNDAiIHZpZXdCb3g9IjAgMCAyNDAgMjQwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPg0KICAgIDxzdHlsZT4uc3Bpbm5lcl8xS0Q3e2FuaW1hdGlvbjpzcGlubmVyXzZRbkIgMS4ycyBpbmZpbml0ZX0uc3Bpbm5lcl9NSmc0e2FuaW1hdGlvbi1kZWxheTouMXN9LnNwaW5uZXJfc2o5WHthbmltYXRpb24tZGVsYXk6LjJzfS5zcGlubmVyX1d3Q2x7YW5pbWF0aW9uLWRlbGF5Oi4zc30uc3Bpbm5lcl92eTJKe2FuaW1hdGlvbi1kZWxheTouNHN9LnNwaW5uZXJfb3MxRnthbmltYXRpb24tZGVsYXk6LjVzfS5zcGlubmVyX2wxVHd7YW5pbWF0aW9uLWRlbGF5Oi42c30uc3Bpbm5lcl9XTkVne2FuaW1hdGlvbi1kZWxheTouN3N9LnNwaW5uZXJfa3VnVnthbmltYXRpb24tZGVsYXk6LjhzfS5zcGlubmVyXzR6T2x7YW5pbWF0aW9uLWRlbGF5Oi45c30uc3Bpbm5lcl83aGUye2FuaW1hdGlvbi1kZWxheToxc30uc3Bpbm5lcl9TZU83e2FuaW1hdGlvbi1kZWxheToxLjFzfUBrZXlmcmFtZXMgc3Bpbm5lcl82UW5CezAlLDUwJXthbmltYXRpb24tdGltaW5nLWZ1bmN0aW9uOmN1YmljLWJlemllcigwLjI3LC40MiwuMzcsLjk5KTtyOjB9MjUle2FuaW1hdGlvbi10aW1pbmctZnVuY3Rpb246Y3ViaWMtYmV6aWVyKDAuNTMsMCwuNjEsLjczKTtyOjJweH19PC9zdHlsZT4NCiAgICA8Y2lyY2xlIGNsYXNzPSJzcGlubmVyXzFLRDciIGN4PSIxMjAiIGN5PSIzMCIgcj0iMTAiIGZpbGw9IndoaXRlIi8+DQogICAgPGNpcmNsZSBjbGFzcz0ic3Bpbm5lcl8xS0Q3IHNwaW5uZXJfTUpnNCIgY3g9IjE2NS4wIiBjeT0iNDIuMSIgcj0iMTAiIGZpbGw9IndoaXRlIi8+DQogICAgPGNpcmNsZSBjbGFzcz0ic3Bpbm5lcl8xS0Q3IHNwaW5uZXJfU2VPNyIgY3g9Ijc1LjAiIGN5PSI0Mi4xIiByPSIxMCIgZmlsbD0id2hpdGUiLz4NCiAgICA8Y2lyY2xlIGNsYXNzPSJzcGlubmVyXzFLRDcgc3Bpbm5lcl9zajlYIiBjeD0iMTk3LjkiIGN5PSI3NS4wIiByPSIxMCIgZmlsbD0id2hpdGUiLz4NCiAgICA8Y2lyY2xlIGNsYXNzPSJzcGlubmVyXzFLRDcgc3Bpbm5lcl83aGUyIiBjeD0iNDIuMSIgY3k9Ijc1LjAiIHI9IjEwIiBmaWxsPSJ3aGl0ZSIvPg0KICAgIDxjaXJjbGUgY2xhc3M9InNwaW5uZXJfMUtENyBzcGlubmVyX1d3Q2wiIGN4PSIyMTAuMCIgY3k9IjEyMC4wIiByPSIxMCIgZmlsbD0id2hpdGUiLz4NCiAgICA8Y2lyY2xlIGNsYXNzPSJzcGlubmVyXzFLRDcgc3Bpbm5lcl80ek9sIiBjeD0iMzAuMCIgY3k9IjEyMC4wIiByPSIxMCIgZmlsbD0id2hpdGUiLz4NCiAgICA8Y2lyY2xlIGNsYXNzPSJzcGlubmVyXzFLRDcgc3Bpbm5lcl92eTJKIiBjeD0iMTk3LjkiIGN5PSIxNjUuMCIgcj0iMTAiIGZpbGw9IndoaXRlIi8+DQogICAgPGNpcmNsZSBjbGFzcz0ic3Bpbm5lcl8xS0Q3IHNwaW5uZXJfa3VnViIgY3g9IjQyLjEiIGN5PSIxNjUuMCIgcj0iMTAiIGZpbGw9IndoaXRlIi8+DQogICAgPGNpcmNsZSBjbGFzcz0ic3Bpbm5lcl8xS0Q3IHNwaW5uZXJfb3MxRiIgY3g9IjE2NS4wIiBjeT0iMTk3LjkiIHI9IjEwIiBmaWxsPSJ3aGl0ZSIvPg0KICAgIDxjaXJjbGUgY2xhc3M9InNwaW5uZXJfMUtENyBzcGlubmVyX1dORWciIGN4PSI3NS4wIiBjeT0iMTk3LjkiIHI9IjEwIiBmaWxsPSJ3aGl0ZSIvPg0KICAgIDxjaXJjbGUgY2xhc3M9InNwaW5uZXJfMUtENyBzcGlubmVyX2wxVHciIGN4PSIxMjAiIGN5PSIyMTAiIHI9IjEwIiBmaWxsPSJ3aGl0ZSIvPg0KPC9zdmc+DQo8L3N2Zz4="
     const [OptionsMenu, setOptionsMenu] = useState<OptionsMenu>({
         show: false,
         disabled: true
     });
-    const PostOptions = [
-        {
-            id: "main-download",
-            name: t("DownloadMainImage"),
-            action: () => {
-                toast.warning(t('UnavailableYet'));
-                setOptionsMenu(prevState => ({
-                    ...prevState,
-                    show: false
-                }))
-            },
-        },
-        {
-            id: "secondary-download",
-            name: t("DownloadSecondaryImage"),
-            action: () => {
-                toast.warning(t('UnavailableYet'));
-                setOptionsMenu(prevState => ({
-                    ...prevState,
-                    show: false
-                }))
-            },
-        },
-        {
-            id: "combined-download",
-            name: t("DownloadCombinedImages"),
-            action: () => {
-                toast.warning(t('UnavailableYet'));
-                setOptionsMenu(prevState => ({
-                    ...prevState,
-                    show: false
-                }))
-            },
-        },
-        {
-            id: "bts-download",
-            name: t("DownloadBTSVideo"),
-            action: () => {
-                toast.warning(t('UnavailableYet'));
-                setOptionsMenu(prevState => ({
-                    ...prevState,
-                    show: false
-                }))
-            },
-        },
-        {
-            id: "copy-link-main",
-            name: t("CopyMainImageLink"),
-            action: () => {
-                if (OptionsMenu.primary) {
-                    navigator.clipboard.writeText(OptionsMenu.primary);
-                    toast.success(t('CopyLinkSuccess'));
-                    setOptionsMenu(prevState => ({
-                        ...prevState,
-                        show: false
-                    }))
-                } else {
-                    toast.error("CopyLinkError")
-                }
-            },
-        },
-        {
-            id: "copy-link-secondary",
-            name: t("CopySecondaryImageLink"),
-            action: () => {
-                if (OptionsMenu.secondary) {
-                    navigator.clipboard.writeText(OptionsMenu.secondary);
-                    toast.success(t('CopyLinkSuccess'));
-                    setOptionsMenu(prevState => ({
-                        ...prevState,
-                        show: false
-                    }))
-                } else {
-                    toast.error(t('CopyLinkError'))
-                }
-            },
-        },
-    ]
-    const lsUser = typeof window !== "undefined" ? localStorage.getItem('myself') : null
-    const parsedLSUser = JSON.parse(lsUser !== null ? lsUser : "{}")
-    const realmoji = (emoji: string) => parsedLSUser.realmojis.find((rm: { emoji: string; }) => rm.emoji === emoji);
-    const placeholder = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwMCIgaGVpZ2h0PSIyMDAwIiB2aWV3Qm94PSIwIDAgMTUwMCAyMDAwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPg0KPHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iIzExMTExMSIgLz4NCjxzdmcgeD0iNjMwcHgiIHk9Ijg4MCIgd2lkdGg9IjI0MCIgaGVpZ2h0PSIyNDAiIHZpZXdCb3g9IjAgMCAyNDAgMjQwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPg0KICAgIDxzdHlsZT4uc3Bpbm5lcl8xS0Q3e2FuaW1hdGlvbjpzcGlubmVyXzZRbkIgMS4ycyBpbmZpbml0ZX0uc3Bpbm5lcl9NSmc0e2FuaW1hdGlvbi1kZWxheTouMXN9LnNwaW5uZXJfc2o5WHthbmltYXRpb24tZGVsYXk6LjJzfS5zcGlubmVyX1d3Q2x7YW5pbWF0aW9uLWRlbGF5Oi4zc30uc3Bpbm5lcl92eTJKe2FuaW1hdGlvbi1kZWxheTouNHN9LnNwaW5uZXJfb3MxRnthbmltYXRpb24tZGVsYXk6LjVzfS5zcGlubmVyX2wxVHd7YW5pbWF0aW9uLWRlbGF5Oi42c30uc3Bpbm5lcl9XTkVne2FuaW1hdGlvbi1kZWxheTouN3N9LnNwaW5uZXJfa3VnVnthbmltYXRpb24tZGVsYXk6LjhzfS5zcGlubmVyXzR6T2x7YW5pbWF0aW9uLWRlbGF5Oi45c30uc3Bpbm5lcl83aGUye2FuaW1hdGlvbi1kZWxheToxc30uc3Bpbm5lcl9TZU83e2FuaW1hdGlvbi1kZWxheToxLjFzfUBrZXlmcmFtZXMgc3Bpbm5lcl82UW5CezAlLDUwJXthbmltYXRpb24tdGltaW5nLWZ1bmN0aW9uOmN1YmljLWJlemllcigwLjI3LC40MiwuMzcsLjk5KTtyOjB9MjUle2FuaW1hdGlvbi10aW1pbmctZnVuY3Rpb246Y3ViaWMtYmV6aWVyKDAuNTMsMCwuNjEsLjczKTtyOjJweH19PC9zdHlsZT4NCiAgICA8Y2lyY2xlIGNsYXNzPSJzcGlubmVyXzFLRDciIGN4PSIxMjAiIGN5PSIzMCIgcj0iMTAiIGZpbGw9IndoaXRlIi8+DQogICAgPGNpcmNsZSBjbGFzcz0ic3Bpbm5lcl8xS0Q3IHNwaW5uZXJfTUpnNCIgY3g9IjE2NS4wIiBjeT0iNDIuMSIgcj0iMTAiIGZpbGw9IndoaXRlIi8+DQogICAgPGNpcmNsZSBjbGFzcz0ic3Bpbm5lcl8xS0Q3IHNwaW5uZXJfU2VPNyIgY3g9Ijc1LjAiIGN5PSI0Mi4xIiByPSIxMCIgZmlsbD0id2hpdGUiLz4NCiAgICA8Y2lyY2xlIGNsYXNzPSJzcGlubmVyXzFLRDcgc3Bpbm5lcl9zajlYIiBjeD0iMTk3LjkiIGN5PSI3NS4wIiByPSIxMCIgZmlsbD0id2hpdGUiLz4NCiAgICA8Y2lyY2xlIGNsYXNzPSJzcGlubmVyXzFLRDcgc3Bpbm5lcl83aGUyIiBjeD0iNDIuMSIgY3k9Ijc1LjAiIHI9IjEwIiBmaWxsPSJ3aGl0ZSIvPg0KICAgIDxjaXJjbGUgY2xhc3M9InNwaW5uZXJfMUtENyBzcGlubmVyX1d3Q2wiIGN4PSIyMTAuMCIgY3k9IjEyMC4wIiByPSIxMCIgZmlsbD0id2hpdGUiLz4NCiAgICA8Y2lyY2xlIGNsYXNzPSJzcGlubmVyXzFLRDcgc3Bpbm5lcl80ek9sIiBjeD0iMzAuMCIgY3k9IjEyMC4wIiByPSIxMCIgZmlsbD0id2hpdGUiLz4NCiAgICA8Y2lyY2xlIGNsYXNzPSJzcGlubmVyXzFLRDcgc3Bpbm5lcl92eTJKIiBjeD0iMTk3LjkiIGN5PSIxNjUuMCIgcj0iMTAiIGZpbGw9IndoaXRlIi8+DQogICAgPGNpcmNsZSBjbGFzcz0ic3Bpbm5lcl8xS0Q3IHNwaW5uZXJfa3VnViIgY3g9IjQyLjEiIGN5PSIxNjUuMCIgcj0iMTAiIGZpbGw9IndoaXRlIi8+DQogICAgPGNpcmNsZSBjbGFzcz0ic3Bpbm5lcl8xS0Q3IHNwaW5uZXJfb3MxRiIgY3g9IjE2NS4wIiBjeT0iMTk3LjkiIHI9IjEwIiBmaWxsPSJ3aGl0ZSIvPg0KICAgIDxjaXJjbGUgY2xhc3M9InNwaW5uZXJfMUtENyBzcGlubmVyX1dORWciIGN4PSI3NS4wIiBjeT0iMTk3LjkiIHI9IjEwIiBmaWxsPSJ3aGl0ZSIvPg0KICAgIDxjaXJjbGUgY2xhc3M9InNwaW5uZXJfMUtENyBzcGlubmVyX2wxVHciIGN4PSIxMjAiIGN5PSIyMTAiIHI9IjEwIiBmaWxsPSJ3aGl0ZSIvPg0KPC9zdmc+DQo8L3N2Zz4="
+    const PostOptions=[{id:'main-download',name:t('DownloadMainImage'),action:async()=>{try{await downloadImage(!0,OptionsMenu)}catch(e){toast.error(t('DownloadFailed'))}finally{setOptionsMenu(e=>({...e,show:!1}))}}},{id:'secondary-download',name:t('DownloadSecondaryImage'),action:async()=>{try{await downloadImage(!1,OptionsMenu)}catch(e){toast.error(t('DownloadFailed'))}finally{setOptionsMenu(e=>({...e,show:!1}))}}},{id:'combined-download',name:t('DownloadCombinedImages'),action:async()=>{try{await downloadCombinedImage(OptionsMenu)}catch(e){toast.error(t('DownloadFailed'))}finally{setOptionsMenu(e=>({...e,show:!1}))}}},{id:'bts-download',name:t('DownloadBTSVideo'),action:async()=>{try{await downloadBTSVideo(OptionsMenu)}catch(e){toast.error(t('DownloadFailed'))}finally{setOptionsMenu(e=>({...e,show:!1}))}}},{id:'copy-link-main',name:t('CopyMainImageLink'),action:()=>{OptionsMenu.primary?navigator.clipboard.writeText(OptionsMenu.primary):(toast.error(t('CopyLinkError')),!1);toast.success(t('CopyLinkSuccess'));setOptionsMenu(e=>({...e,show:!1}))}},{id:'copy-link-secondary',name:t('CopySecondaryImageLink'),action:()=>{OptionsMenu.secondary?navigator.clipboard.writeText(OptionsMenu.secondary):(toast.error(t('CopyLinkError')),!1);toast.success(t('CopyLinkSuccess'));setOptionsMenu(e=>({...e,show:!1}))}}];
+    
+    const downloadImage = async (main: boolean, post: OptionsMenu) => {
+        const url = main ? (post.primary) : (post.secondary);
+
+        const date = post.takenAt ? new Date(post.takenAt) : new Date();
+        const formattedDate = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}-${date.getHours()}-${date.getMinutes()}`;
+        const fileName = `${post.subtitle}-${formattedDate}-${main ? 'main' : 'secondary'}.webp`;
+
+        const response = await fetch('/api/cors?endpoint=' + url);
+        const blobImage = await response.blob();
+        const href = URL.createObjectURL(blobImage);
+        const anchorElement = document.createElement('a');
+        anchorElement.href = href;
+        anchorElement.download = fileName;
+        document.body.appendChild(anchorElement);
+        anchorElement.click();
+        document.body.removeChild(anchorElement);
+        window.URL.revokeObjectURL(href);
+    };
+    
+    const CanvasRef = useRef<HTMLCanvasElement | null>(null);
+    const downloadCombinedImage = async (OptionsMenu: OptionsMenu) => {
+        if (CanvasRef.current !== null) {
+            const canvas = CanvasRef.current;
+            const mainRes = await fetch('/api/cors?endpoint=' + (OptionsMenu.primary));
+            const secondaryRes = await fetch('/api/cors?endpoint=' + (OptionsMenu.secondary));
+            const mainBlob = await mainRes.blob();
+            const secondaryBlob = await secondaryRes.blob();
+    
+            let primaryImage = await createImageBitmap(mainBlob);
+            let secondaryImage = await createImageBitmap(secondaryBlob);
+    
+            canvas.width = primaryImage.width;
+            canvas.height = primaryImage.height;
+    
+            const ctx = canvas.getContext('2d');
+            if (ctx !== null) {
+                ctx.drawImage(primaryImage, 0, 0)
+                let width = secondaryImage.width * 0.3;
+                let height = secondaryImage.height * 0.3;
+                let x = primaryImage.width * 0.025;
+                let y = primaryImage.height * 0.02;
+                let radius = 30;
+    
+                ctx.beginPath();
+                ctx.moveTo(x + radius, y);
+                ctx.lineTo(x + width - radius, y);
+                ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+                ctx.lineTo(x + width, y + height - radius);
+                ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+                ctx.lineTo(x + radius, y + height);
+                ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+                ctx.lineTo(x, y + radius);
+                ctx.quadraticCurveTo(x, y, x + radius, y);
+                ctx.closePath();
+                ctx.lineWidth = 10;
+                ctx.stroke();
+                ctx.clip();
+    
+                ctx.drawImage(secondaryImage, x, y, width, height);
+    
+                const href = canvas.toDataURL('image/webp');
+                const anchorElement = document.createElement('a');
+                anchorElement.href = href;
+                anchorElement.download = `${OptionsMenu.subtitle}-combined.webp`;
+                document.body.appendChild(anchorElement);
+                anchorElement.click();
+                document.body.removeChild(anchorElement);
+            }
+        } else {
+            console.error('Could not get canvas element');
+        }
+    };
+
+    const downloadBTSVideo = async (post: OptionsMenu) => {
+        const date = post.takenAt ? new Date(post.takenAt) : new Date()
+        const formattedDate = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}-${date.getHours()}-${date.getMinutes()}`;
+        const fileName = `${post.subtitle}-${formattedDate}-bts.mp4`;
+
+        const response = await fetch('/api/cors?endpoint=' + post.btsMedia);
+        const blobImage = await response.blob();
+        const href = URL.createObjectURL(blobImage);
+        const anchorElement = document.createElement('a');
+        anchorElement.href = href;
+        anchorElement.download = fileName;
+        document.body.appendChild(anchorElement);
+        anchorElement.click();
+        document.body.removeChild(anchorElement);
+        window.URL.revokeObjectURL(href);
+    };
 
     const fetchLocations = async (feed: FeedType) => {
         if (feed.friendsPosts) {
@@ -142,11 +155,11 @@ export default function Feed({ params }: { params: { lng: string }}) {
             setFeed(updatedFeed);
         }
     };
-    
 
     useEffect (() => {
         if (!feed.friendsPosts) {
             setLoading(true)
+
             let lsToken = typeof window !== "undefined" ? localStorage.getItem('token') : null
             let parsedLSToken = JSON.parse(lsToken !== null ? lsToken : "{}")
             let token: string|null = parsedLSToken.token
@@ -230,6 +243,7 @@ export default function Feed({ params }: { params: { lng: string }}) {
             setPrevScrollPos(prevScrollPos => {
                 const shouldShow = ScrollY < 50 || ScrollY < prevScrollPos;
                 setIsScrolled(shouldShow);
+                if (ScrollY - prevScrollPos > 10 || ScrollY - prevScrollPos < -10) setShowRealMojis({})
                 return ScrollY;
             });
         };
@@ -239,97 +253,42 @@ export default function Feed({ params }: { params: { lng: string }}) {
         };
     }, []);
 
-    const handleReactionClick = async (postId: string, userId: string, emoji: string) => {
-        if (realmoji(emoji)) {
-            let lsToken = typeof window !== "undefined" ? localStorage.getItem('token') : null
-            let parsedLSToken = JSON.parse(lsToken !== null ? lsToken : "{}")
-            let token: string|null = parsedLSToken.token
-            let token_expiration: string|null = parsedLSToken.token_expiration
-            let refresh_token: string|null = parsedLSToken.refresh_token
-
-            await axios.post(`${domain}/api/realmoji/react`, JSON.stringify({ "emoji": emoji }), {
-                headers: {
-                    "token": token,
-                    "token_expiration": token_expiration,
-                    "refresh_token": refresh_token,
-                    "userid": userId,
-                    "postid": postId
-                }
-            }).then((response) => {
-                console.log("===== RealMoji =====")
-                console.log(response.data)
-                const updatedFeed: FeedType = { ...feed };
-                if (updatedFeed.friendsPosts){
-                const postIndex = updatedFeed.friendsPosts.findIndex(post => post.posts.some(p => p.id === postId));
-                if (postIndex !== -1) {
-                    const post = updatedFeed.friendsPosts[postIndex].posts.find(p => p.id === postId);
-                    if (post) {
-
-                        const existingReactionIndex = post.realMojis.findIndex(rm => rm.user.id === parsedLSUser.id);
-                        if (existingReactionIndex !== -1) {
-                            post.realMojis.splice(existingReactionIndex, 1);
-                        }
-                        post.realMojis.push({
-                            emoji: response.data.data.emoji,
-                            id: response.data.data.id,
-                            isInstant: response.data.data.isInstant,
-                            postedAt: response.data.data.postedAt,
-                            user: response.data.data.user,
-                            media: response.data.data.media
-                        });
-                        post.realMojis.sort((a, b) => {
-                            const dateA = new Date(a.postedAt).getTime();
-                            const dateB = new Date(b.postedAt).getTime();
-                            if (a.user.id === userId) {
-                                return -1;
-                            } else if (b.user.id === userId) {
-                                return 1;
-                            } else {
-                                return dateB - dateA;
-                            }
-                        });
-                        setFeed(updatedFeed);
-                    }
-                }}
-            }).catch((error) => {
-                console.log(error)
-                toast.error(t("ReactError"))
-            })
-        } else {
-            toast.error(t("UndefinedRealMoji"))
-        }
-    }
-
     const handlers = useSwipeable({
         onSwipedDown: () => {if (window.scrollY <= 0) {setGridView(!gridView)}},
     });
 
     return (
         <div {...handlers}>
+            <canvas id='combined-render-canvas' className='hidden' ref={CanvasRef} />
             <div className="fixed w-full top-3 z-50 flex justify-between items-center">
-                <div onClick={() => {toast.warn(t("UnavailableYet"))}}>
+                <div className="w-24" onClick={() => {toast.warn(t("UnavailableYet"))}}>
                     <MdAddAPhoto className='h-7 w-7 ml-4'/>
                 </div>
                 <svg width="110" height="45" viewBox="0 0 2000 824" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path fillRule="evenodd" clipRule="evenodd" d="M1669.95 569.565H1736V506.768H1669.95V569.565ZM401.716 429.211H327.904V519.168H397.258C414.426 519.168 428.219 515.406 438.622 507.865C449.025 500.329 454.227 489.659 454.227 475.838C454.227 460.767 449.433 449.228 439.861 441.221C430.278 433.22 417.569 429.211 401.716 429.211ZM380.415 300.162H327.904V379.758H375.461C393.295 379.758 407.243 376.545 417.321 370.103C427.394 363.671 432.43 353.545 432.43 339.725C432.43 324.658 427.801 314.297 418.559 308.64C409.307 302.988 396.592 300.162 380.415 300.162ZM389.827 249.296C422.522 249.296 449.102 256.125 469.584 269.784C490.054 283.448 500.298 306.447 500.298 338.783C500.298 350.719 497.402 361.473 491.628 371.045C485.849 380.627 478.33 388.869 469.088 395.771C484.275 403.307 496.747 413.517 506.49 426.385C516.227 439.264 521.104 455.586 521.104 475.367C521.104 504.887 510.282 527.965 488.656 544.606C467.019 561.248 438.204 569.563 402.212 569.563H264V249.296H389.827ZM716.126 432.507C712.818 417.132 706.873 405.745 698.292 398.366C689.7 390.988 678.972 387.293 666.092 387.293C652.876 387.293 641.818 391.145 632.901 398.832C623.985 406.53 618.2 417.755 615.563 432.507H716.126ZM680.954 575.22C639.341 575.22 606.558 564.382 582.62 542.722C558.671 521.057 546.705 492.013 546.705 455.585C546.705 419.168 557.521 389.967 579.152 367.983C600.779 346.009 630.254 335.019 667.578 335.019C705.227 335.019 732.881 346.873 750.555 370.579C768.218 394.285 777.058 422.313 777.058 454.643V473.483H615.068C618.04 488.554 625.3 500.569 636.864 509.518C648.423 518.467 663.615 522.936 682.44 522.936C693.338 522.936 703.163 521.606 711.915 518.938C720.661 516.274 730.817 512.422 742.381 507.398L761.206 551.671C749.971 559.834 736.348 565.8 720.336 569.563C704.314 573.331 691.186 575.22 680.954 575.22ZM909.964 300.164H870.333V398.128H910.954C930.104 398.128 945.956 394.444 958.511 387.06C971.061 379.686 977.336 367.514 977.336 350.559C977.336 332.661 971.391 319.788 959.502 311.938C947.613 304.094 931.094 300.164 909.964 300.164ZM1002.11 569.565L930.77 447.11C927.131 447.424 923.339 447.659 919.376 447.816C915.413 447.978 911.45 448.052 907.487 448.052H870.333V569.565H806.429V249.298H911.945C948.603 249.298 979.972 257.305 1006.06 273.318C1032.16 289.331 1045.21 314.136 1045.21 347.733C1045.21 367.514 1039.83 384.548 1029.1 398.834C1018.36 413.121 1004.58 424.194 987.739 432.038L1070.47 569.565H1002.11ZM1231.56 432.507C1228.26 417.132 1222.31 405.745 1213.73 398.366C1205.13 390.988 1194.41 387.293 1181.53 387.293C1168.32 387.293 1157.25 391.145 1148.34 398.832C1139.42 406.53 1133.64 417.755 1131 432.507H1231.56ZM1196.39 575.22C1154.78 575.22 1122 564.382 1098.05 542.722C1074.11 521.057 1062.14 492.013 1062.14 455.585C1062.14 419.168 1072.95 389.967 1094.59 367.983C1116.22 346.009 1145.69 335.019 1183.02 335.019C1220.67 335.019 1248.32 346.873 1265.99 370.579C1283.66 394.285 1292.49 422.313 1292.49 454.643V473.483H1130.51C1133.48 488.554 1140.73 500.569 1152.3 509.518C1163.86 518.467 1179.05 522.936 1197.88 522.936C1208.77 522.936 1218.6 521.606 1227.35 518.938C1236.09 516.274 1246.26 512.422 1257.82 507.398L1276.64 551.671C1265.41 559.834 1251.79 565.8 1235.78 569.563C1219.75 573.331 1206.63 575.22 1196.39 575.22ZM1414.95 527.997C1444.17 527.997 1465.59 510.183 1465.59 486.43V470.103L1416.29 473.065C1391.08 474.551 1377.92 484.729 1377.92 500.852V501.276C1377.92 518.027 1392.42 527.997 1414.95 527.997ZM1313.45 504.453V504.034C1313.45 462.677 1347.13 438.494 1406.48 434.889L1465.59 431.498V417.504C1465.59 397.352 1451.75 384.839 1426.32 384.839C1402.01 384.839 1387.29 395.656 1384.17 410.288L1383.72 412.198H1324.16L1324.38 409.655C1327.95 367.659 1365.87 337.542 1429 337.542C1490.79 337.542 1530.72 367.874 1530.72 413.679V569.563H1465.59V535.632H1464.25C1450.64 558.961 1425.21 573.169 1393.75 573.169C1345.8 573.169 1313.45 544.538 1313.45 504.453ZM1566.18 569.565H1634.46V248.78H1566.18V569.565Z" fill="white" />
                 </svg>
-                <div onClick={() => router.push(`/${params.lng}/profile/me`)}>
-                    {parsedLSUser.profilePicture ? (
-                    <Image
-                        height={parsedLSUser.profilePicture.height}
-                        width={parsedLSUser.profilePicture.width}
-                        className='w-8 h-8 rounded-full mr-4 cursor-pointer'
-                        src={parsedLSUser.profilePicture.url}
-                        alt="my profile"
-                        referrerPolicy='no-referrer'
-                    />
-                    ) : (
-                    <div className='w-8 h-8 rounded-full bg-white/5 border-full border-black justify-center align-middle flex mr-2 cursor-pointer'>
-                        <div className='m-auto text-xl uppercase font-bold'>
-                        {parsedLSUser.username ? parsedLSUser.username.slice(0, 1) : ''}
-                        </div>
+                <div className="flex w-24">
+                    <div onClick={() => router.push(`/${params.lng}/map`)}>
+                        <FaMapMarkedAlt className='h-7 w-7 mr-4'/>
                     </div>
-                    )}
+                    <div onClick={() => router.push(`/${params.lng}/profile/me`)}>
+                        {parsedLSUser.profilePicture ? (
+                        <Image
+                            height={parsedLSUser.profilePicture.height}
+                            width={parsedLSUser.profilePicture.width}
+                            className='w-8 h-8 rounded-full mr-4 cursor-pointer'
+                            src={parsedLSUser.profilePicture.url}
+                            alt="my profile"
+                            referrerPolicy='no-referrer'
+                        />
+                        ) : (
+                        <div className='w-8 h-8 rounded-full bg-white/5 border-full border-black justify-center align-middle flex mr-2 cursor-pointer'>
+                            <div className='m-auto text-xl uppercase font-bold'>
+                            {parsedLSUser.username ? parsedLSUser.username.slice(0, 1) : ''}
+                            </div>
+                        </div>
+                        )}
+                    </div>
                 </div>
             </div>
 
@@ -511,13 +470,14 @@ export default function Feed({ params }: { params: { lng: string }}) {
                                         />
 
                                         <Transition
-                                        show={ShowRealMojis[userPost.id] ? !ShowRealMojis[userPost.id] : true}
-                                        enter="transition-opacity duration-200"
-                                        enterFrom="opacity-0"
-                                        enterTo="opacity-100"
-                                        leave="transition-opacity duration-200"
-                                        leaveFrom="opacity-100"
-                                        leaveTo="opacity-0"
+                                            show={ShowRealMojis[userPost.id] ? !ShowRealMojis[userPost.id] : true}
+                                            enter="transition-opacity duration-200"
+                                            enterFrom="opacity-0"
+                                            enterTo="opacity-100"
+                                            leave="transition-opacity duration-200"
+                                            leaveFrom="opacity-100"
+                                            leaveTo="opacity-0"
+                                            className="mb-4"
                                         >
                                             <div className={`flex ml-7 -mt-12 ${userPost.realMojis[0] ? "mb-4" : "mb-12"}`} onClick={() => {
                                                 feed.data = { scrollY: window.scrollY, gridView: false };
@@ -541,77 +501,15 @@ export default function Feed({ params }: { params: { lng: string }}) {
                                                     </div>
                                                 ))}
                                             </div>
-                                            <div className="flex -mt-12 justify-end mr-6" onClick={() => setShowRealMojis(prev => ({
-                                                ...prev,
-                                                [userPost.id]: true
-                                            }))}>
-                                                <FaSmile className="h-8 w-8 z-0"/>
-                                            </div>
                                         </Transition>
 
-                                        <Transition
-                                        enter="transition ease-in-out duration-300 transform"
-                                        enterFrom="translate-x-full"
-                                        enterTo="translate-x-0"
-                                        leave="transition ease-in-out duration-300 transform"
-                                        leaveFrom="translate-x-0"
-                                        leaveTo="translate-x-full"
-                                        show={ShowRealMojis[userPost.id] || false}
-                                        className="top-0 absolute w-[100vw] flex flex-row justify-center items-end mb-4 aspect-[1.5/2]"
-                                        onClick={() => setShowRealMojis(prev => ({
-                                            ...prev,
-                                            [userPost.id]: false
-                                        }))}>
-                                            {["👍", "😃", "😲", "😍", "😂"].map((emoji, index) => (
-                                                <div
-                                                    key={index}
-                                                    className={`w-14 h-16 mr-1`}
-                                                    onClick={() => handleReactionClick(
-                                                        userPost.id,
-                                                        post.user.id,
-                                                        emoji,
-                                                    )}
-                                                >
-                                                    <div
-                                                    className={`relative overflow-visible w-14 h-14 ${realmoji(emoji) ? "" : "border-dashed border-2"} border-white rounded-full aspect-square ${realmoji(emoji) ? "" : "bg-transparent"}`}
-                                                    >
-                                                    {realmoji(emoji) && realmoji(emoji).media && realmoji(emoji).media.url ? (
-                                                        <Image
-                                                        width={500}
-                                                        height={500}
-                                                        src={realmoji(emoji).media.url}
-                                                        alt={`${emoji} realmoji's`}
-                                                        className="rounded-full border-2 border-black aspect-square w-full h-full object-cover"
-                                                        />
-                                                    ) : (
-                                                        <div className="flex items-center justify-center rounded-full aspect-square">
-                                                            <span className={`text-2xl`}>{emoji}</span>
-                                                        </div>
-                                                    )}
-                                                    {realmoji(emoji) && realmoji(emoji).media && realmoji(emoji).media.url && (
-                                                        <span className="absolute text-2xl -bottom-2 -right-2">
-                                                            {realmoji(emoji).emoji}
-                                                        </span>
-                                                    )}
-                                                    </div>
-                                                </div>
-                                            ))}
-
-                                            <div className="w-14" style={{ cursor: "pointer" }}>
-                                                <div
-                                                    className="flex items-center justify-center rounded-full bg-black aspect-square mb-2"
-                                                    onClick={() => toast.warn(t("UnavailableYet"))}
-                                                >
-                                                    <span
-                                                        className="text-xl"
-                                                        role="img"
-                                                        aria-label="Upload emoji"
-                                                    >
-                                                        ⚡
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </Transition>
+                                        <Realmojis 
+                                            post={post} 
+                                            userPost={userPost} 
+                                            ShowRealMojis={ShowRealMojis} 
+                                            setShowRealMojis={setShowRealMojis} 
+                                            t={t}
+                                        />
                                     </div>
                                 )).reverse()}
                             </SwipeableViews>
@@ -633,6 +531,16 @@ export default function Feed({ params }: { params: { lng: string }}) {
                     ))}
                 </div>
 
+                {/* No BeReal Warning */}
+                {feed && feed.friendsPosts && feed.friendsPosts.length === 0 && (
+                    <div className={`${loading ? 'hidden' : ''}`}>
+                    <p
+                        className='text-white/75 text-center p-4'
+                    >
+                        It's quiet here, nobody has posted anything yet.
+                    </p>
+                    </div>
+                )}
 
                 {/* gridView */}
                 <div className={`flex flex-wrap justify-around mt-10 pt-6 overflow-hidden ${gridView ? "" : "hidden"}`}>

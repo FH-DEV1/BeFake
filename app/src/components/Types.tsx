@@ -13,6 +13,7 @@ interface User {
     username: string;
     profilePicture: Image | null;
     type?: string;
+    fullname?: string;
 }
 
 export interface RealMojis {
