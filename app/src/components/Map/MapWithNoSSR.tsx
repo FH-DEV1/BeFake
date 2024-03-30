@@ -6,8 +6,8 @@ const MapWithNoSSR = dynamic(() => import('./MapWithSSR'), {
   ssr: false,
 });
 
-const Map = ({ posts }: { posts: FriendPost[] }) => {
-  return <MapWithNoSSR posts={posts} />;
+const Map = ({ posts, lng }: { posts: FriendPost[], lng: string }) => {
+  return <MapWithNoSSR posts={posts} lng={lng}/>;
 };
 
 export default Map;

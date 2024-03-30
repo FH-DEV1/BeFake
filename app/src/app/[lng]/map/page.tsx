@@ -65,7 +65,7 @@ export default function Map({ params }: { params: { lng: string } }): JSX.Elemen
       >
         <IoArrowBack className='h-6 w-6'/>
       </button>
-      <Maps posts={posts} />
+      <Maps posts={posts} lng={params.lng}/>
     </>
   );
 }

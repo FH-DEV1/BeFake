@@ -10,6 +10,7 @@ import {
 } from 'react-leaflet';
 import { FriendPost } from '../Types';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 function SetViewOnClick({ animateRef }: { animateRef: React.MutableRefObject<boolean> }) {
   const map = useMapEvent('click', (e) => {
@@ -21,7 +22,8 @@ function SetViewOnClick({ animateRef }: { animateRef: React.MutableRefObject<boo
   return null
 }
 
-const MapWithNoSSR = ({ posts }: { posts: FriendPost[] }) => {
+const MapWithNoSSR = ({ posts, lng }: { posts: FriendPost[], lng: string }) => {
+  const router = useRouter()
   const [mapCenter, setMapCenter] = useState<[number, number]>([0, 0]);
   const [mapZoom, setMapZoom] = useState<number>(6);
   const [maxBounds, setMaxBounds] = useState<LatLngBoundsExpression | null>(null);
@@ -138,7 +140,9 @@ const MapWithNoSSR = ({ posts }: { posts: FriendPost[] }) => {
                 icon={createCustomIcon(profilePicture ? profilePicture.url : null)}
               >
                 <Popup>
-                  <div className='relative -my-1 -mx-2 text-center'>
+                  <div className='relative -my-1 -mx-2 text-center' onClick={() => {
+                    router.push(`/${lng}/feed/${post.user.username}`)
+                  }}>
                     <Image
                         width={innerPost.primary.width}
                         height={innerPost.primary.height}
