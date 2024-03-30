@@ -101,8 +101,6 @@ const MapWithNoSSR = ({ posts, lng }: { posts: FriendPost[], lng: string }) => {
         zoomControl={false}
         minZoom={3}
         maxZoom={18}
-        maxBounds={maxBounds as any}
-        maxBoundsViscosity={0.95}
       >
         <TileLayer url='http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png' />
 
