@@ -10,6 +10,7 @@ export const deleteComment = async (req: Request, res: Response, next: NextFunct
     let token_expiration: string | undefined = req.headers.token_expiration as string;
     let refresh_token: string | undefined = req.headers.refresh_token as string;
     let postId: string | undefined = req.headers.postid as string;
+    let userId: string | undefined = req.headers.userid as string;
     let commentId: string | undefined = req.headers.commentid as string;
 
     if (token && token_expiration && refresh_token && postId && commentId) {
@@ -40,17 +41,17 @@ export const deleteComment = async (req: Request, res: Response, next: NextFunct
         return res.status(400).json({ error: 'Error: Impossible error' });
     }
 
-    await axios.delete(`https://mobile.bereal.com/api/content/comments?postId=${postId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'bereal-app-version-code': '14549',
-            'bereal-signature': process.env.SIGNATURE,
-            'bereal-device-id': process.env.DEVICEID,
-            'bereal-timezone': 'Europe/Paris'
-          }, 
-          data: {
-            commentIds: commentId,
-        }
+    await axios.delete(`https://mobile.bereal.com/api/content/comments?postId=${postId}&postUserId=${userId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'bereal-app-version-code': '14549',
+                'bereal-signature': process.env.SIGNATURE,
+                'bereal-device-id': process.env.DEVICEID,
+                'bereal-timezone': 'Europe/Paris'
+            }, 
+            data: {
+                commentIds: [commentId]
+            }
         }
     ).then(response => {
         if (refreshData) {

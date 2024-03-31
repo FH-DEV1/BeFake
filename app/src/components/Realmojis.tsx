@@ -193,12 +193,12 @@ const Realmojis: React.FC<RealMojisProps> = ({ post, userPost, ShowRealMojis, se
             leave="transition-opacity duration-200"
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
-            className="flex -mt-16 mb-5 justify-end mr-5"
-            onClick={() => setShowRealMojis(prev => ({
+            className="flex -mt-16 justify-end mr-5"
+        >
+            <FaSmile className="h-8 w-8 z-0 mb-5 drop-shadow-darkGlow" onClick={() => setShowRealMojis(prev => ({
                 ...prev,
                 [userPost.id]: true
-            }))}>
-            <FaSmile className="h-8 w-8 z-0" />
+            }))}/>
         </Transition>
         <Transition
             enter="transition ease-in-out duration-300 transform"
@@ -208,7 +208,7 @@ const Realmojis: React.FC<RealMojisProps> = ({ post, userPost, ShowRealMojis, se
             leaveFrom="translate-x-0"
             leaveTo="translate-x-full"
             show={ShowRealMojis[userPost.id] || false}
-            className="top-0 absolute w-[100vw] flex flex-row justify-center items-end mb-4 aspect-[1.5/2]"
+            className="top-0 absolute w-[100vw] flex flex-row justify-center items-end aspect-[1.5/2] pb-1"
             onClick={() => setShowRealMojis(prev => ({
                 ...prev,
                 [userPost.id]: false

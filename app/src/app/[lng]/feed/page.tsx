@@ -12,7 +12,7 @@ import axios from "axios";
 import { Transition } from "@headlessui/react";
 import { useTranslation } from '@/app/i18n/client'
 import { MdAddAPhoto } from "react-icons/md";
-import { FaPlus, FaLock, FaMapMarkedAlt } from "react-icons/fa";
+import { FaPlus, FaLock, FaMapMarkedAlt, FaCommentAlt } from "react-icons/fa";
 import Image from 'next/image'
 import Modal from "@/components/Modal"
 import Realmojis from "@/components/Realmojis";
@@ -461,7 +461,7 @@ export default function Feed({ params }: { params: { lng: string }}) {
                                     [post.user.id]: idx
                                 }))}>
                                 {post.posts.map((userPost: PostType, postIndex: number) => (
-                                    <div className='flex flex-col' key={`${userPost.id}_${postIndex}`}>
+                                    <div className='flex flex-col aspect-[1.5/2]' key={`${userPost.id}_${postIndex}`}>
                                         <Post
                                             post={userPost}
                                             width={"full"}
@@ -501,6 +501,12 @@ export default function Feed({ params }: { params: { lng: string }}) {
                                                     </div>
                                                 ))}
                                             </div>
+                                            <div className="flex -mt-24 justify-end mr-5" onClick={() => {
+                                                feed.data = { scrollY: window.scrollY, gridView: false };
+                                                router.push(`/${params.lng}/feed/${post.user.username}?index=${post.posts.length - postIndex - 1}&comment=true`);
+                                            }}>
+                                                <FaCommentAlt className="h-8 w-8 z-0 drop-shadow-darkGlow"/>
+                                            </div>
                                         </Transition>
 
                                         <Realmojis 
@@ -521,7 +527,7 @@ export default function Feed({ params }: { params: { lng: string }}) {
                             <p className={`ml-2 -mt-2 h-6 transition-opacity delay-75 duration-300 ${post.posts[post.posts.length-index[post.user.id]-1? post.posts.length-index[post.user.id]-1 : 0].caption ? "opacity-100" : "opacity-0"}`}>
                                 {post.posts[post.posts.length-index[post.user.id]-1? post.posts.length-index[post.user.id]-1 : 0].caption}
                             </p>
-                            <div className={`ml-2 opacity-50 transition-transform duration-300 ${post.posts[post.posts.length-index[post.user.id]-1? post.posts.length-index[post.user.id]-1 : 0].caption ? "" : "-translate-y-6"}`} onClick={() => {
+                            <div className={`ml-2 opacity-50 transition-transform duration-300 ${post.posts[post.posts.length-index[post.user.id]-1? post.posts.length-index[post.user.id]-1 : 0].caption ? "" :  ShowRealMojis[post.posts[post.posts.length-index[post.user.id]-1? post.posts.length-index[post.user.id]-1 : 0].id] ? "delay-150 -translate-y-[20px]" : "-translate-y-6"}`} onClick={() => {
                                 feed.data = { scrollY: window.scrollY, gridView: false };
                                 router.push(`/${params.lng}/feed/${post.user.username}?index=${index[post.user.id] != undefined? index[post.user.id] : post.posts.length-1}`)
                             }}>

@@ -26,12 +26,8 @@ const AllowedUrls: string[] = [
   'https://befake.website',
 ];
 
-if (process.env.PRODUCTION !== 'true') {
-  AllowedUrls.push('http://localhost:3000');
-}
-
 const corsOptions: cors.CorsOptions = {
-  origin: AllowedUrls,
+  origin: process.env.PRODUCTION !== 'true' ? '*' : AllowedUrls,
   preflightContinue: true,
 };
 
