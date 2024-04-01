@@ -1,12 +1,13 @@
 import { Transition } from "@headlessui/react";
-import { FeedType, FriendPost, PostType } from "./Types";
+import { FeedType, FriendPost, PostType, RealMojis } from "./Types";
 import Image from "next/image";
 import axios from "axios";
 import { useFeedState } from "./FeedContext";
 import { useRef, useState } from "react";
 import { getBase64 } from "./Functions";
 import { toast } from "react-toastify";
-import { FaSmile } from "react-icons/fa";
+import { FaCommentAlt, FaSmile } from "react-icons/fa";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 
 interface RealMojisProps {
     post: FriendPost;
@@ -18,29 +19,27 @@ interface RealMojisProps {
         [key: string]: boolean
     }>>;
     t: Function;
+    router?: AppRouterInstance;
+    parsedLSUser: {
+        realmojis: RealMojis[];
+        id: string;
+    }
 }
 
-const Realmojis: React.FC<RealMojisProps> = ({ post, userPost, ShowRealMojis, setShowRealMojis, t }) => {
+const Realmojis: React.FC<RealMojisProps> = ({ post, userPost, ShowRealMojis, setShowRealMojis, t, router, parsedLSUser }) => {
 
-    const domain = process.env.NODE_ENV === "development" ? process.env.NEXT_PUBLIC_DEV_DOMAIN : process.env.NEXT_PUBLIC_DOMAIN
-    const lsUser = typeof window !== "undefined" ? localStorage.getItem('myself') : null
-    const parsedLSUser = JSON.parse(lsUser !== null ? lsUser : "{}")
+    let domain = process.env.NODE_ENV === "development" ? process.env.NEXT_PUBLIC_DEV_DOMAIN : process.env.NEXT_PUBLIC_DOMAIN
     const lsToken = typeof window !== "undefined" ? localStorage.getItem('token') : null
-    const parsedLSToken = JSON.parse(lsToken !== null ? lsToken : "{}")
-    const token: string|null = parsedLSToken.token
-    const token_expiration: string|null = parsedLSToken.token_expiration
-    const refresh_token: string|null = parsedLSToken.refresh_token
+    let parsedLSToken = JSON.parse(lsToken !== null ? lsToken : "{}")
+    let token: string|null = parsedLSToken.token
+    let token_expiration: string|null = parsedLSToken.token_expiration
+    let refresh_token: string|null = parsedLSToken.refresh_token
 
-    const realmoji = (emoji: string) => parsedLSUser.realmojis.find((rm: { emoji: string; }) => rm.emoji === emoji);
+    let realmoji = (emoji: string) => parsedLSUser.realmojis.find((rm: { emoji: string; }) => rm.emoji === emoji);
     const { feed, setFeed } = useFeedState();
 
     const handleReactionClick = async (postId: string, userId: string, emoji: string) => {
         if (realmoji(emoji)) {
-            let lsToken = typeof window !== "undefined" ? localStorage.getItem('token') : null
-            let parsedLSToken = JSON.parse(lsToken !== null ? lsToken : "{}")
-            let token: string|null = parsedLSToken.token
-            let token_expiration: string|null = parsedLSToken.token_expiration
-            let refresh_token: string|null = parsedLSToken.refresh_token
 
             await axios.post(`${domain}/api/realmoji/react`, JSON.stringify({ "emoji": emoji }), {
                 headers: {
@@ -96,17 +95,14 @@ const Realmojis: React.FC<RealMojisProps> = ({ post, userPost, ShowRealMojis, se
     }
 
 
-    const [selectedFiles, setSelectedFiles] = useState<{[id: string]: any}>({});
+    const [selectedFiles, setSelectedFiles] = useState<any>();
     const fileInputRefs = useRef<{[id: string]: any}>({});
     const [fileBase64, setFileBase64] = useState<string>('""');
 
-    async function fileHandler(id: string, event: any) {
+    async function fileHandler(event: any) {
         if (event.target.files && event.target.files[0]) {
             const file = event.target.files[0];
-            setSelectedFiles((prevSelectedFiles) => ({
-                ...prevSelectedFiles,
-                [id]: file,
-            }));
+            setSelectedFiles(file);
         
             getBase64(file)
             .then((result: string | ArrayBuffer | null) => {
@@ -193,13 +189,20 @@ const Realmojis: React.FC<RealMojisProps> = ({ post, userPost, ShowRealMojis, se
             leave="transition-opacity duration-200"
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
-            className="flex -mt-16 justify-end mr-5"
+            className="flex flex-col items-end mr-5"
         >
-            <FaSmile className="h-8 w-8 z-0 mb-5 drop-shadow-darkGlow" onClick={() => setShowRealMojis(prev => ({
+            {router &&
+                <FaCommentAlt className="h-8 w-8 z-0 mb-5" onClick={() => {
+                    feed.data = { scrollY: window.scrollY, gridView: false };
+                    router.push(`/${t("lng")}/feed/${post.user.username}?index=${post.posts.length-post.posts.findIndex(p => p.id === userPost.id)-1}`);
+                }}/>
+            }
+            <FaSmile className="h-8 w-8 z-0 mb-5" onClick={() => setShowRealMojis(prev => ({
                 ...prev,
                 [userPost.id]: true
             }))}/>
         </Transition>
+
         <Transition
             enter="transition ease-in-out duration-300 transform"
             enterFrom="translate-x-full"
@@ -213,7 +216,9 @@ const Realmojis: React.FC<RealMojisProps> = ({ post, userPost, ShowRealMojis, se
                 ...prev,
                 [userPost.id]: false
             }))}>
-                {["👍", "😃", "😲", "😍", "😂"].map((emoji, index) => (
+                {["👍", "😃", "😲", "😍", "😂"].map((emoji, index) => {
+                    let realmojiObject = realmoji(emoji)
+                    return (
                     <div
                         key={index}
                         className={`w-14 h-16 mr-1`}
@@ -224,13 +229,13 @@ const Realmojis: React.FC<RealMojisProps> = ({ post, userPost, ShowRealMojis, se
                         )}
                     >
                         <div
-                            className={`relative overflow-visible w-14 h-14 ${realmoji(emoji) ? "" : "border-dashed border-2"} border-white rounded-full aspect-square ${realmoji(emoji) ? "" : "bg-transparent"}`}
+                            className={`relative overflow-visible w-14 h-14 ${realmojiObject ? "" : "border-dashed border-2"} border-white rounded-full aspect-square ${realmojiObject ? "" : "bg-transparent"}`}
                         >
-                            {realmoji(emoji) && realmoji(emoji).media && realmoji(emoji).media.url ? (
+                            {realmojiObject && realmojiObject.media.url ? (
                                 <Image
                                     width={500}
                                     height={500}
-                                    src={realmoji(emoji).media.url}
+                                    src={realmojiObject.media.url}
                                     alt={`${emoji} realmoji's`}
                                     className="rounded-full border-2 border-black aspect-square w-full h-full object-cover"
                                     placeholder="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAADIAQMAAAAwS4omAAAAA1BMVEURERGD9/d/AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAG0lEQVRIie3BMQEAAADCoPVPbQwfoAAAAIC3AQ+gAAEq5xQCAAAAAElFTkSuQmCC" />
@@ -239,19 +244,19 @@ const Realmojis: React.FC<RealMojisProps> = ({ post, userPost, ShowRealMojis, se
                                     <span className={`text-2xl`}>{emoji}</span>
                                 </div>
                             )}
-                            {realmoji(emoji) && realmoji(emoji).media && realmoji(emoji).media.url && (
+                            {realmojiObject && realmojiObject.media.url && (
                                 <span className="absolute text-2xl -bottom-2 -right-2">
-                                    {realmoji(emoji).emoji}
+                                    {realmojiObject.emoji}
                                 </span>
                             )}
                         </div>
                     </div>
-                ))}
+                )})}
 
                 <div className='w-14' style={{ cursor: 'pointer' }}>
-                    {selectedFiles[userPost.id] ? (
+                    {selectedFiles ? (
                         <Image
-                            src={URL.createObjectURL(selectedFiles[userPost.id])}
+                            src={URL.createObjectURL(selectedFiles)}
                             alt='Custom lightning emoji'
                             width={500}
                             height={500}
@@ -269,7 +274,7 @@ const Realmojis: React.FC<RealMojisProps> = ({ post, userPost, ShowRealMojis, se
                                 type='file'
                                 accept='image/*'
                                 className='hidden'
-                                onChange={(e) => fileHandler(userPost.id, e)}
+                                onChange={(e) => fileHandler(e)}
                                 ref={(ref) => (fileInputRefs.current[userPost.id] = ref)} />
                         </div>
                     )}

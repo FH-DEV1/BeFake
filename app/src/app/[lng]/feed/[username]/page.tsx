@@ -417,6 +417,7 @@ export default function Page({ params }: { params: { username: string, lng: stri
                             ShowRealMojis={ShowRealMojis} 
                             setShowRealMojis={setShowRealMojis} 
                             t={t}
+                            parsedLSUser={parsedLSUser}
                         />
                     </div>
                 )}
