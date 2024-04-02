@@ -69,5 +69,9 @@
   "Reply": "Reply",
   "CalmHere": "Wow, it's really calm in here!",
   "CalmHere2": "Be the first to react with a RealMoji or to comment!",
-  "CommentError": "There was an error while trying to post your comment. Please try again later."
+  "CommentError": "There was an error while trying to post your comment. Please try again later.",
+  "Settings": "Settings",
+  "DevMode": "Developer Mode",
+  "CopyToken": "Copy token",
+  "CopyUser": "Copy my data"
 }

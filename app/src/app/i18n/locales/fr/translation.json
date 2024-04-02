@@ -69,5 +69,9 @@
   "NoCommentYet": "Aucun commentaire actuellement...",
   "NoRealMojiYet": "Aucun RealMoji actuellement...",
   "FirstReaction": "Sois le premier à commenter sur le post de {{name}}.",
-  "Reply": "Répondre"
+  "Reply": "Répondre",
+  "Settings": "Paramètres",
+  "DevMode": "Mode Développeur",
+  "CopyToken": "Copier le token",
+  "CopyUser": "Copier mes données"
 }

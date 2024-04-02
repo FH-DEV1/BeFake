@@ -52,7 +52,7 @@ export default function Page({ params }: { params: { username: string, lng: stri
         if (posts && ShowRealMojis[posts.posts[posts.posts.length-index-1].id]) {
             const timer = setTimeout(() => {
                 setDelaySwitch(delaySwitch => ({...delaySwitch, [posts.posts[posts.posts.length-index-1].id]: true }));
-            }, 150);
+            }, 250);
             return () => clearTimeout(timer);
         } else if (posts) {
             setDelaySwitch(delaySwitch => ({...delaySwitch, [posts.posts[posts.posts.length-index-1].id]: false }));
@@ -410,7 +410,7 @@ export default function Page({ params }: { params: { username: string, lng: stri
                     show={!comment}
                 >
                 {posts && (
-                    <div className={delaySwitch[posts.posts[posts.posts.length-index-1].id] ? "absolute bottom-[137vw] w-full" : "absolute bottom-0 right-0 mt-8"}>
+                    <div className={delaySwitch[posts.posts[posts.posts.length-index-1].id] ? "absolute bottom-[140vw] w-full" : "absolute bottom-4 right-0"}>
                         <Realmojis 
                             post={posts} 
                             userPost={posts?.posts[posts.posts.length-index-1]}

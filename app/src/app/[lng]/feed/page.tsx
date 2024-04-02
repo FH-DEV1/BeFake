@@ -15,6 +15,7 @@ import { FaPlus, FaLock, FaMapMarkedAlt } from "react-icons/fa";
 import Image from 'next/image'
 import Modal from "@/components/Modal"
 import Realmojis from "@/components/Realmojis";
+import { copyTextToClipboard } from "@/components/Functions";
 
 export default function Feed({ params }: { params: { lng: string }}) {
     const { t } = useTranslation(params.lng, 'client-page', {})
@@ -39,7 +40,7 @@ export default function Feed({ params }: { params: { lng: string }}) {
         show: false,
         disabled: true
     });
-    const PostOptions=[{id:'main-download',name:t('DownloadMainImage'),action:async()=>{try{await downloadImage(!0,OptionsMenu)}catch(e){toast.error(t('DownloadFailed'))}finally{setOptionsMenu(e=>({...e,show:!1}))}}},{id:'secondary-download',name:t('DownloadSecondaryImage'),action:async()=>{try{await downloadImage(!1,OptionsMenu)}catch(e){toast.error(t('DownloadFailed'))}finally{setOptionsMenu(e=>({...e,show:!1}))}}},{id:'combined-download',name:t('DownloadCombinedImages'),action:async()=>{try{await downloadCombinedImage(OptionsMenu)}catch(e){toast.error(t('DownloadFailed'))}finally{setOptionsMenu(e=>({...e,show:!1}))}}},{id:'bts-download',name:t('DownloadBTSVideo'),action:async()=>{try{await downloadBTSVideo(OptionsMenu)}catch(e){toast.error(t('DownloadFailed'))}finally{setOptionsMenu(e=>({...e,show:!1}))}}},{id:'copy-link-main',name:t('CopyMainImageLink'),action:()=>{OptionsMenu.primary?navigator.clipboard.writeText(OptionsMenu.primary):(toast.error(t('CopyLinkError')),!1);toast.success(t('CopyLinkSuccess'));setOptionsMenu(e=>({...e,show:!1}))}},{id:'copy-link-secondary',name:t('CopySecondaryImageLink'),action:()=>{OptionsMenu.secondary?navigator.clipboard.writeText(OptionsMenu.secondary):(toast.error(t('CopyLinkError')),!1);toast.success(t('CopyLinkSuccess'));setOptionsMenu(e=>({...e,show:!1}))}}];
+    const PostOptions=[{id:'main-download',name:t('DownloadMainImage'),action:async()=>{try{await downloadImage(!0,OptionsMenu)}catch(e){toast.error(t('DownloadFailed'))}finally{setOptionsMenu(e=>({...e,show:!1}))}}},{id:'secondary-download',name:t('DownloadSecondaryImage'),action:async()=>{try{await downloadImage(!1,OptionsMenu)}catch(e){toast.error(t('DownloadFailed'))}finally{setOptionsMenu(e=>({...e,show:!1}))}}},{id:'combined-download',name:t('DownloadCombinedImages'),action:async()=>{try{await downloadCombinedImage(OptionsMenu)}catch(e){toast.error(t('DownloadFailed'))}finally{setOptionsMenu(e=>({...e,show:!1}))}}},{id:'bts-download',name:t('DownloadBTSVideo'),action:async()=>{try{await downloadBTSVideo(OptionsMenu)}catch(e){toast.error(t('DownloadFailed'))}finally{setOptionsMenu(e=>({...e,show:!1}))}}},{id:'copy-link-main',name:t('CopyMainImageLink'),action:()=>{OptionsMenu.primary?copyTextToClipboard(OptionsMenu.primary):(toast.error(t('CopyLinkError')),!1);toast.success(t('CopyLinkSuccess'));setOptionsMenu(e=>({...e,show:!1}))}},{id:'copy-link-secondary',name:t('CopySecondaryImageLink'),action:()=>{OptionsMenu.secondary?copyTextToClipboard(OptionsMenu.secondary):(toast.error(t('CopyLinkError')),!1);toast.success(t('CopyLinkSuccess'));setOptionsMenu(e=>({...e,show:!1}))}}];
     
     const downloadImage = async (main: boolean, post: OptionsMenu) => {
         const url = main ? (post.primary) : (post.secondary);
@@ -493,7 +494,7 @@ export default function Feed({ params }: { params: { lng: string }}) {
                                                </div>
                                         )}
 
-                                        <div className="-mt-24">
+                                        <div className="-mt-[100px]">
                                             <Realmojis 
                                                 post={post} 
                                                 userPost={userPost} 

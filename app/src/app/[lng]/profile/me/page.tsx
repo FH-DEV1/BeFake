@@ -1,6 +1,5 @@
 "use client"
-import { IoArrowBack } from "react-icons/io5";
-import { TbLogout } from "react-icons/tb";
+import { IoArrowBack, IoSettingsSharp } from "react-icons/io5";
 import { FaPlus } from "react-icons/fa6";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -42,10 +41,20 @@ export default function MyProfile({ params }: { params: { lng: string }}) {
                     userid: userId
                 }
             }).then(PMresult => {
+                if (PMresult.data.refresh_data && typeof window !== "undefined") {
+                    console.log("===== refreshed data =====")
+                    console.log(PMresult.data.refresh_data)
+                    localStorage.setItem("token", PMresult.data.refresh_data)
+                }
                 setMyInfo({data: parsedLSUser, pinnedMemories: PMresult.data.pinned.pinnedMemories})
                 setLoading(false)
             })
-            .catch(() => {
+            .catch((error) => {
+                if (error.response.data.refresh_data && typeof window !== "undefined") {
+                    console.log("===== refreshed data =====")
+                    console.log(error.response.data.refresh_data)
+                    localStorage.setItem("token", error.response.data.refresh_data)
+                }
                 router.replace(`/${params.lng}/error`)
             });
         } else {
@@ -54,17 +63,9 @@ export default function MyProfile({ params }: { params: { lng: string }}) {
 
     }, []);
 
-    const handleLogout = () => {
-        const confirmation = window.confirm(t("LogoutConfirm"));
-        if (confirmation) {
-            localStorage.clear();
-            router.replace(`/${params.lng}/login/phone-number`);
-        }
-    };
-
     return (
         <div className='flex flex-col justify-between items-center mt-[0.5vh] h-[99.5vh]'>
-            <div className='flex items-center justify-between p-2 absolute left-1 right-1 z-40'>
+            <div className='flex items-center justify-between p-2 fixed left-1 right-1 z-40'>
                 <button
                     onClick={() => router.back()}
                     className='flex items-center justify-center rounded-lg transition-all transform hover:scale-105 px-2 py-1'
@@ -75,10 +76,10 @@ export default function MyProfile({ params }: { params: { lng: string }}) {
                     <h1 className='text-lg font-semibold'>{t('Profile')}</h1>
                 </div>
                 <button
-                    onClick={handleLogout}
-                    className='flex items-center justify-center rounded-lg transition-all transform hover:scale-105 px-2 py-1 text-red-500'
+                    onClick={() => router.push(`/${params.lng}/profile/me/settings`)}
+                    className='flex items-center justify-center rounded-lg transition-all transform hover:scale-105 px-2 py-1'
                 >
-                    <TbLogout className='h-8 w-8'/>
+                    <IoSettingsSharp className='h-7 w-7'/>
                 </button>
             </div>
 
