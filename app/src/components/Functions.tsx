@@ -37,3 +37,19 @@ function fallbackCopyTextToClipboard(text: string) {
     document.body.removeChild(tempInput);
     return true
 }
+
+export function dataIsValid(): boolean {
+    if (typeof window !== "undefined"){
+        let LStoken = localStorage.getItem('token')
+        const token = JSON.parse(LStoken !== null ? LStoken : "{}")
+        const version: string|null = localStorage.getItem('v')
+        if (version !== process.env.NEXT_PUBLIC_VERSION || !token.token || !token.refresh_token || !token.token_expiration) {
+            localStorage.clear()
+            return false
+        } else {
+            return true
+        }
+    } else {
+        return false
+    }
+}

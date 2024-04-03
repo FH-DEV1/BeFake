@@ -10,6 +10,7 @@ import { useEffect, useState } from "react"
 import Image from "next/image"
 import Modal from "@/components/Modal"
 import React from "react"
+import { dataIsValid } from "@/components/Functions"
 
 export default function Page({ params }: { params: { userid: string, lng: string } }) {
     const domain = process.env.NODE_ENV === "development" ? process.env.NEXT_PUBLIC_DEV_DOMAIN : process.env.NEXT_PUBLIC_DOMAIN
@@ -23,9 +24,15 @@ export default function Page({ params }: { params: { userid: string, lng: string
         disabled: true
     });
 
+    useEffect(() => {
+        if(!dataIsValid()){
+            router.replace(`/${params.lng}/login/phone-number`)
+        }
+    })
+
     useEffect (() => {
         let ls = typeof window !== "undefined" ? localStorage.getItem('token') : null
-        let parsedls = JSON.parse(ls !== null ? ls : "")
+        let parsedls = JSON.parse(ls !== null ? ls : "{}")
         let token: string|null = parsedls.token
         let token_expiration: string|null = parsedls.token_expiration
         let refresh_token: string|null = parsedls.refresh_token
@@ -40,6 +47,14 @@ export default function Page({ params }: { params: { userid: string, lng: string
                     userid: params.userid
                 }
             }).then(response => {
+                if (response.data.refresh_data && typeof window !== "undefined") {
+                    console.log("===== refreshed data =====")
+                    console.log(response.data.refresh_data)
+                    localStorage.setItem("token", response.data.refresh_data)
+                    token = response.data.refresh_data.token
+                    token_expiration = response.data.refresh_data.token_expiration
+                    refresh_token = response.data.refresh_data.refresh_token
+                }
                 console.log(response.data.data)
                 setInfo({data: response.data.data})
                 setLoading(false)
@@ -52,14 +67,29 @@ export default function Page({ params }: { params: { userid: string, lng: string
                             userid: params.userid
                         }
                     }).then(PMresult => {
+                        if (PMresult.data.refresh_data && typeof window !== "undefined") {
+                            console.log("===== refreshed data =====")
+                            console.log(PMresult.data.refresh_data)
+                            localStorage.setItem("token", PMresult.data.refresh_data)
+                        }
                         setInfo({data: response.data.data, pinnedMemories: PMresult.data.pinned.pinnedMemories})
                     })
-                    .catch(() => {
+                    .catch((error) => {
+                        if (error.response.data.refresh_data && typeof window !== "undefined") {
+                            console.log("===== refreshed data =====")
+                            console.log(error.response.data.refresh_data)
+                            localStorage.setItem("token", error.response.data.refresh_data)
+                        }
                         router.replace(`/${params.lng}/error`)
                     });
                 }
             })
-            .catch(() => {
+            .catch((error) => {
+                if (error.response.data.refresh_data && typeof window !== "undefined") {
+                    console.log("===== refreshed data =====")
+                    console.log(error.response.data.refresh_data)
+                    localStorage.setItem("token", error.response.data.refresh_data)
+                }
                 router.replace(`/${params.lng}/error`)
             });
         } else {

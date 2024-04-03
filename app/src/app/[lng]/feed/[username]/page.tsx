@@ -15,6 +15,7 @@ import axios from 'axios'
 import { toast } from 'react-toastify'
 import { Transition } from '@headlessui/react'
 import Realmojis from '@/components/Realmojis'
+import { dataIsValid } from '@/components/Functions'
 
 export default function Page({ params }: { params: { username: string, lng: string } }) {
     const domain = process.env.NODE_ENV === 'development' ? process.env.NEXT_PUBLIC_DEV_DOMAIN : process.env.NEXT_PUBLIC_DOMAIN;
@@ -33,6 +34,12 @@ export default function Page({ params }: { params: { username: string, lng: stri
 
     const lsUser = typeof window !== "undefined" ? localStorage.getItem('myself') : null
     const parsedLSUser = JSON.parse(lsUser !== null ? lsUser : "{}")
+
+    useEffect(() => {
+        if(!dataIsValid()){
+            router.replace(`/${params.lng}/login/phone-number`)
+        }
+    })
     
     useEffect(() => {
         if (feed.friendsPosts) {

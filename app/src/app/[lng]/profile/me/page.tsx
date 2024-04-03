@@ -12,6 +12,7 @@ import "./memory-button.css";
 import axios from "axios";
 import { useTranslation } from "@/app/i18n/client";
 import Image from "next/image";
+import { dataIsValid } from "@/components/Functions";
 
 export default function MyProfile({ params }: { params: { lng: string }}) {
     const domain = process.env.NODE_ENV === "development" ? process.env.NEXT_PUBLIC_DEV_DOMAIN : process.env.NEXT_PUBLIC_DOMAIN
@@ -21,9 +22,15 @@ export default function MyProfile({ params }: { params: { lng: string }}) {
     const [loading, setLoading] = useState(false)
     const [swipeable, setSwipeable] = useState(false)
 
+    useEffect(() => {
+        if(!dataIsValid()){
+            router.replace(`/${params.lng}/login/phone-number`)
+        }
+    })
+
     useEffect (() => {
         let ls = typeof window !== "undefined" ? localStorage.getItem('token') : null
-        let parsedls = JSON.parse(ls !== null ? ls : "")
+        let parsedls = JSON.parse(ls !== null ? ls : "{}")
         let token: string|null = parsedls.token
         let token_expiration: string|null = parsedls.token_expiration
         let refresh_token: string|null = parsedls.refresh_token

@@ -4,12 +4,19 @@ import Maps from '@/components/Map/MapWithNoSSR';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { IoArrowBack } from "react-icons/io5";
+import { dataIsValid } from '@/components/Functions';
 
 export default function Map({ params }: { params: { lng: string } }): JSX.Element {
   const router = useRouter();
   const domain = process.env.NODE_ENV === 'development' ? process.env.NEXT_PUBLIC_DEV_DOMAIN : process.env.NEXT_PUBLIC_DOMAIN;
 
   const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    if(!dataIsValid()){
+        router.replace(`/${params.lng}/login/phone-number`)
+    }
+  })
 
   useEffect(() => {
     const fetchData = async () => {

@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react'
 import { IoArrowBack, IoPerson } from 'react-icons/io5'
 import { FaLocationArrow } from "react-icons/fa";
 import Image from 'next/image'
+import { dataIsValid } from '@/components/Functions'
 
 export default function Page({ params }: { params: { username: string, lng: string } }) {
     const { t } = useTranslation(params.lng, 'client-page', {})
@@ -16,6 +17,12 @@ export default function Page({ params }: { params: { username: string, lng: stri
     const { fof } = useFeedState();
     const [swipeable, setSwipeable] = useState<boolean>(false);
     const [post, setPost] = useState<FOFPost>()
+
+    useEffect(() => {
+        if(!dataIsValid()){
+            router.replace(`/${params.lng}/login/phone-number`)
+        }
+    })
 
     useEffect(() => {
         if (fof.data) {

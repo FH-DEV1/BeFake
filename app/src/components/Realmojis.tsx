@@ -50,6 +50,11 @@ const Realmojis: React.FC<RealMojisProps> = ({ post, userPost, ShowRealMojis, se
                     "postid": postId
                 }
             }).then((response) => {
+                if (response.data.refresh_data && typeof window !== "undefined") {
+                    console.log("===== refreshed data =====")
+                    console.log(response.data.refresh_data)
+                    localStorage.setItem("token", response.data.refresh_data)
+                }
                 console.log("===== RealMoji =====")
                 console.log(response.data)
                 const updatedFeed: FeedType = { ...feed };
@@ -86,6 +91,11 @@ const Realmojis: React.FC<RealMojisProps> = ({ post, userPost, ShowRealMojis, se
                     }
                 }}
             }).catch((error) => {
+                if (error.response.data.refresh_data && typeof window !== "undefined") {
+                    console.log("===== refreshed data =====")
+                    console.log(error.response.data.refresh_data)
+                    localStorage.setItem("token", error.response.data.refresh_data)
+                }
                 console.log(error)
                 toast.error(t("ReactError"))
             })
@@ -137,6 +147,11 @@ const Realmojis: React.FC<RealMojisProps> = ({ post, userPost, ShowRealMojis, se
                     'refresh_token': refresh_token,
                 }
             }).then(response => {
+                if (response.data.refresh_data && typeof window !== "undefined") {
+                    console.log("===== refreshed data =====")
+                    console.log(response.data.refresh_data)
+                    localStorage.setItem("token", response.data.refresh_data)
+                }
                 console.log("===== RealMoji =====")
                 console.log(response.data)
                 const updatedFeed: FeedType = { ...feed };
@@ -174,6 +189,11 @@ const Realmojis: React.FC<RealMojisProps> = ({ post, userPost, ShowRealMojis, se
                         }
                     }
             }).catch(error => {
+                if (error.response.data.refresh_data && typeof window !== "undefined") {
+                    console.log("===== refreshed data =====")
+                    console.log(error.response.data.refresh_data)
+                    localStorage.setItem("token", error.response.data.refresh_data)
+                }
                 console.log(error)
                 toast.error(t('ReactError'))
             })

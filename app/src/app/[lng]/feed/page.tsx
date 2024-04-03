@@ -15,7 +15,7 @@ import { FaPlus, FaLock, FaMapMarkedAlt } from "react-icons/fa";
 import Image from 'next/image'
 import Modal from "@/components/Modal"
 import Realmojis from "@/components/Realmojis";
-import { copyTextToClipboard } from "@/components/Functions";
+import { copyTextToClipboard, dataIsValid } from "@/components/Functions";
 
 export default function Feed({ params }: { params: { lng: string }}) {
     const { t } = useTranslation(params.lng, 'client-page', {})
@@ -157,6 +157,12 @@ export default function Feed({ params }: { params: { lng: string }}) {
             setFeed(updatedFeed);
         }
     };
+
+    useEffect(() => {
+        if(!dataIsValid()){
+            router.replace(`/${params.lng}/login/phone-number`)
+        }
+    })
 
     useEffect (() => {
         if (!feed.friendsPosts) {

@@ -1,20 +1,24 @@
 "use client"
 import { useTranslation } from "@/app/i18n/client";
-import { copyTextToClipboard } from "@/components/Functions";
+import { copyTextToClipboard, dataIsValid } from "@/components/Functions";
 import { Switch } from "@headlessui/react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaLock } from "react-icons/fa";
 import { IoArrowBack, IoCopyOutline, IoPerson } from "react-icons/io5";
 import { MdDeveloperMode } from "react-icons/md";
 import { TbLogout } from "react-icons/tb";
-import { toast } from "react-toastify";
 
 export default function Settings({ params }: { params: { lng: string }}) {
     const { t } = useTranslation(params.lng, 'client-page', {})
     const router = useRouter()
+    useEffect(() => {
+        if(!dataIsValid()){
+            router.replace(`/${params.lng}/login/phone-number`)
+        }
+    })
     let ls = typeof window !== "undefined" ? localStorage.getItem('settings') : null
-    let settings = ls ? JSON.parse(ls !== null ? ls : "") : undefined
+    let settings = ls ? JSON.parse(ls !== null ? ls : "{}") : undefined
     
     const handleLogout = () => {
         const confirmation = window.confirm(t("LogoutConfirm"));
