@@ -73,5 +73,8 @@
   "Settings": "Settings",
   "DevMode": "Developer Mode",
   "CopyToken": "Copy token",
-  "CopyUser": "Copy my data"
+  "CopyUser": "Copy my data",
+  "ClickToChange": "Click to change",
+  "FOFVisible": "Show to friends of friends",
+  "PostLate": "Post late"
 }

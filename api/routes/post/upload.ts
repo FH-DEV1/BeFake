@@ -19,7 +19,7 @@ export const uploadPost = async (req: Request, res: Response, next: NextFunction
     let token_expiration: string | undefined = req.headers.token_expiration as string;
     let refresh_token: string | undefined = req.headers.refresh_token as string;
 
-    let { primaryb64, secondaryb64, visibility } = JSON.parse(req.body);
+    let { primaryb64, secondaryb64, visibility, isLate, retakes } = JSON.parse(req.body);
 
     if (!(token && token_expiration && refresh_token && primaryb64 && secondaryb64)) {
         return res.status(400).json({ error: 'Error: missing required fields' });
@@ -115,10 +115,10 @@ export const uploadPost = async (req: Request, res: Response, next: NextFunction
 
         let takenAt: string = moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
         let postData: PostData = {
-            isLate: false,
-            retakeCounter: 0,
-            takenAt,
-            visibility: [visibility || 'friends'], 
+            isLate: isLate,
+            retakeCounter: retakes,
+            takenAt: takenAt,
+            visibility: [visibility], 
             backCamera: {
                 bucket: primaryRes.bucket,
                 height: 1500,

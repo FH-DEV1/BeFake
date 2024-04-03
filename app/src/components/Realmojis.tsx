@@ -212,22 +212,22 @@ const Realmojis: React.FC<RealMojisProps> = ({ post, userPost, ShowRealMojis, se
             className="flex flex-col items-end mr-5"
         >
             {router &&
-                <FaCommentAlt className="h-8 w-8 z-0 mb-5" onClick={() => {
+                <FaCommentAlt className="h-7 w-7 z-0 mb-5" onClick={() => {
                     feed.data = { scrollY: window.scrollY, gridView: false };
                     router.push(`/${t("lng")}/feed/${post.user.username}?index=${post.posts.length-post.posts.findIndex(p => p.id === userPost.id)-1}`);
                 }}/>
             }
-            <FaSmile className="h-8 w-8 z-0 mb-5" onClick={() => setShowRealMojis(prev => ({
+            <FaSmile className="h-7 w-7 z-0 mb-5" onClick={() => setShowRealMojis(prev => ({
                 ...prev,
                 [userPost.id]: true
             }))}/>
         </Transition>
 
         <Transition
-            enter="transition ease-in-out duration-300 transform"
+            enter="transition duration-200 transform"
             enterFrom="translate-x-full"
             enterTo="translate-x-0"
-            leave="transition ease-in-out duration-300 transform"
+            leave="transition ease-in-out duration-200 transform"
             leaveFrom="translate-x-0"
             leaveTo="translate-x-full"
             show={ShowRealMojis[userPost.id] || false}
@@ -253,6 +253,7 @@ const Realmojis: React.FC<RealMojisProps> = ({ post, userPost, ShowRealMojis, se
                         >
                             {realmojiObject && realmojiObject.media.url ? (
                                 <Image
+                                    priority
                                     width={500}
                                     height={500}
                                     src={realmojiObject.media.url}
