@@ -5,7 +5,7 @@ export const sendCode = async (req: Request, res: Response, next: NextFunction) 
     let phone_number: string | undefined = req.headers.phone_number as string;
 
     try {
-        const receipt_response = await axios.post('https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyClient?key=AIzaSyDwjfEeparokD7sXPVQli9NsTuhT6fJ6iA', {
+        const receipt_response = await axios.post('https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyClient?key=AIzaSyCgNTZt6gzPMh-2voYXOvrt_UR_gpGl83Q', {
                 'appToken': '54F80A258C35A916B38A3AD83CA5DDD48A44BFE2461F90831E0F97EBA4BB2EC7'
             }, {
                 headers: {
@@ -23,7 +23,7 @@ export const sendCode = async (req: Request, res: Response, next: NextFunction) 
 
         let receipt = receipt_response.data.receipt;
 
-        const otp_response = await axios.post('https://www.googleapis.com/identitytoolkit/v3/relyingparty/sendVerificationCode?key=AIzaSyDwjfEeparokD7sXPVQli9NsTuhT6fJ6iA',
+        const otp_response = await axios.post('https://www.googleapis.com/identitytoolkit/v3/relyingparty/sendVerificationCode?key=AIzaSyCgNTZt6gzPMh-2voYXOvrt_UR_gpGl83Q',
             {
                 'phoneNumber': phone_number,
                 'iosReceipt': receipt
