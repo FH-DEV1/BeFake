@@ -44,7 +44,7 @@ export const verifyOTP = async (req: Request, res: Response, next: NextFunction)
             };
 
             let fire_otp_options = {
-                url: 'https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPhoneNumber?key=AIzaSyDwjfEeparokD7sXPVQli9NsTuhT6fJ6iA',
+                url: 'https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPhoneNumber?key=AIzaSyCgNTZt6gzPMh-2voYXOvrt_UR_gpGl83Q',
                 method: 'POST',
                 headers: fire_otp_headers,
                 data: fire_otp_body,
@@ -62,7 +62,7 @@ export const verifyOTP = async (req: Request, res: Response, next: NextFunction)
             });
 
             let firebase_refresh_options = {
-                url: 'https://securetoken.googleapis.com/v1/token?key=AIzaSyDwjfEeparokD7sXPVQli9NsTuhT6fJ6iA',
+                url: 'https://securetoken.googleapis.com/v1/token?key=AIzaSyCgNTZt6gzPMh-2voYXOvrt_UR_gpGl83Q',
                 method: 'POST',
                 headers: headers_list,
                 data: firebase_refresh_data,
@@ -135,7 +135,7 @@ export const verifyOTP = async (req: Request, res: Response, next: NextFunction)
 
             let refresh_body = JSON.stringify({ 'token': token, 'returnSecureToken': 'True' });
             let refresh_options = {
-                url: 'https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyCustomToken?key=AIzaSyDwjfEeparokD7sXPVQli9NsTuhT6fJ6iA',
+                url: 'https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyCustomToken?key=AIzaSyCgNTZt6gzPMh-2voYXOvrt_UR_gpGl83Q',
                 method: 'POST',
                 headers: headers_list,
                 data: refresh_body,
@@ -150,7 +150,7 @@ export const verifyOTP = async (req: Request, res: Response, next: NextFunction)
                 'refreshToken': refresh_token
             });
             let firebase_refresh_options = {
-                url: 'https://securetoken.googleapis.com/v1/token?key=AIzaSyDwjfEeparokD7sXPVQli9NsTuhT6fJ6iA',
+                url: 'https://securetoken.googleapis.com/v1/token?key=AIzaSyCgNTZt6gzPMh-2voYXOvrt_UR_gpGl83Q',
                 method: 'POST',
                 headers: headers_list,
                 data: firebase_refresh_data,
