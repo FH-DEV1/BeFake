@@ -54,8 +54,6 @@ export const verifyOTP = async (req: Request, res: Response, next: NextFunction)
 
             let fire_refresh_token = fire_otp_response.data.refreshToken;
 
-            console.log(fire_otp_response.data.phoneNumber, fire_otp_response.data.localId);
-
             let firebase_refresh_data = JSON.stringify({
                 'grantType': 'refresh_token',
                 'refreshToken': fire_refresh_token
