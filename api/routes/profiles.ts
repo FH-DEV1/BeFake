@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { Request, Response, NextFunction } from 'express';
 import { refreshDataType } from '../types/Types';
+import getHeaders from 'happy-headers';
 
 const domain: string | undefined = process.env.DOMAIN;
 
@@ -40,10 +41,7 @@ export const profiles = async (req: Request, res: Response, next: NextFunction) 
     await axios.get(`https://mobile.bereal.com/api/person/profiles/${userId}`, {
         headers: {
             'Authorization': `Bearer ${token}`,
-            'bereal-app-version-code': '14549',
-            'bereal-signature': process.env.SIGNATURE,
-            'bereal-timezone': 'Europe/Paris',
-            'bereal-device-id': process.env.DEVICEID
+            ...getHeaders()
         }
     }).then(response => {
         if (refreshData) {

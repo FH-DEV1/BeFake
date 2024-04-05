@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { Request, Response, NextFunction } from 'express';
 import { refreshDataType } from '../types/Types';
+import getHeaders from 'happy-headers';
 
 const domain: string | undefined = process.env.DOMAIN;
 
@@ -42,10 +43,7 @@ export const getData = async (req: Request, res: Response, next: NextFunction) =
             const response: any = await axios.get(nextPage, {
                 headers: {
                     'authorization': `Bearer ${token}`,
-                    'bereal-app-version-code': '14549',
-                    'bereal-signature': process.env.SIGNATURE,
-                    'bereal-device-id': process.env.DEVICEID,
-                    'bereal-timezone': 'Europe/Paris'
+                    ...getHeaders()
                 }
             });
 

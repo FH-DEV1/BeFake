@@ -337,7 +337,7 @@ export default function Feed({ params }: { params: { lng: string }}) {
                                 className='pr-[27vw] pl-[35vw] mr-2'
                             >
                                 {feed.userPosts.posts.map((post: PostType, indx: number) => (
-                                    <div key={indx}>
+                                    <div key={indx} onClick={() => router.push(`/${params.lng}/feed/me?index=${indx}`)}>
                                         <div className={`pb-4 ${(!index["userpost"] && indx == 0) || index["userpost"] == indx ? 'opacity-100' : 'opacity-50'}`} >
                                             <div className='relative'>
                                                 <Image

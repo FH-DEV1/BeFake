@@ -4,6 +4,7 @@ import moment from 'moment';
 import { NextFunction, Request, Response } from 'express';
 import { PostData, refreshDataType } from '../../types/Types';
 import { DOMParser } from 'xmldom';
+import getHeaders from 'happy-headers';
 
 const domain: string | undefined = process.env.DOMAIN;
 
@@ -63,10 +64,7 @@ export const uploadPost = async (req: Request, res: Response, next: NextFunction
         let uploadRes = await axios.get('https://mobile.bereal.com/api/content/posts/upload-url?mimeType=image/webp', {
             headers: {
                 'Authorization': `Bearer ${token}`,
-                'bereal-app-version-code': '14549',
-                'bereal-signature': 'berealsignature',
-                'bereal-timezone': 'Europe/Paris',
-                'bereal-device-id': 'berealdeviceid'
+                ...getHeaders()
             }
         });
 
@@ -74,38 +72,14 @@ export const uploadPost = async (req: Request, res: Response, next: NextFunction
 
         let primaryHeaders = {
             ...primaryRes.headers,
-            'Bereal-Device-Language': 'fr',
-            'Bereal-App-Version': '2.2.0',
-            'Bereal-App-Version-Code': '15558',
             'Authorization': `Bearer ${token}`,
-            'Accept': '*/*',
-            'Bereal-Platform': 'iPadOS',
-            'Bereal-Os-Version': '17.3',
-            'Accept-Language': 'fr-FR;q=1.0',
-            'Accept-Encoding': 'gzip, deflate, br',
-            'Bereal-Device-Id': process.env.DEVICEID,
-            'User-Agent': 'BeReal/2.2.0 (AlexisBarreyat.BeReal; build:15558; iOS 17.3.0)',
-            'Bereal-App-Language': 'fr-FR',
-            'Bereal-Timezone': 'Europe/Paris',
-            'Bereal-Signature': process.env.SIGNATURE
+            ...getHeaders()
         };
 
         let secondaryHeaders = {
             ...secondaryRes.headers,
-            'Bereal-Device-Language': 'fr',
-            'Bereal-App-Version': '2.2.0',
-            'Bereal-App-Version-Code': '15558',
             'Authorization': `Bearer ${token}`,
-            'Accept': '*/*',
-            'Bereal-Platform': 'iPadOS',
-            'Bereal-Os-Version': '17.3',
-            'Accept-Language': 'fr-FR;q=1.0',
-            'Accept-Encoding': 'gzip, deflate, br',
-            'Bereal-Device-Id': process.env.DEVICEID,
-            'User-Agent': 'BeReal/2.2.0 (AlexisBarreyat.BeReal; build:15558; iOS 17.3.0)',
-            'Bereal-App-Language': 'fr-FR',
-            'Bereal-Timezone': 'Europe/Paris',
-            'Bereal-Signature': process.env.SIGNATURE
+            ...getHeaders()
         };
 
         await Promise.all([
@@ -135,20 +109,8 @@ export const uploadPost = async (req: Request, res: Response, next: NextFunction
 
         let postResponse = await axios.post('https://mobile.bereal.com/api/content/posts', postData, {
             headers: {
-                'Bereal-Device-Language': 'fr',
-                'Bereal-App-Version': '2.2.0',
-                'Bereal-App-Version-Code': '15558',
                 'Authorization': `Bearer ${token}`,
-                'Accept': '*/*',
-                'Bereal-Platform': 'iPadOS',
-                'Bereal-Os-Version': '17.3',
-                'Accept-Language': 'fr-FR;q=1.0',
-                'Accept-Encoding': 'gzip, deflate, br',
-                'Bereal-Device-Id': process.env.DEVICEID,
-                'User-Agent': 'BeReal/2.2.0 (AlexisBarreyat.BeReal; build:15558; iOS 17.3.0)',
-                'Bereal-App-Language': 'fr-FR',
-                'Bereal-Timezone': 'Europe/Paris',
-                'Bereal-Signature': process.env.SIGNATURE
+                ...getHeaders()
             },
         });
 

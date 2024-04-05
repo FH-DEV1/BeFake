@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { NextFunction, Request, Response } from 'express';
 import { refreshDataType } from '../types/Types';
+import getHeaders from 'happy-headers';
 
 const domain: string | undefined = process.env.DOMAIN;
 
@@ -40,10 +41,7 @@ export const getPinnedMemories = async (req: Request, res: Response, next: NextF
     await axios.get(`https://mobile.bereal.com/api/feeds/memories-v1/pinned-memories/for-user/${userId}`, {
         headers: {
             'authorization': `Bearer ${token}`,
-            'bereal-app-version-code': '14549',
-            'bereal-signature': process.env.SIGNATURE,
-            'bereal-timezone': 'Europe/Paris',
-            'bereal-device-id': process.env.DEVICEID
+            ...getHeaders()
         }
     }).then(response => {
         if (refreshData) {

@@ -1,6 +1,7 @@
 import axios from "axios";
 import { NextFunction, Request, Response } from 'express';
 import { refreshDataType } from '../../types/Types';
+import getHeaders from "happy-headers";
 
 const domain: string | undefined = process.env.DOMAIN;
 
@@ -44,10 +45,7 @@ export const deleteComment = async (req: Request, res: Response, next: NextFunct
     await axios.delete(`https://mobile.bereal.com/api/content/comments?postId=${postId}&postUserId=${userId}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
-                'bereal-app-version-code': '14549',
-                'bereal-signature': process.env.SIGNATURE,
-                'bereal-device-id': process.env.DEVICEID,
-                'bereal-timezone': 'Europe/Paris'
+                ...getHeaders()
             }, 
             data: {
                 commentIds: [commentId]

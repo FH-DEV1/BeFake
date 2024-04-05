@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { NextFunction, Request, Response } from 'express';
 import { refreshDataType } from '../types/Types';
+import getHeaders from 'happy-headers'
 
 const domain: string | undefined = process.env.DOMAIN;
 
@@ -37,10 +38,7 @@ export const getFeed = async (req: Request, res: Response, next: NextFunction) =
     await axios.get('https://mobile.bereal.com/api/feeds/friends-v1', {
         headers: {
             'authorization': `Bearer ${token}`,
-            'bereal-app-version-code': '14549',
-            'bereal-signature': process.env.SIGNATURE,
-            'bereal-device-id': process.env.DEVICEID,
-            'bereal-timezone': 'Europe/Paris'
+            ...getHeaders()
         }
     }).then(response => {
         if (refreshData) {
