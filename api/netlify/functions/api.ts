@@ -21,13 +21,8 @@ import { deleteComment } from '../../routes/comment/delete.ts';
 const api: express.Application = express();
 const router: Router = Router();
 
-const AllowedUrls: string[] = [
-  'https://bereal-fhdev.vercel.app',
-  'https://befake.website',
-];
-
 const corsOptions: cors.CorsOptions = {
-  origin: process.env.PRODUCTION !== 'true' ? '*' : AllowedUrls,
+  origin: process.env.PRODUCTION !== 'true' ? '*' : process.env.ALLOWED_DOMAIN,
   preflightContinue: true,
 };
 
