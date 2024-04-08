@@ -264,7 +264,7 @@ export default function Feed({ params }: { params: { lng: string }}) {
     });
 
     return (
-        <div {...handlers}>
+        <div {...handlers} className="overscroll-y-contain">
             <canvas id='combined-render-canvas' className='hidden' ref={CanvasRef} />
             <div className="fixed w-full top-3 z-50 flex justify-between items-center">
                 <div className="w-24" onClick={() => router.push(`/${params.lng}/post`)}>
@@ -320,7 +320,7 @@ export default function Feed({ params }: { params: { lng: string }}) {
 
             <div className={`${loading ? "hidden" : ""} pt-11 pb-11`}>
 
-                <div className={`${feed?.userPosts ? isScrolled ? "block" : "hidden" : "hidden"} z-50`}>
+                <div className={`${feed?.userPosts && isScrolled ? "block" : "hidden"} z-50`}>
                     <div className='flex text-white justify-center mt-3 fixed w-full z-50'>
                         <p className='mr-2'>{t('Friends')}</p>
                         <p className="ml-2 opacity-50 cursor-pointer" onClick={() => {feed.data = { scrollY: 0, gridView: false }; router.replace(`/${params.lng}/fof`)}}>{t('FOF')}</p>

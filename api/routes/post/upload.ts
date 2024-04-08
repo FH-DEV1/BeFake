@@ -19,8 +19,9 @@ export const uploadPost = async (req: Request, res: Response, next: NextFunction
     let token: string = req.headers.token as string;
     let token_expiration: string | undefined = req.headers.token_expiration as string;
     let refresh_token: string | undefined = req.headers.refresh_token as string;
+    let randomDate: string = moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
 
-    let { primaryb64, secondaryb64, visibility, isLate, retakes } = JSON.parse(req.body);
+    let { primaryb64, secondaryb64, visibility, isLate, retakes, region } = JSON.parse(req.body);
 
     if (!(token && token_expiration && refresh_token && primaryb64 && secondaryb64)) {
         return res.status(400).json({ error: 'Error: missing required fields' });
@@ -39,6 +40,22 @@ export const uploadPost = async (req: Request, res: Response, next: NextFunction
         } catch (error) {
             return res.status(400).json({ error: { message: 'Error refreshing token', error: error.response.data }});
         }
+    }
+
+    if (!isLate) {
+        await axios.get(`https://mobile.bereal.com/api/bereal/moments/last/${region}`)
+        .then(response => {
+            let dateA = moment(response.data.startDate, "YYYY-MM-DDTHH:mm:ss.SSSZ");
+            let dateB = moment(response.data.endDate, "YYYY-MM-DDTHH:mm:ss.SSSZ");
+            
+            let diff = dateB.diff(dateA);
+            let randomMillis = Math.random() * diff;
+            
+            randomDate = dateA.add(randomMillis, 'milliseconds').utc().format("YYYY-MM-DDTHH:mm:ss.SSS[Z]");
+        })
+        .catch(error => {
+            return res.status(400).json({ error: error.response.data || 'Unknown error occurred.', refresh_data: refreshData });
+        })
     }
 
     primaryb64 = primaryb64.replace(/^data:(image|application)\/(png|webp|jpeg|jpg|gif|svg\+xml|octet-stream);base64,/, '');
@@ -87,11 +104,10 @@ export const uploadPost = async (req: Request, res: Response, next: NextFunction
             axios.put(secondaryRes.url, sharp_secondary, { headers: secondaryHeaders })
         ]);
 
-        let takenAt: string = moment().utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
         let postData: PostData = {
             isLate: isLate,
-            retakeCounter: retakes,
-            takenAt: takenAt,
+            retakeCounter:  retakes,
+            takenAt: randomDate,
             visibility: [visibility], 
             backCamera: {
                 bucket: primaryRes.bucket,
@@ -113,7 +129,7 @@ export const uploadPost = async (req: Request, res: Response, next: NextFunction
                 ...getHeaders()
             },
         });
-
+        
         if (refreshData) {
             res.locals.response = { data: postResponse.data, refresh_data: refreshData };
         } else {

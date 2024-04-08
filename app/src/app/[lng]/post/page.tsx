@@ -25,7 +25,7 @@ export default function Error({ params }: { params: { lng: string }}) {
     const [primaryImage, setPrimaryImage] = useState<string | null>(null);
     const [secondaryImage, setSecondaryImage] = useState<string | null>(null);
     const [currentTime, setCurrentTime] = useState<Date>(new Date());
-    const [visibility, setVisibility] = useState<string>('friends');
+    const [visibility, setVisibility] = useState<string>('friends-of-friends');
     const [isLate, setIsLate] = useState<boolean>(false);
     const [retakes, setRetakes] = useState<number>(0);
 
@@ -102,7 +102,20 @@ export default function Error({ params }: { params: { lng: string }}) {
             'visibility': selectedVisibility,
             'isLate': isLate,
             'retakes': retakes,
+            'region': parsedLSUser.region
         };
+
+        // Calculate the size of postData in bytes
+        const postDataSizeInBytes = new Blob([JSON.stringify(postData)]).size;
+        
+        // Maximum allowed size in bytes (6MB)
+        const maxAllowedSize = 6 * 1024 * 1024;
+
+        if (postDataSizeInBytes > maxAllowedSize) {
+            setLoading(false);
+            toast.error('The size of the body exceeds the limit (6MB)');
+            return;
+        }
 
         try {
             await axios.post(`${domain}/api/post/upload`, JSON.stringify(postData), {
@@ -313,7 +326,7 @@ export default function Error({ params }: { params: { lng: string }}) {
                         />
                     </Switch>
                 </div>
-                {/* <div 
+                <div 
                     className="flex mt-2 items-center justify-between text-white bg-white/10 active:bg-white/20 w-full px-4 py-3 rounded-xl"
                     onClick={() => setIsLate(!isLate)}
                 >
@@ -334,7 +347,7 @@ export default function Error({ params }: { params: { lng: string }}) {
                             } inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-300`}
                         />
                     </Switch>
-                </div> */}
+                </div>
                 <div 
                     className="flex mt-2 items-center justify-between text-white bg-white/10 active:bg-white/20 w-full px-4 py-3 rounded-xl"
                 >
