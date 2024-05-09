@@ -40,7 +40,20 @@ export default function Feed({ params }: { params: { lng: string }}) {
         show: false,
         disabled: true
     });
-    const PostOptions=[{id:'main-download',name:t('DownloadMainImage'),action:async()=>{try{await downloadImage(!0,OptionsMenu)}catch(e){toast.error(t('DownloadFailed'))}finally{setOptionsMenu(e=>({...e,show:!1}))}}},{id:'secondary-download',name:t('DownloadSecondaryImage'),action:async()=>{try{await downloadImage(!1,OptionsMenu)}catch(e){toast.error(t('DownloadFailed'))}finally{setOptionsMenu(e=>({...e,show:!1}))}}},{id:'combined-download',name:t('DownloadCombinedImages'),action:async()=>{try{await downloadCombinedImage(OptionsMenu)}catch(e){toast.error(t('DownloadFailed'))}finally{setOptionsMenu(e=>({...e,show:!1}))}}},{id:'bts-download',name:t('DownloadBTSVideo'),action:async()=>{try{await downloadBTSVideo(OptionsMenu)}catch(e){toast.error(t('DownloadFailed'))}finally{setOptionsMenu(e=>({...e,show:!1}))}}},{id:'copy-link-main',name:t('CopyMainImageLink'),action:()=>{OptionsMenu.primary?copyTextToClipboard(OptionsMenu.primary):(toast.error(t('CopyLinkError')),!1);toast.success(t('CopyLinkSuccess'));setOptionsMenu(e=>({...e,show:!1}))}},{id:'copy-link-secondary',name:t('CopySecondaryImageLink'),action:()=>{OptionsMenu.secondary?copyTextToClipboard(OptionsMenu.secondary):(toast.error(t('CopyLinkError')),!1);toast.success(t('CopyLinkSuccess'));setOptionsMenu(e=>({...e,show:!1}))}}];
+    const PostOptions=[{id:'hide-secondary',name:t('HideSecondaryImage'),action:async()=>{try{toggleImageVisibilityById(OptionsMenu.secondary || "")}catch(e){toast.error("error")}finally{setOptionsMenu(e=>({...e,show:!1}))}}},{id:'main-download',name:t('DownloadMainImage'),action:async()=>{try{await downloadImage(!0,OptionsMenu)}catch(e){toast.error(t('DownloadFailed'))}finally{setOptionsMenu(e=>({...e,show:!1}))}}},{id:'secondary-download',name:t('DownloadSecondaryImage'),action:async()=>{try{await downloadImage(!1,OptionsMenu)}catch(e){toast.error(t('DownloadFailed'))}finally{setOptionsMenu(e=>({...e,show:!1}))}}},{id:'combined-download',name:t('DownloadCombinedImages'),action:async()=>{try{await downloadCombinedImage(OptionsMenu)}catch(e){toast.error(t('DownloadFailed'))}finally{setOptionsMenu(e=>({...e,show:!1}))}}},{id:'bts-download',name:t('DownloadBTSVideo'),action:async()=>{try{await downloadBTSVideo(OptionsMenu)}catch(e){toast.error(t('DownloadFailed'))}finally{setOptionsMenu(e=>({...e,show:!1}))}}},{id:'copy-link-main',name:t('CopyMainImageLink'),action:()=>{OptionsMenu.primary?copyTextToClipboard(OptionsMenu.primary):(toast.error(t('CopyLinkError')),!1);toast.success(t('CopyLinkSuccess'));setOptionsMenu(e=>({...e,show:!1}))}},{id:'copy-link-secondary',name:t('CopySecondaryImageLink'),action:()=>{OptionsMenu.secondary?copyTextToClipboard(OptionsMenu.secondary):(toast.error(t('CopyLinkError')),!1);toast.success(t('CopyLinkSuccess'));setOptionsMenu(e=>({...e,show:!1}))}}];
+    
+    const toggleImageVisibilityById = (imageId: string) => {
+        const imgElement = document.getElementById(imageId);
+        if (imgElement) {
+            if (imgElement.style.display === 'none') {
+                imgElement.style.display = '';
+            } else {
+                imgElement.style.display = 'none';
+            }
+        } else {
+            console.error(`Image with ID "${imageId}" not found.`);
+        }
+    }
     
     const downloadImage = async (main: boolean, post: OptionsMenu) => {
         const url = main ? (post.primary) : (post.secondary);

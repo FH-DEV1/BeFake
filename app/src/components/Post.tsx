@@ -80,6 +80,7 @@ const Post: React.FC<PostProps> = ({ post, width, swipeable, setSwipeable }) => 
                         width={1500}
                         height={2000}
                         alt='Secondary image'
+                        id={post.secondary.url}
                         placeholder={placeholder}
                     />
                 </Draggable>
