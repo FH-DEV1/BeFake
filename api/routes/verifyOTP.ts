@@ -87,7 +87,7 @@ export const verifyOTP = async (req: Request, res: Response, next: NextFunction)
             let access_grant_response = await axios.request(access_grant_options);
 
             let access_expiration = Date.now() + access_grant_response.data.expires_in * 1000;
-            res.locals.response = { token: access_grant_response.data.access_token, refresh_token: access_grant_response.data.refresh_token, token_expiration: access_expiration }
+            res.locals.response = { token: access_grant_response.data.access_token, refresh_token: firebase_refresh_response.data.refresh_token, token_expiration: access_expiration }
             return next();
             
         } catch (error: any) {
@@ -180,7 +180,7 @@ export const verifyOTP = async (req: Request, res: Response, next: NextFunction)
             }
 
             let access_expiration = Date.now() + access_grant_response.data.expires_in * 1000;
-            res.locals.response = { token: access_grant_response.data.access_token, refresh_token: access_grant_response.data.refresh_token, token_expiration: access_expiration }
+            res.locals.response = { token: access_grant_response.data.access_token, refresh_token: refresh_response.data.refresh_token, token_expiration: access_expiration }
             return next();
         
         } catch (error: any) {
