@@ -78,5 +78,7 @@
   "FOFVisible": "Amis d'amis",
   "PostLate": "Poster en late",
   "MyBeReal": "Mon BeReal.",
-  "HideSecondaryImage": "Cacher/Montrer l'image secondaire"
+  "HideSecondaryImage": "Cacher/Montrer l'image secondaire",
+  "forceLogin1": "L'ancienne page de connexion est obsolète, utilisez celle-ci à la place.",
+  "forceLogin2": "En raison de la dernière mise à jour de BeReal ajoutant un captcha à la page de connexion, vous ne pouvez plus vous connecter à cette application web. Je ne prévois pas d'ajouter la connexion de sitôt, mais n'hésitez pas à faire une pull request sur github si vous souhaitez implémenter les captchas."
 }

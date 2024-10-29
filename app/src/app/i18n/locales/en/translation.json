@@ -78,5 +78,7 @@
   "FOFVisible": "Friends of friends",
   "PostLate": "Post late",
   "MyBeReal": "My BeReal.",
-  "HideSecondaryImage": "Hide/Show secondary image"
+  "HideSecondaryImage": "Hide/Show secondary image",
+  "forceLogin1": "Old login is deprecated use this one instead.",
+  "forceLogin2": "Because of bereal latest update adding captcha to login page you can't login on this webapp anymore. I don't plan on adding the login anytime soon but feel free to do a pull request on the repo if you want to implement the captcha's."
 }

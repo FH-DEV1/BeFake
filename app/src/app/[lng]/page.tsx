@@ -11,7 +11,7 @@ export default function Page({ params }: { params: { lng: string }}) {
     useEffect(() => {
         if (version !== process.env.NEXT_PUBLIC_VERSION && typeof window !== "undefined") {
             localStorage.clear()
-            router.replace(`/${params.lng}/login/phone-number`)
+            router.replace(`/${params.lng}/login/force`)
         }
         let lsToken = typeof window !== "undefined" ? localStorage.getItem('token') : null
         let parsedLSToken = JSON.parse(lsToken !== null ? lsToken : "{}")
@@ -47,7 +47,7 @@ export default function Page({ params }: { params: { lng: string }}) {
             })
         } else {
             console.log("no token was found in ls")
-            router.replace(`/${params.lng}/login/phone-number`)
+            router.replace(`/${params.lng}/login/force`)
         }
     }, []);
     return (
