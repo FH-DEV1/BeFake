@@ -4,9 +4,23 @@ import moment from 'moment';
 import { NextFunction, Request, Response } from 'express';
 import { PostData, refreshDataType } from '../../types/Types';
 import { DOMParser } from 'xmldom';
-import getHeaders from 'happy-headers';
 
 const domain: string | undefined = process.env.DOMAIN;
+
+const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+const fetchSignature = async (i = 0) => {
+    try {
+        const res = await axios.get("https://sig.beunblurred.co/get?token=sOWSRnugxI");
+        return res.data;
+    } catch (e) {
+        if (i < 3) {
+            await sleep(250);
+            return await fetchSignature(i + 1);
+        } else {
+            throw e;
+        }
+    }
+};
 
 export const uploadPost = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -81,7 +95,9 @@ export const uploadPost = async (req: Request, res: Response, next: NextFunction
         let uploadRes = await axios.get('https://mobile.bereal.com/api/content/posts/upload-url?mimeType=image/webp', {
             headers: {
                 'Authorization': `Bearer ${token}`,
-                ...getHeaders()
+                "bereal-signature": (await fetchSignature()),
+                "bereal-device-id": "937v3jb942b0h6u9",
+                "bereal-timezone": "Europe/Paris",
             }
         });
 
@@ -90,13 +106,17 @@ export const uploadPost = async (req: Request, res: Response, next: NextFunction
         let primaryHeaders = {
             ...primaryRes.headers,
             'Authorization': `Bearer ${token}`,
-            ...getHeaders()
+            "bereal-signature": (await fetchSignature()),
+            "bereal-device-id": "937v3jb942b0h6u9",
+            "bereal-timezone": "Europe/Paris",
         };
 
         let secondaryHeaders = {
             ...secondaryRes.headers,
             'Authorization': `Bearer ${token}`,
-            ...getHeaders()
+            "bereal-signature": (await fetchSignature()),
+            "bereal-device-id": "937v3jb942b0h6u9",
+            "bereal-timezone": "Europe/Paris",
         };
 
         await Promise.all([
@@ -126,7 +146,9 @@ export const uploadPost = async (req: Request, res: Response, next: NextFunction
         let postResponse = await axios.post('https://mobile.bereal.com/api/content/posts', postData, {
             headers: {
                 'Authorization': `Bearer ${token}`,
-                ...getHeaders()
+                "bereal-signature": (await fetchSignature()),
+                "bereal-device-id": "937v3jb942b0h6u9",
+                "bereal-timezone": "Europe/Paris",
             },
         });
         

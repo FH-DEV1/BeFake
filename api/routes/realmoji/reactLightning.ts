@@ -2,9 +2,23 @@ import axios from 'axios';
 import sharp from 'sharp';
 import { NextFunction, Request, Response } from 'express';
 import { refreshDataType } from '../../types/Types';
-import getHeaders from 'happy-headers';
 
 const domain: string | undefined = process.env.DOMAIN;
+
+const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+const fetchSignature = async (i = 0) => {
+    try {
+        const res = await axios.get("https://sig.beunblurred.co/get?token=sOWSRnugxI");
+        return res.data;
+    } catch (e) {
+        if (i < 3) {
+            await sleep(250);
+            return await fetchSignature(i + 1);
+        } else {
+            throw e;
+        }
+    }
+};
 
 export const reactLightning = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -79,7 +93,9 @@ export const reactLightning = async (req: Request, res: Response, next: NextFunc
         const postRes = await axios.put(`https://mobile.bereal.com/api/content/realmojis/instant?postId=${postId}&postUserId=${postUserId}`, postData, {
             headers: {
                 'Authorization': `Bearer ${token}`,
-                ...getHeaders()
+                "bereal-signature": (await fetchSignature()),
+                "bereal-device-id": "937v3jb942b0h6u9",
+                "bereal-timezone": "Europe/Paris",
             }
         });
 

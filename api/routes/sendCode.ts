@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { Request, Response, NextFunction } from 'express';
-import getHeaders from 'happy-headers';
+// import getHeaders from 'happy-headers';
 
 const BeRealClientSecret = "F5A71DA-32C7-425C-A3E3-375B4DACA406";
 
@@ -22,7 +22,7 @@ export const sendCode = async (req: Request, res: Response, next: NextFunction) 
                     "x-firebase-locale": "en",
                     "x-firebase-gmpid": "1:405768487586:ios:28c4df089ca92b89",
                     "bereal-app-version-code": "14549",
-                    ...getHeaders()
+                    // ...getHeaders()
                 }
             }
         );
@@ -44,7 +44,7 @@ export const sendCode = async (req: Request, res: Response, next: NextFunction) 
                 "x-firebase-locale": "en",
                 "x-firebase-gmpid": "1:405768487586:ios:28c4df089ca92b89",
                 "bereal-app-version-code": "14549",
-                ...getHeaders()
+                // ...getHeaders()
             }
         
         });
@@ -60,7 +60,7 @@ export const sendCode = async (req: Request, res: Response, next: NextFunction) 
                     phoneNumber: phone_number,
                     "client_id": "android",
                     "client_secret": BeRealClientSecret,
-                    "device_id": getHeaders()['bereal-device-id'],
+                    // "device_id": getHeaders()['bereal-device-id'],
                     "tokens": [
                         {
                             "token": token,
@@ -75,7 +75,7 @@ export const sendCode = async (req: Request, res: Response, next: NextFunction) 
                     "Content-Type": "application/json",
                     "bereal-app-version-code": "2348592",
                     "bereal-app-version": "3.10.1",
-                    ...getHeaders()
+                    // ...getHeaders()
                 }
             });
 
